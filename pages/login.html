@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — Fitly</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<div class="hero-grid-bg" style="position:fixed; inset:0; pointer-events:none;"></div>
+<div style="position:fixed; width:500px; height:500px; background: radial-gradient(circle, rgba(0,207,255,0.06) 0%, transparent 70%); top:-100px; left:-100px; pointer-events:none;"></div>
+
+<!-- Minimal Navbar -->
+<nav style="padding: 1.25rem 0; border-bottom: 1px solid var(--border); position: relative; z-index: 10;">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a href="../index.html" style="font-family: 'Poppins', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--primary); text-decoration: none;">Fit<span style="color: var(--white);">ly</span></a>
+    <span style="font-size: 0.875rem; color: var(--text-muted);">Don't have an account? <a href="register.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">Sign up</a></span>
+  </div>
+</nav>
+
+<div class="auth-wrapper" style="position: relative; z-index: 10;">
+  <div class="auth-card">
+    <div class="auth-logo">Welcome back</div>
+    <p class="auth-tagline">Sign in to continue tracking your fitness journey</p>
+
+    <div id="loginAlert" style="display:none;" class="alert-custom warning mb-3">
+      <i class="bi bi-exclamation-circle me-2"></i><span id="loginAlertMsg"></span>
+    </div>
+
+    <form id="loginForm">
+      <div class="mb-3">
+        <label class="form-label-custom">Email Address</label>
+        <input type="email" id="loginEmail" class="form-control-custom" placeholder="you@example.com" required />
+        <div class="field-error" style="display:none; font-size:0.75rem; color:var(--danger); margin-top:4px;">Please enter a valid email.</div>
+      </div>
+      <div class="mb-4">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label class="form-label-custom" style="margin-bottom:0;">Password</label>
+          <a href="#" style="font-size: 0.8rem; color: var(--primary); text-decoration: none;">Forgot password?</a>
+        </div>
+        <div style="position: relative;">
+          <input type="password" id="loginPassword" class="form-control-custom" placeholder="••••••••" required style="padding-right: 40px;" />
+          <button type="button" onclick="togglePass('loginPassword', 'toggleIcon1')" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; padding:0;">
+            <i class="bi bi-eye" id="toggleIcon1" style="font-size: 1rem;"></i>
+          </button>
+        </div>
+        <div class="field-error" style="display:none; font-size:0.75rem; color:var(--danger); margin-top:4px;">Please enter your password.</div>
+      </div>
+      <div class="mb-4 d-flex align-items-center gap-2">
+        <input type="checkbox" id="rememberMe" style="accent-color: var(--primary); width: 16px; height: 16px;" />
+        <label for="rememberMe" style="font-size: 0.875rem; color: var(--text-secondary); cursor: pointer;">Remember me</label>
+      </div>
+      <button type="submit" class="btn-primary-custom w-100" style="padding: 12px; font-size: 0.95rem;">
+        Sign In <i class="bi bi-arrow-right ms-2"></i>
+      </button>
+    </form>
+
+    <div class="auth-divider">or</div>
+
+    <button class="btn-ghost w-100" onclick="demoLogin()" style="padding: 12px; font-size: 0.875rem;">
+      <i class="bi bi-lightning-fill me-2" style="color: var(--primary);"></i>
+      Continue with Demo Account
+    </button>
+
+    <p style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-muted);">
+      New to Fitly? <a href="register.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">Create an account</a>
+    </p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="../js/main.js"></script>
+<script>
+  function togglePass(inputId, iconId) {
+    const inp = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      inp.type = 'password';
+      icon.className = 'bi bi-eye';
+    }
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    if (!email || !pass) { return; }
+    // Front-end demo validation
+    const users = Store.get('users');
+    const user = users.find(u => u.email === email && u.password === pass);
+    if (!user) {
+      document.getElementById('loginAlert').style.display = 'block';
+      document.getElementById('loginAlertMsg').textContent = 'Incorrect email or password.';
+      return;
+    }
+    Store.set('currentUser', user);
+    showToast('Welcome back, ' + user.name + '!');
+    setTimeout(() => window.location.href = 'dashboard.html', 800);
+  });
+
+  function demoLogin() {
+    Store.set('currentUser', { name: 'Demo User', email: 'demo@fitly.com' });
+    showToast('Signed in as Demo User!');
+    setTimeout(() => window.location.href = 'dashboard.html', 800);
+  }
+</script>
+</body>
+</html>

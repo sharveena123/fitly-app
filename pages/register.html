@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account — Fitly</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<div class="hero-grid-bg" style="position:fixed; inset:0; pointer-events:none;"></div>
+<div style="position:fixed; width:500px; height:500px; background: radial-gradient(circle, rgba(0,102,255,0.05) 0%, transparent 70%); bottom:-100px; right:-100px; pointer-events:none;"></div>
+
+<nav style="padding: 1.25rem 0; border-bottom: 1px solid var(--border); position: relative; z-index: 10;">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a href="../index.html" style="font-family: 'Poppins', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--primary); text-decoration: none;">Fit<span style="color: var(--white);">ly</span></a>
+    <span style="font-size: 0.875rem; color: var(--text-muted);">Already have an account? <a href="login.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">Sign in</a></span>
+  </div>
+</nav>
+
+<div class="auth-wrapper" style="position: relative; z-index: 10;">
+  <div class="auth-card" style="max-width: 520px;">
+    <div class="auth-logo">Create your account</div>
+    <p class="auth-tagline">Start your fitness journey with Fitly today — it's free</p>
+
+    <div id="regAlert" style="display:none;" class="alert-custom warning mb-3">
+      <i class="bi bi-exclamation-circle me-2"></i><span id="regAlertMsg"></span>
+    </div>
+    <div id="regSuccess" style="display:none;" class="alert-custom mb-3">
+      <i class="bi bi-check-circle me-2"></i> Account created! Redirecting you to sign in...
+    </div>
+
+    <form id="registerForm">
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label-custom">Full Name *</label>
+          <input type="text" id="rName" class="form-control-custom" placeholder="John Doe" required />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label-custom">Age</label>
+          <input type="number" id="rAge" class="form-control-custom" placeholder="25" min="1" max="120" />
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label-custom">Email Address *</label>
+        <input type="email" id="rEmail" class="form-control-custom" placeholder="you@example.com" required />
+      </div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label-custom">Weight (kg)</label>
+          <input type="number" id="rWeight" class="form-control-custom" placeholder="65" step="0.1" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label-custom">Height (cm)</label>
+          <input type="number" id="rHeight" class="form-control-custom" placeholder="170" />
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label-custom">Fitness Goal</label>
+        <select id="rGoal" class="form-select-custom">
+          <option value="">Select a goal</option>
+          <option>Lose weight</option>
+          <option>Build muscle</option>
+          <option>Improve endurance</option>
+          <option>Stay healthy</option>
+          <option>Increase flexibility</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label-custom">Password *</label>
+        <div style="position: relative;">
+          <input type="password" id="rPassword" class="form-control-custom" placeholder="At least 6 characters" required style="padding-right: 40px;" oninput="checkStrength()" />
+          <button type="button" onclick="togglePass('rPassword', 'toggleIcon2')" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; padding:0;">
+            <i class="bi bi-eye" id="toggleIcon2" style="font-size: 1rem;"></i>
+          </button>
+        </div>
+        <div style="margin-top: 8px;">
+          <div class="progress-custom" style="height: 4px;">
+            <div id="strengthBar" class="progress-bar-custom" style="width: 0%; transition: width 0.3s, background 0.3s;"></div>
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;" id="strengthLabel">Password strength</div>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="form-label-custom">Confirm Password *</label>
+        <input type="password" id="rConfirm" class="form-control-custom" placeholder="Repeat password" required />
+      </div>
+      <div class="mb-4 d-flex align-items-center gap-2">
+        <input type="checkbox" id="agreeTerms" style="accent-color: var(--primary); width:16px; height:16px;" required />
+        <label for="agreeTerms" style="font-size: 0.875rem; color: var(--text-secondary); cursor: pointer;">
+          I agree to the <a href="#" style="color: var(--primary);">Terms of Service</a> and <a href="#" style="color: var(--primary);">Privacy Policy</a>
+        </label>
+      </div>
+      <button type="submit" class="btn-primary-custom w-100" style="padding: 12px; font-size: 0.95rem;">
+        Create Account <i class="bi bi-arrow-right ms-2"></i>
+      </button>
+    </form>
+
+    <p style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-muted);">
+      Already have an account? <a href="login.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">Sign in</a>
+    </p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="../js/main.js"></script>
+<script>
+  function togglePass(inputId, iconId) {
+    const inp = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (inp.type === 'password') { inp.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+    else { inp.type = 'password'; icon.className = 'bi bi-eye'; }
+  }
+
+  function checkStrength() {
+    const pass = document.getElementById('rPassword').value;
+    let score = 0;
+    if (pass.length >= 6) score++;
+    if (pass.length >= 10) score++;
+    if (/[A-Z]/.test(pass)) score++;
+    if (/[0-9]/.test(pass)) score++;
+    if (/[^A-Za-z0-9]/.test(pass)) score++;
+    const bar = document.getElementById('strengthBar');
+    const label = document.getElementById('strengthLabel');
+    const widths = [0, 20, 40, 60, 80, 100];
+    const colors = ['', '#FF4D6A', '#FFB800', '#FFB800', '#00E5A0', '#00E5A0'];
+    const labels = ['', 'Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
+    bar.style.width = widths[score] + '%';
+    bar.style.background = colors[score];
+    label.textContent = labels[score];
+    label.style.color = colors[score] || 'var(--text-muted)';
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const name = document.getElementById('rName').value.trim();
+    const email = document.getElementById('rEmail').value.trim();
+    const pass = document.getElementById('rPassword').value;
+    const confirm = document.getElementById('rConfirm').value;
+    const agreed = document.getElementById('agreeTerms').checked;
+
+    if (!agreed) {
+      document.getElementById('regAlert').style.display = 'block';
+      document.getElementById('regAlertMsg').textContent = 'You must agree to the Terms of Service.';
+      return;
+    }
+    if (pass.length < 6) {
+      document.getElementById('regAlert').style.display = 'block';
+      document.getElementById('regAlertMsg').textContent = 'Password must be at least 6 characters.';
+      return;
+    }
+    if (pass !== confirm) {
+      document.getElementById('regAlert').style.display = 'block';
+      document.getElementById('regAlertMsg').textContent = 'Passwords do not match.';
+      return;
+    }
+    const users = Store.get('users');
+    if (users.find(u => u.email === email)) {
+      document.getElementById('regAlert').style.display = 'block';
+      document.getElementById('regAlertMsg').textContent = 'This email is already registered.';
+      return;
+    }
+    users.push({
+      name, email, password: pass,
+      age: parseInt(document.getElementById('rAge').value) || null,
+      weight: parseFloat(document.getElementById('rWeight').value) || null,
+      height: parseFloat(document.getElementById('rHeight').value) || null,
+      goal: document.getElementById('rGoal').value
+    });
+    Store.set('users', users);
+    document.getElementById('regAlert').style.display = 'none';
+    document.getElementById('regSuccess').style.display = 'block';
+    this.style.display = 'none';
+    setTimeout(() => window.location.href = 'login.html', 2000);
+  });
+</script>
+</body>
+</html>

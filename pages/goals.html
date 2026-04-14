@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Goals — Fitly</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#fitlyNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="fitlyNav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+        <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="workout.html">Workout</a></li>
+        <li class="nav-item"><a class="nav-link" href="nutrition.html">Nutrition</a></li>
+        <li class="nav-item"><a class="nav-link active" href="goals.html">Goals</a></li>
+        <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+        <li class="nav-item ms-2">
+          <a class="btn-primary-custom" href="login.html" style="padding: 8px 18px; font-size: 0.8rem;">Sign In</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+
+  <div class="page-header">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <h1 class="page-title">Goal Setting</h1>
+        <p class="page-subtitle">Define targets and track your progress</p>
+      </div>
+      <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+        <i class="bi bi-plus-lg me-1"></i> New Goal
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="row g-3 mb-4">
+    <div class="col-4">
+      <div class="card-stat">
+        <div class="stat-label">Total Goals</div>
+        <div class="stat-value" id="totalGoals">0</div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card-stat">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value" style="color: var(--success);" id="completedGoals">0</div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card-stat">
+        <div class="stat-label">In Progress</div>
+        <div class="stat-value" style="color: var(--primary);" id="inProgressGoals">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Goals Grid -->
+  <div class="row g-4" id="goalsGrid">
+    <div class="col-12">
+      <div class="card-custom text-center" style="padding: 3rem;">
+        <i class="bi bi-bullseye" style="font-size: 2.5rem; color: var(--text-muted);"></i>
+        <p style="color: var(--text-muted); margin-top: 1rem;">No goals set yet. Set your first goal to get started!</p>
+        <button class="btn-primary-custom mt-2" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+          <i class="bi bi-plus-lg me-1"></i> Add Your First Goal
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Add Goal Modal -->
+<div class="modal fade" id="addGoalModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Set New Goal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="goalForm">
+          <div class="mb-3">
+            <label class="form-label-custom">Goal Title *</label>
+            <input type="text" id="gTitle" class="form-control-custom" placeholder="e.g. Lose 5kg, Run 5km" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label-custom">Category</label>
+            <select id="gCategory" class="form-select-custom">
+              <option>Weight</option>
+              <option>Cardio</option>
+              <option>Strength</option>
+              <option>Nutrition</option>
+              <option>Hydration</option>
+              <option>Steps</option>
+              <option>Custom</option>
+            </select>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-4">
+              <label class="form-label-custom">Current *</label>
+              <input type="number" id="gCurrent" class="form-control-custom" placeholder="0" step="any" required />
+            </div>
+            <div class="col-4">
+              <label class="form-label-custom">Target *</label>
+              <input type="number" id="gTarget" class="form-control-custom" placeholder="100" step="any" required />
+            </div>
+            <div class="col-4">
+              <label class="form-label-custom">Unit</label>
+              <input type="text" id="gUnit" class="form-control-custom" placeholder="kg, km, steps" />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label-custom">Deadline</label>
+            <input type="date" id="gDeadline" class="form-control-custom" />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-primary-custom" onclick="saveGoal()">Save Goal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Update Progress Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Update Progress</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="updateId" />
+        <label class="form-label-custom" id="updateLabel">Current Value</label>
+        <input type="number" id="updateValue" class="form-control-custom" step="any" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-primary-custom" onclick="saveUpdate()">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div class="footer-brand">Fitly</div>
+      <span style="color: var(--text-muted);">&copy; 2025 Fitly. WIF2003 Group Project.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="../js/main.js"></script>
+<script>
+  const catIcons = { Weight: 'bi-graph-down-arrow', Cardio: 'bi-heart-pulse-fill', Strength: 'bi-lightning-fill', Nutrition: 'bi-egg-fried', Hydration: 'bi-droplet-fill', Steps: 'bi-footprint', Custom: 'bi-bullseye' };
+  const catColors = { Weight: 'cyan', Cardio: 'green', Strength: 'blue', Nutrition: 'yellow', Hydration: 'blue', Steps: 'green', Custom: 'cyan' };
+
+  function renderGoals() {
+    const goals = Store.get('goals');
+    const total = goals.length;
+    const completed = goals.filter(g => parseFloat(g.current) >= parseFloat(g.target)).length;
+    document.getElementById('totalGoals').textContent = total;
+    document.getElementById('completedGoals').textContent = completed;
+    document.getElementById('inProgressGoals').textContent = total - completed;
+
+    if (!total) {
+      document.getElementById('goalsGrid').innerHTML = `
+        <div class="col-12">
+          <div class="card-custom text-center" style="padding: 3rem;">
+            <i class="bi bi-bullseye" style="font-size: 2.5rem; color: var(--text-muted);"></i>
+            <p style="color: var(--text-muted); margin-top: 1rem;">No goals set yet!</p>
+            <button class="btn-primary-custom mt-2" data-bs-toggle="modal" data-bs-target="#addGoalModal">Add Your First Goal</button>
+          </div>
+        </div>`;
+      return;
+    }
+
+    const html = goals.map(g => {
+      const pct = Math.min(100, Math.round((parseFloat(g.current) / parseFloat(g.target)) * 100));
+      const done = pct >= 100;
+      const color = catColors[g.category] || 'cyan';
+      const icon = catIcons[g.category] || 'bi-bullseye';
+      const daysLeft = g.deadline ? Math.ceil((new Date(g.deadline) - new Date()) / 86400000) : null;
+      return `
+      <div class="col-md-6 col-lg-4">
+        <div class="card-custom" style="${done ? 'border-color: var(--success);' : ''}">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 1rem;">
+            <div class="stat-icon ${color}" style="margin-bottom:0;"><i class="bi ${icon}"></i></div>
+            <div style="display:flex; gap:6px; align-items:center;">
+              ${done ? '<span class="badge-custom badge-green"><i class="bi bi-check2 me-1"></i>Done</span>' : `<span class="badge-custom badge-cyan">${pct}%</span>`}
+              <button class="btn-ghost" style="padding: 3px 8px; font-size: 0.75rem;" onclick="deleteGoal(${g.id})"><i class="bi bi-trash3"></i></button>
+            </div>
+          </div>
+          <div style="font-family: 'Poppins', sans-serif; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">${g.title}</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">${g.category}${daysLeft !== null ? ` · ${daysLeft > 0 ? daysLeft + 'd left' : 'Overdue'}` : ''}</div>
+          <div class="progress-custom" style="margin-bottom: 8px;">
+            <div class="${done ? 'progress-bar-green' : 'progress-bar-custom'} progress-bar-custom" style="width: ${pct}%;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            <span>${g.current} ${g.unit}</span>
+            <span>Target: ${g.target} ${g.unit}</span>
+          </div>
+          ${!done ? `<button class="btn-outline-custom w-100" style="font-size: 0.8rem; padding: 7px 14px;" onclick="openUpdate(${g.id}, '${g.title}', ${g.current})">
+            <i class="bi bi-pencil me-1"></i> Update Progress
+          </button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+    document.getElementById('goalsGrid').innerHTML = html;
+  }
+
+  function saveGoal() {
+    const title = document.getElementById('gTitle').value.trim();
+    const target = parseFloat(document.getElementById('gTarget').value);
+    const current = parseFloat(document.getElementById('gCurrent').value);
+    if (!title || isNaN(target)) { showToast('Fill in required fields.', 'error'); return; }
+    const goals = Store.get('goals');
+    goals.push({
+      id: Date.now(), title,
+      category: document.getElementById('gCategory').value,
+      current: current || 0, target,
+      unit: document.getElementById('gUnit').value || '',
+      deadline: document.getElementById('gDeadline').value
+    });
+    Store.set('goals', goals);
+    bootstrap.Modal.getInstance(document.getElementById('addGoalModal')).hide();
+    document.getElementById('goalForm').reset();
+    renderGoals();
+    showToast('Goal created!');
+  }
+
+  function openUpdate(id, title, current) {
+    document.getElementById('updateId').value = id;
+    document.getElementById('updateLabel').textContent = 'Current value for: ' + title;
+    document.getElementById('updateValue').value = current;
+    new bootstrap.Modal(document.getElementById('updateModal')).show();
+  }
+
+  function saveUpdate() {
+    const id = parseInt(document.getElementById('updateId').value);
+    const val = parseFloat(document.getElementById('updateValue').value);
+    if (isNaN(val)) return;
+    const goals = Store.get('goals').map(g => g.id === id ? { ...g, current: val } : g);
+    Store.set('goals', goals);
+    bootstrap.Modal.getInstance(document.getElementById('updateModal')).hide();
+    renderGoals();
+    showToast('Progress updated!');
+  }
+
+  function deleteGoal(id) {
+    if (!confirm('Delete this goal?')) return;
+    Store.set('goals', Store.get('goals').filter(g => g.id !== id));
+    renderGoals();
+    showToast('Goal deleted.');
+  }
+
+  renderGoals();
+</script>
+</body>
+</html>
