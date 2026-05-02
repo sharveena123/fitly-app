@@ -26,8 +26,10 @@
           <li class="nav-item"><a class="nav-link" href="workout.html">Workout</a></li>
           <li class="nav-item"><a class="nav-link" href="nutrition.html">Nutrition</a></li>
           <li class="nav-item"><a class="nav-link" href="goals.html">Goals</a></li>
-          <li class="nav-item"><a class="nav-link active" href="profile.html">Profile</a></li>
-          <li class="nav-item ms-2"><a class="btn-primary-custom" href="login.html">Sign In</a></li>
+          <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+          <li class="nav-item ms-2">
+            <a class="btn-primary-custom" href="login.html" style="padding: 8px 18px; font-size: 0.8rem;">Sign In</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -165,7 +167,31 @@
 
             <div class="mt-4 d-flex gap-3">
               <button type="submit" class="btn-primary-custom">Save Profile</button>
+            </div>
 
+            <hr class="divider" />
+
+            <div class="section-title">Change Password</div>
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label-custom" for="pCurrentPassword">Current Password *</label>
+                <input type="password" id="pCurrentPassword" class="form-control-custom" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom" for="pNewPassword">New Password *</label>
+                <input type="password" id="pNewPassword" class="form-control-custom" />
+              </div>
+            </div>
+            <button type="button" class="btn-outline-custom mb-4" onclick="changePassword()">Update Password</button>
+
+            <hr class="divider" />
+
+            <div class="section-title" style="color: #dc3545;">Danger Zone</div>
+            <div class="card-custom" style="border: 1px solid #dc3545; background: #fff5f5;">
+              <p style="color: #666666; margin-bottom: 1rem;">Permanently delete your account and all associated data. This action cannot be undone.</p>
+              <button type="button" class="btn-ghost" style="border-color: #dc3545; color: #dc3545;" onclick="deleteAccount()">
+                <i class="bi bi-trash3 me-1"></i> Delete Account
+              </button>
             </div>
           </form>
         </div>
@@ -320,6 +346,92 @@
 
       reader.readAsDataURL(file);
     });
+
+    // ============== CHANGE PASSWORD FUNCTION ==============
+    function changePassword() {
+      var currentPassword = document.getElementById('pCurrentPassword').value;
+      var newPassword = document.getElementById('pNewPassword').value;
+
+      if (!currentPassword || !newPassword) {
+        showToast('Please fill in all password fields.', 'error');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        showToast('New password must be at least 6 characters.', 'error');
+        return;
+      }
+
+      var currentUser = Store.getObj('currentUser', null);
+      if (!currentUser || !currentUser.email) {
+        showToast('Please login first.', 'error');
+        return;
+      }
+
+      var users = Store.get('users');
+      var userIndex = users.findIndex(function(u) {
+        return u.email === currentUser.email;
+      });
+
+      if (userIndex === -1) {
+        showToast('User not found.', 'error');
+        return;
+      }
+
+      if (users[userIndex].password !== currentPassword) {
+        showToast('Current password is incorrect.', 'error');
+        return;
+      }
+
+      users[userIndex].password = newPassword;
+      Store.set('users', users);
+      document.getElementById('pCurrentPassword').value = '';
+      document.getElementById('pNewPassword').value = '';
+      showToast('Password changed successfully! You will be logged out.', 'success');
+      setTimeout(function() {
+        handleLogout();
+      }, 1500);
+    }
+
+    // ============== DELETE ACCOUNT FUNCTION ==============
+    function deleteAccount() {
+      var confirmMessage = 'This will permanently delete your account and all associated data.\n\nType "DELETE" to confirm:';
+      var userInput = prompt(confirmMessage);
+
+      if (userInput !== 'DELETE') {
+        showToast('Account deletion cancelled.', 'error');
+        return;
+      }
+
+      var currentUser = Store.getObj('currentUser', null);
+      if (!currentUser || !currentUser.email) {
+        showToast('Please login first.', 'error');
+        return;
+      }
+
+      var users = Store.get('users');
+      var updatedUsers = users.filter(function(u) {
+        return u.email !== currentUser.email;
+      });
+      Store.set('users', updatedUsers);
+
+      localStorage.removeItem('fitly_currentUser');
+      localStorage.removeItem('fitly_remember_token');
+      localStorage.removeItem('fitly_profile');
+      localStorage.removeItem('fitly_workouts');
+      localStorage.removeItem('fitly_meals');
+      localStorage.removeItem('fitly_goals');
+      localStorage.removeItem('fitly_water');
+
+      showToast('Your account has been deleted. Redirecting...', 'success');
+      setTimeout(function() {
+        window.location.href = '../index.html';
+      }, 1500);
+    }
+
+    // Expose functions globally
+    window.changePassword = changePassword;
+    window.deleteAccount = deleteAccount;
 
     loadProfile();
   </script>

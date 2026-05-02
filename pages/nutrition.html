@@ -90,7 +90,10 @@
           <form id="mealForm">
             <div class="mb-3">
               <label class="form-label-custom" for="mFoodName">Food Name *</label>
-              <input type="text" id="mFoodName" class="form-control-custom" placeholder="e.g. Nasi Lemak" required />
+              <div class="d-flex gap-2">
+                <input type="text" id="mFoodName" class="form-control-custom" placeholder="e.g. Nasi Lemak" required />
+                <button type="button" class="btn-outline-custom" onclick="openFoodSearch()" title="Search Foods"><i class="bi bi-search"></i></button>
+              </div>
             </div>
             <div class="mb-3">
               <label class="form-label-custom" for="mMealType">Meal Type *</label>
@@ -170,7 +173,84 @@
         </div>
       </div>
     </div>
-  </main>
+
+  <!-- Food Search Modal -->
+  <div class="modal fade" id="foodSearchModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Search Common Foods</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <input type="text" id="foodSearchInput" class="form-control-custom" placeholder="Search for food..." onkeyup="searchFoods()" />
+          </div>
+          <div id="foodSearchResults" style="max-height: 400px; overflow-y: auto;">
+            <!-- Results populated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Meal Modal -->
+  <div class="modal fade" id="editMealModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Meal</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editMealForm">
+            <input type="hidden" id="editMealId" />
+            <div class="mb-3">
+              <label class="form-label-custom" for="editMealFood">Food Name *</label>
+              <input type="text" id="editMealFood" class="form-control-custom" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label-custom" for="editMealType">Meal Type *</label>
+              <select id="editMealType" class="form-select-custom" required>
+                <option value="">Select type</option>
+                <option>Breakfast</option>
+                <option>Lunch</option>
+                <option>Dinner</option>
+                <option>Snack</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label-custom" for="editMealCalories">Calories (kcal) *</label>
+              <input type="number" id="editMealCalories" class="form-control-custom" min="0" required />
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-4">
+                <label class="form-label-custom" for="editMealCarbs">Carbs (g)</label>
+                <input type="number" id="editMealCarbs" class="form-control-custom" min="0" placeholder="0" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-custom" for="editMealProtein">Protein (g)</label>
+                <input type="number" id="editMealProtein" class="form-control-custom" min="0" placeholder="0" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-custom" for="editMealFat">Fat (g)</label>
+                <input type="number" id="editMealFat" class="form-control-custom" min="0" placeholder="0" />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label-custom" for="editMealDate">Date *</label>
+              <input type="date" id="editMealDate" class="form-control-custom" required />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer" style="gap: 10px;">
+          <button class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn-primary-custom" onclick="saveMealEdit()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
 
   <footer class="footer">
     <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -304,7 +384,8 @@
           html += '<div><strong>' + meal.food + '</strong><br />';
           html += '<span style="font-size:0.75rem; color:#999999;">C:' + meal.carbs + 'g, P:' + meal.protein + 'g, F:' + meal.fat + 'g - ' + formatDate(meal.date) + '</span></div>';
           html += '<div><span style="color:#0066cc;">' + meal.calories + ' kcal</span> ';
-          html += '<button class="btn-ghost" onclick="deleteMeal(' + meal.id + ')"><i class="bi bi-trash3"></i></button></div>';
+          html += '<button class="btn-ghost" onclick="openEditMeal(' + meal.id + ')" title="Edit"><i class="bi bi-pencil-square"></i></button>';
+          html += '<button class="btn-ghost" onclick="deleteMeal(' + meal.id + ')" title="Delete"><i class="bi bi-trash3"></i></button></div>';
           html += '</div>';
         });
 
@@ -413,6 +494,154 @@
     renderMeals();
     updateWaterUI();
     drawNutritionChart();
+
+    // ============== EDIT MEAL FUNCTIONS ==============
+    function openEditMeal(id) {
+      var meals = Store.get('meals');
+      var meal = meals.find(function(m) { return m.id === id; });
+
+      if (!meal) {
+        showToast('Meal not found.', 'error');
+        return;
+      }
+
+      document.getElementById('editMealId').value = id;
+      document.getElementById('editMealFood').value = meal.food;
+      document.getElementById('editMealType').value = meal.type;
+      document.getElementById('editMealCalories').value = meal.calories;
+      document.getElementById('editMealCarbs').value = meal.carbs || 0;
+      document.getElementById('editMealProtein').value = meal.protein || 0;
+      document.getElementById('editMealFat').value = meal.fat || 0;
+      document.getElementById('editMealDate').value = meal.date;
+
+      new bootstrap.Modal(document.getElementById('editMealModal')).show();
+    }
+
+    function saveMealEdit() {
+      var id = parseInt(document.getElementById('editMealId').value);
+      var food = document.getElementById('editMealFood').value.trim();
+      var type = document.getElementById('editMealType').value;
+      var calories = parseInt(document.getElementById('editMealCalories').value);
+      var carbs = parseInt(document.getElementById('editMealCarbs').value) || 0;
+      var protein = parseInt(document.getElementById('editMealProtein').value) || 0;
+      var fat = parseInt(document.getElementById('editMealFat').value) || 0;
+      var date = document.getElementById('editMealDate').value;
+
+      if (!food || !type || !calories || !date) {
+        showToast('Please fill in all required fields.', 'error');
+        return;
+      }
+
+      var meals = Store.get('meals');
+      var mealIndex = meals.findIndex(function(m) { return m.id === id; });
+
+      if (mealIndex === -1) {
+        showToast('Meal not found.', 'error');
+        return;
+      }
+
+      meals[mealIndex] = {
+        id: id,
+        food: food,
+        type: type,
+        calories: calories,
+        carbs: carbs,
+        protein: protein,
+        fat: fat,
+        date: date
+      };
+
+      Store.set('meals', meals);
+      const modal = bootstrap.Modal.getInstance(document.getElementById('editMealModal'));
+      if (modal) modal.hide();
+      updateTodaySummary();
+      renderMeals();
+      drawNutritionChart();
+      showToast('Meal updated successfully!');
+    }
+
+    window.openEditMeal = openEditMeal;
+    window.saveMealEdit = saveMealEdit;
+
+    // ============== FOOD SEARCH DATABASE ==============
+    const COMMON_FOODS = [
+      { name: 'Nasi Lemak', calories: 650, carbs: 75, protein: 15, fat: 28 },
+      { name: 'Roti Canai', calories: 350, carbs: 40, protein: 8, fat: 16 },
+      { name: 'Chicken Rice', calories: 520, carbs: 65, protein: 30, fat: 12 },
+      { name: 'Fish & Chips', calories: 580, carbs: 45, protein: 28, fat: 28 },
+      { name: 'Laksa', calories: 450, carbs: 48, protein: 18, fat: 20 },
+      { name: 'Satay', calories: 280, carbs: 8, protein: 28, fat: 16 },
+      { name: 'Nasi Goreng', calories: 580, carbs: 68, protein: 18, fat: 24 },
+      { name: 'Mee Goreng', calories: 420, carbs: 52, protein: 14, fat: 18 },
+      { name: 'Tom Yum Soup', calories: 120, carbs: 12, protein: 8, fat: 5 },
+      { name: 'Pad Thai', calories: 480, carbs: 55, protein: 16, fat: 22 },
+      { name: 'Sushi Roll', calories: 280, carbs: 38, protein: 10, fat: 8 },
+      { name: 'Tandoori Chicken', calories: 320, carbs: 5, protein: 42, fat: 15 },
+      { name: 'Biriyani', calories: 520, carbs: 68, protein: 18, fat: 18 },
+      { name: 'Chicken Biryani', calories: 520, carbs: 68, protein: 18, fat: 18 },
+      { name: 'Rendang Chicken', calories: 580, carbs: 12, protein: 38, fat: 44 },
+      { name: 'Teh Tarik', calories: 170, carbs: 22, protein: 4, fat: 7 },
+      { name: 'Kopi O', calories: 5, carbs: 1, protein: 0, fat: 0 },
+      { name: 'Cendol', calories: 280, carbs: 45, protein: 4, fat: 8 },
+      { name: 'ABC Ice', calories: 200, carbs: 48, protein: 2, fat: 1 },
+      { name: 'Roti Telur', calories: 320, carbs: 28, protein: 10, fat: 18 },
+      { name: 'Banana', calories: 89, carbs: 23, protein: 1, fat: 0 },
+      { name: 'Apple', calories: 52, carbs: 14, protein: 0, fat: 0 },
+      { name: 'Orange', calories: 47, carbs: 12, protein: 1, fat: 0 },
+      { name: 'Chicken Breast', calories: 165, carbs: 0, protein: 31, fat: 3 },
+      { name: 'Salmon', calories: 208, carbs: 0, protein: 20, fat: 13 },
+      { name: 'Eggs', calories: 155, carbs: 1, protein: 13, fat: 11 },
+      { name: 'Almonds', calories: 579, carbs: 22, protein: 21, fat: 50 },
+      { name: 'Yogurt', calories: 100, carbs: 6, protein: 10, fat: 5 },
+      { name: 'Milk', calories: 61, carbs: 5, protein: 3, fat: 3 },
+      { name: 'Brown Rice', calories: 111, carbs: 23, protein: 3, fat: 1 },
+      { name: 'Bread', calories: 80, carbs: 14, protein: 3, fat: 1 }
+    ];
+
+    function openFoodSearch() {
+      document.getElementById('foodSearchInput').value = '';
+      document.getElementById('foodSearchResults').innerHTML = COMMON_FOODS.map(function(food) {
+        return '<div style="padding: 12px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 6px; cursor: pointer;" onclick="selectFood(\'' + food.name + '\', ' + food.calories + ', ' + food.carbs + ', ' + food.protein + ', ' + food.fat + ')">' +
+          '<div style="font-weight: bold; color: #0066cc;">' + food.name + '</div>' +
+          '<div style="font-size: 0.75rem; color: #999;">Cal: ' + food.calories + ' | C: ' + food.carbs + 'g | P: ' + food.protein + 'g | F: ' + food.fat + 'g</div>' +
+          '</div>';
+      }).join('');
+      new bootstrap.Modal(document.getElementById('foodSearchModal')).show();
+    }
+
+    function searchFoods() {
+      var query = document.getElementById('foodSearchInput').value.toLowerCase();
+      var results = COMMON_FOODS.filter(function(food) {
+        return food.name.toLowerCase().indexOf(query) !== -1;
+      });
+      
+      if (results.length === 0) {
+        document.getElementById('foodSearchResults').innerHTML = '<div style="text-align: center; padding: 2rem; color: #999;">No foods found.</div>';
+        return;
+      }
+
+      document.getElementById('foodSearchResults').innerHTML = results.map(function(food) {
+        return '<div style="padding: 12px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 6px; cursor: pointer;" onclick="selectFood(\'' + food.name + '\', ' + food.calories + ', ' + food.carbs + ', ' + food.protein + ', ' + food.fat + ')">' +
+          '<div style="font-weight: bold; color: #0066cc;">' + food.name + '</div>' +
+          '<div style="font-size: 0.75rem; color: #999;">Cal: ' + food.calories + ' | C: ' + food.carbs + 'g | P: ' + food.protein + 'g | F: ' + food.fat + 'g</div>' +
+          '</div>';
+      }).join('');
+    }
+
+    function selectFood(name, calories, carbs, protein, fat) {
+      document.getElementById('mFoodName').value = name;
+      document.getElementById('mCalories').value = calories;
+      document.getElementById('mCarbs').value = carbs;
+      document.getElementById('mProtein').value = protein;
+      document.getElementById('mFat').value = fat;
+      var modal = bootstrap.Modal.getInstance(document.getElementById('foodSearchModal'));
+      if (modal) modal.hide();
+      showToast('Food selected: ' + name, 'success');
+    }
+
+    window.openFoodSearch = openFoodSearch;
+    window.searchFoods = searchFoods;
+    window.selectFood = selectFood;
   </script>
 </body>
 

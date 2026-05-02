@@ -130,7 +130,74 @@
     </div>
   </div>
 
-  <div class="row g-4">
+  <div class="row g-4 mb-4">
+    <div class="col-lg-12">
+      <div class="card-custom">
+        <div class="section-title mb-3">Monthly Reports</div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-3">
+            <label class="form-label-custom" for="reportMonth">Month</label>
+            <select id="reportMonth" class="form-select-custom" onchange="drawMonthlyChart()">
+              <option value="0">January</option>
+              <option value="1">February</option>
+              <option value="2">March</option>
+              <option value="3">April</option>
+              <option value="4">May</option>
+              <option value="5">June</option>
+              <option value="6">July</option>
+              <option value="7">August</option>
+              <option value="8">September</option>
+              <option value="9">October</option>
+              <option value="10">November</option>
+              <option value="11">December</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label-custom" for="reportYear">Year</label>
+            <input type="number" id="reportYear" class="form-control-custom" min="2020" onchange="drawMonthlyChart()" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-custom">&nbsp;</label>
+            <div class="d-flex gap-2">
+              <button class="btn-primary-custom flex-grow-1" onclick="generateReport()">Generate Report</button>
+              <button class="btn-ghost" onclick="downloadReport()"><i class="bi bi-download me-1"></i>Download</button>
+            </div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="monthlyChart"></canvas>
+        </div>
+        <div class="mt-3">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <div class="text-center">
+                <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary);" id="monthlyWorkouts">0</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Workouts</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center">
+                <div style="font-size: 1.5rem; font-weight: bold; color: var(--success);" id="monthlyCalBurned">0</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Cal Burned</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center">
+                <div style="font-size: 1.5rem; font-weight: bold; color: var(--warning);" id="monthlyCalConsumed">0</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Cal Consumed</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center">
+                <div style="font-size: 1.5rem; font-weight: bold; color: #0066cc;" id="monthlyAvgCalories">0</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">Avg Cal/Day</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
     <div class="col-lg-5">
       <div class="card-custom h-100">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -424,6 +491,159 @@
   
   console.log('Dashboard initialized - Fitly dynamic content');
   console.log(`Today's stats: Burned ${calBurned} kcal, Intake ${calIn} kcal`);
+
+  // ============== MONTHLY REPORTS FUNCTIONS ==============
+  let monthlyChart = null;
+
+  function initMonthlyReport() {
+    const today = new Date();
+    document.getElementById('reportMonth').value = today.getMonth();
+    document.getElementById('reportYear').value = today.getFullYear();
+    drawMonthlyChart();
+  }
+
+  function drawMonthlyChart() {
+    const month = parseInt(document.getElementById('reportMonth').value);
+    const year = parseInt(document.getElementById('reportYear').value);
+    const workouts = Store.get('workouts');
+    const meals = Store.get('meals');
+    
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const labels = [];
+    const caloriesBurned = [];
+    const caloriesConsumed = [];
+
+    for (let i = 1; i <= daysInMonth; i++) {
+      const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(i).padStart(2, '0');
+      labels.push(i);
+      
+      const dayBurned = workouts
+        .filter(w => w.date === dateStr)
+        .reduce((acc, w) => acc + (parseInt(w.calories) || 0), 0);
+      caloriesBurned.push(dayBurned);
+
+      const dayConsumed = meals
+        .filter(m => m.date === dateStr)
+        .reduce((acc, m) => acc + (parseInt(m.calories) || 0), 0);
+      caloriesConsumed.push(dayConsumed);
+    }
+
+    const monthName = new Date(year, month, 1).toLocaleDateString('en-MY', { month: 'long' });
+    
+    if (monthlyChart) monthlyChart.destroy();
+
+    monthlyChart = new Chart(document.getElementById('monthlyChart'), {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Calories Burned',
+            data: caloriesBurned,
+            borderColor: '#00aa55',
+            backgroundColor: 'rgba(0, 170, 85, 0.1)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 3,
+            pointBackgroundColor: '#00aa55'
+          },
+          {
+            label: 'Calories Consumed',
+            data: caloriesConsumed,
+            borderColor: '#ff9900',
+            backgroundColor: 'rgba(255, 153, 0, 0.1)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 3,
+            pointBackgroundColor: '#ff9900'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: true, position: 'top' }
+        },
+        scales: {
+          x: { grid: { color: 'rgba(0,0,0,0.05)' } },
+          y: { grid: { color: 'rgba(0,0,0,0.05)' } }
+        }
+      }
+    });
+
+    updateMonthlyStats(month, year, workouts, meals);
+  }
+
+  function updateMonthlyStats(month, year, workouts, meals) {
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    let totalWorkouts = 0;
+    let totalBurned = 0;
+    let totalConsumed = 0;
+    let daysWithWorkouts = 0;
+
+    for (let i = 1; i <= daysInMonth; i++) {
+      const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(i).padStart(2, '0');
+      const dayWorkouts = workouts.filter(w => w.date === dateStr);
+      const dayMeals = meals.filter(m => m.date === dateStr);
+
+      if (dayWorkouts.length > 0) {
+        totalWorkouts += dayWorkouts.length;
+        daysWithWorkouts++;
+        totalBurned += dayWorkouts.reduce((acc, w) => acc + (parseInt(w.calories) || 0), 0);
+      }
+
+      totalConsumed += dayMeals.reduce((acc, m) => acc + (parseInt(m.calories) || 0), 0);
+    }
+
+    document.getElementById('monthlyWorkouts').textContent = totalWorkouts;
+    document.getElementById('monthlyCalBurned').textContent = totalBurned;
+    document.getElementById('monthlyCalConsumed').textContent = totalConsumed;
+    document.getElementById('monthlyAvgCalories').textContent = Math.round(totalConsumed / daysInMonth);
+  }
+
+  function generateReport() {
+    const month = parseInt(document.getElementById('reportMonth').value);
+    const year = parseInt(document.getElementById('reportYear').value);
+    const monthName = new Date(year, month, 1).toLocaleDateString('en-MY', { month: 'long', year: 'numeric' });
+    
+    const monthlyWorkouts = document.getElementById('monthlyWorkouts').textContent;
+    const monthlyCalBurned = document.getElementById('monthlyCalBurned').textContent;
+    const monthlyCalConsumed = document.getElementById('monthlyCalConsumed').textContent;
+    const monthlyAvgCalories = document.getElementById('monthlyAvgCalories').textContent;
+
+    const report = `Monthly Report - ${monthName}\n\nTotal Workouts: ${monthlyWorkouts}\nTotal Calories Burned: ${monthlyCalBurned}\nTotal Calories Consumed: ${monthlyCalConsumed}\nAverage Calories/Day: ${monthlyAvgCalories}`;
+    showToast('Report generated! Ready to download.', 'success');
+  }
+
+  function downloadReport() {
+    const month = parseInt(document.getElementById('reportMonth').value);
+    const year = parseInt(document.getElementById('reportYear').value);
+    const monthName = new Date(year, month, 1).toLocaleDateString('en-MY', { month: 'long', year: 'numeric' });
+    
+    const monthlyWorkouts = document.getElementById('monthlyWorkouts').textContent;
+    const monthlyCalBurned = document.getElementById('monthlyCalBurned').textContent;
+    const monthlyCalConsumed = document.getElementById('monthlyCalConsumed').textContent;
+    const monthlyAvgCalories = document.getElementById('monthlyAvgCalories').textContent;
+
+    const report = `FITLY - Monthly Report\n${'='.repeat(40)}\nMonth: ${monthName}\n\nSummary:\nTotal Workouts: ${monthlyWorkouts}\nTotal Calories Burned: ${monthlyCalBurned} kcal\nTotal Calories Consumed: ${monthlyCalConsumed} kcal\nAverage Calories/Day: ${monthlyAvgCalories} kcal\n\nGenerated: ${new Date().toLocaleDateString()}\nFitly Health & Fitness Tracker`;
+
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(report));
+    element.setAttribute('download', `Fitly_Report_${year}_${String(month+1).padStart(2,'0')}.txt`);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    showToast('Report downloaded successfully!', 'success');
+  }
+
+  window.drawMonthlyChart = drawMonthlyChart;
+  window.generateReport = generateReport;
+  window.downloadReport = downloadReport;
+
+  // Initialize monthly report on page load
+  initMonthlyReport();
 </script>
 </body>
 </html>
