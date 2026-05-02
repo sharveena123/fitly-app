@@ -1,4 +1,3 @@
-// LOCAL STORAGE HELPERS (MUST BE FIRST)
 var Store = {
   get: function(key) {
     try { 
@@ -49,32 +48,18 @@ function updateNavbarAuthState() {
   var currentUser = Store.getObj('currentUser', null);
   var navbarAuth = document.querySelector('.navbar-nav .ms-2');
   
-  console.log('DEBUG: currentUser =', currentUser);
-  console.log('DEBUG: navbarAuth element =', navbarAuth);
-  console.log('DEBUG: fitly_currentUser in localStorage =', localStorage.getItem('fitly_currentUser'));
-  
-  if (!navbarAuth) {
-    console.log('DEBUG: navbar auth element not found');
-    return;
-  }
-  
   if (currentUser && currentUser.email) {
-    console.log('DEBUG: User is logged in - showing logout');
     // User is logged in - show logout button on all pages
     navbarAuth.innerHTML = '<a class="btn-primary-custom" href="#" onclick="handleLogout(); return false;" style="padding: 8px 18px; font-size: 0.8rem;"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>';
   } else {
-    console.log('DEBUG: User NOT logged in - showing sign in/sign up');
     // User is not logged in
     var currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    console.log('DEBUG: currentPage =', currentPage);
     
     if (currentPage === 'index.html' || currentPage === '') {
-      console.log('DEBUG: On landing page');
       // On landing page - show Sign Up + Sign In
       navbarAuth.innerHTML = '<a class="btn-primary-custom" href="pages/register.html" style="padding: 8px 18px; font-size: 0.8rem; margin-right: 8px; display: inline-block;">Sign Up</a>' +
         '<a class="btn-primary-custom" href="pages/login.html" style="padding: 8px 18px; font-size: 0.8rem; display: inline-block;">Sign In</a>';
     } else {
-      console.log('DEBUG: On other page');
       // On other pages - show only Sign In
       navbarAuth.innerHTML = '<a class="btn-primary-custom" href="login.html" style="padding: 8px 18px; font-size: 0.8rem;">Sign In</a>';
     }
