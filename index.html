@@ -1,264 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fitly — Track Smarter, Live Better</title>
+  <title>Fitly - Track Smarter, Live Better</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
-
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg">
-  <div class="container">
-    <a class="navbar-brand" href="index.html">Fit<span>ly</span></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#fitlyNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="fitlyNav">
-      <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
-        <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="pages/dashboard.html">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="pages/workout.html">Workout</a></li>
-        <li class="nav-item"><a class="nav-link" href="pages/nutrition.html">Nutrition</a></li>
-        <li class="nav-item"><a class="nav-link" href="pages/goals.html">Goals</a></li>
-        <li class="nav-item"><a class="nav-link" href="pages/profile.html">Profile</a></li>
-        <li class="nav-item ms-2">
-          <a class="btn-primary-custom" href="pages/login.html" style="padding: 8px 18px; font-size: 0.8rem;">Sign In</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero-section">
-  <div class="hero-grid-bg"></div>
-  <div class="hero-glow"></div>
-  <div class="container">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-6">
-        <div class="badge-custom badge-cyan mb-3">
-          <i class="bi bi-lightning-fill me-1"></i> Next-Gen Fitness Tracking
-        </div>
-        <h1 class="hero-title">
-          Train Smarter.<br>
-          <span class="highlight">Track Everything.</span><br>
-          Achieve More.
-        </h1>
-        <p class="hero-subtitle">
-          Fitly is your all-in-one health companion — log workouts, monitor nutrition, set goals and watch your progress unfold in real time.
-        </p>
-        <div class="d-flex flex-wrap gap-3">
-          <a href="pages/register.html" class="btn-primary-custom" style="font-size: 1rem; padding: 12px 30px;">
-            Get Started Free
-          </a>
-          <a href="pages/dashboard.html" class="btn-outline-custom" style="font-size: 1rem; padding: 12px 30px;">
-            <i class="bi bi-play-fill me-1"></i> Live Demo
-          </a>
-        </div>
-        <div class="hero-stats">
-          <div>
-            <div class="hero-stat-num">12K+</div>
-            <div class="hero-stat-label">Active Users</div>
-          </div>
-          <div>
-            <div class="hero-stat-num">98%</div>
-            <div class="hero-stat-label">Goal Rate</div>
-          </div>
-          <div>
-            <div class="hero-stat-num">4.9★</div>
-            <div class="hero-stat-label">Rating</div>
-          </div>
-        </div>
+  <!-- bootstrap navbar for main page navigation -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Fit<span>ly</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#fitlyNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="fitlyNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+          <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/workout.html">Workout</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/nutrition.html">Nutrition</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/goals.html">Goals</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/profile.html">Profile</a></li>
+          <li class="nav-item ms-2"><a class="btn-primary-custom" href="pages/login.html">Sign In</a></li>
+        </ul>
       </div>
-      <div class="col-lg-6">
-        <div class="hero-mockup">
-          <div class="hero-mockup-bar">
-            <div class="hero-mockup-dot" style="background:#FF4D6A;"></div>
-            <div class="hero-mockup-dot" style="background:#FFB800;"></div>
-            <div class="hero-mockup-dot" style="background:#00E5A0;"></div>
-          </div>
-          <!-- Mini dashboard preview -->
-          <div class="row g-2 mb-3">
-            <div class="col-6">
-              <div class="card-stat">
-                <div class="stat-icon cyan"><i class="bi bi-fire"></i></div>
-                <div class="stat-label">Calories Burned</div>
-                <div class="stat-value">542 <span class="stat-unit">kcal</span></div>
-              </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- main intro section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6">
+            <div class="badge-custom badge-cyan mb-3">
+              <i class="bi bi-lightning-fill me-1"></i> Fitness Tracking
             </div>
-            <div class="col-6">
-              <div class="card-stat">
-                <div class="stat-icon green"><i class="bi bi-activity"></i></div>
-                <div class="stat-label">Steps Today</div>
-                <div class="stat-value">8,240</div>
-              </div>
+            <h1 class="hero-title">
+              Train Smarter.<br />
+              <span class="highlight">Track Everything.</span><br />
+              Achieve More.
+            </h1>
+            <p class="hero-subtitle">
+              Fitly helps users log workouts, monitor nutrition, set goals and view progress using a simple web
+              interface.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+              <a href="pages/register.html" class="btn-primary-custom">Get Started Free</a>
+              <a href="pages/dashboard.html" class="btn-outline-custom">
+                <i class="bi bi-play-fill me-1"></i> Live Demo
+              </a>
             </div>
-            <div class="col-6">
-              <div class="card-stat">
-                <div class="stat-icon blue"><i class="bi bi-droplet-fill"></i></div>
-                <div class="stat-label">Water Intake</div>
-                <div class="stat-value">1.8 <span class="stat-unit">L</span></div>
+            <div class="hero-stats">
+              <div>
+                <div class="hero-stat-num">12K+</div>
+                <div class="hero-stat-label">Active Users</div>
               </div>
-            </div>
-            <div class="col-6">
-              <div class="card-stat">
-                <div class="stat-icon yellow"><i class="bi bi-trophy-fill"></i></div>
-                <div class="stat-label">Goals Hit</div>
-                <div class="stat-value">3<span class="stat-unit">/5</span></div>
+              <div>
+                <div class="hero-stat-num">98%</div>
+                <div class="hero-stat-label">Goal Rate</div>
+              </div>
+              <div>
+                <div class="hero-stat-num">4.9</div>
+                <div class="hero-stat-label">Rating</div>
               </div>
             </div>
           </div>
-          <div class="card-custom" style="padding: 1rem;">
-            <div class="section-title" style="font-size: 0.875rem; margin-bottom: 0.75rem;">Weekly Progress</div>
-            <div style="display: flex; align-items: flex-end; gap: 6px; height: 60px;">
-              <div style="flex:1; background: var(--primary-glow); border-radius: 4px 4px 0 0; height: 40%; border-top: 2px solid var(--primary);"></div>
-              <div style="flex:1; background: var(--primary-glow); border-radius: 4px 4px 0 0; height: 70%; border-top: 2px solid var(--primary);"></div>
-              <div style="flex:1; background: var(--primary-glow); border-radius: 4px 4px 0 0; height: 55%; border-top: 2px solid var(--primary);"></div>
-              <div style="flex:1; background: var(--primary-glow); border-radius: 4px 4px 0 0; height: 85%; border-top: 2px solid var(--primary);"></div>
-              <div style="flex:1; background: var(--primary-glow); border-radius: 4px 4px 0 0; height: 65%; border-top: 2px solid var(--primary);"></div>
-              <div style="flex:1; background: rgba(0,207,255,0.3); border-radius: 4px 4px 0 0; height: 90%; border-top: 2px solid var(--primary);"></div>
-              <div style="flex:1; background: var(--primary-glow); border-radius: 4px 4px 0 0; height: 50%; border-top: 2px solid var(--primary);"></div>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-top: 6px;">
-              <span style="font-size: 0.65rem; color: var(--text-muted);">Mon</span>
-              <span style="font-size: 0.65rem; color: var(--text-muted);">Tue</span>
-              <span style="font-size: 0.65rem; color: var(--text-muted);">Wed</span>
-              <span style="font-size: 0.65rem; color: var(--text-muted);">Thu</span>
-              <span style="font-size: 0.65rem; color: var(--text-muted);">Fri</span>
-              <span style="font-size: 0.65rem; color: var(--primary);">Sat</span>
-              <span style="font-size: 0.65rem; color: var(--text-muted);">Sun</span>
+
+          <div class="col-lg-6">
+            <div class="hero-mockup">
+              <div class="hero-mockup-bar">
+                <div class="hero-mockup-dot" style="background:#cc0000;"></div>
+                <div class="hero-mockup-dot" style="background:#ff9900;"></div>
+                <div class="hero-mockup-dot" style="background:#00aa55;"></div>
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <div class="card-stat">
+                    <div class="stat-icon cyan"><i class="bi bi-fire"></i></div>
+                    <div class="stat-label">Calories Burned</div>
+                    <div class="stat-value">542 <span class="stat-unit">kcal</span></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card-stat">
+                    <div class="stat-icon green"><i class="bi bi-activity"></i></div>
+                    <div class="stat-label">Steps Today</div>
+                    <div class="stat-value">8,240</div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card-stat">
+                    <div class="stat-icon blue"><i class="bi bi-droplet-fill"></i></div>
+                    <div class="stat-label">Water Intake</div>
+                    <div class="stat-value">7</div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card-stat">
+                    <div class="stat-icon yellow"><i class="bi bi-trophy-fill"></i></div>
+                    <div class="stat-label">Goals Hit</div>
+                    <div class="stat-value">3<span class="stat-unit">/5</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-custom">
+                <div class="section-title">Weekly Progress</div>
+                <div style="display:flex; align-items:flex-end; gap:6px; height:60px;">
+                  <div style="flex:1; background:#e6f2ff; height:40%;"></div>
+                  <div style="flex:1; background:#e6f2ff; height:70%;"></div>
+                  <div style="flex:1; background:#e6f2ff; height:55%;"></div>
+                  <div style="flex:1; background:#e6f2ff; height:85%;"></div>
+                  <div style="flex:1; background:#e6f2ff; height:65%;"></div>
+                  <div style="flex:1; background:#0066cc; height:90%;"></div>
+                  <div style="flex:1; background:#e6f2ff; height:50%;"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- FEATURES -->
-<section style="padding: 5rem 0; background: var(--bg-card); border-top: 1px solid var(--border);">
-  <div class="container">
-    <div class="text-center mb-5">
-      <div class="badge-custom badge-cyan mb-3">Features</div>
-      <h2 style="font-family: 'Poppins', sans-serif; font-size: 2.25rem; font-weight: 700; color: var(--text-primary);">
-        Everything you need to<br><span style="color: var(--primary);">crush your goals</span>
-      </h2>
-    </div>
-    <div class="row g-4">
-      <div class="col-md-6 col-lg-4">
-        <div class="feature-card">
-          <div class="feature-icon"><i class="bi bi-lightning-fill"></i></div>
-          <div class="feature-title">Workout Tracker</div>
-          <p class="feature-desc">Log exercises, sets, reps and duration. Track cardio, strength, yoga and more with a simple intuitive interface.</p>
+    <!-- feature section -->
+    <section style="padding: 5rem 0; background:#ffffff; border-top:1px solid #dddddd;">
+      <div class="container">
+        <div class="text-center mb-5">
+          <div class="badge-custom badge-cyan mb-3">Features</div>
+          <h2>Everything needed to track health goals</h2>
+        </div>
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4">
+            <div class="feature-card">
+              <div class="feature-icon"><i class="bi bi-lightning-fill"></i></div>
+              <div class="feature-title">Workout Tracker</div>
+              <p class="feature-desc">Log exercise name, type, duration, intensity, calories and date.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="feature-card">
+              <div class="feature-icon"><i class="bi bi-egg-fried"></i></div>
+              <div class="feature-title">Nutrition Log</div>
+              <p class="feature-desc">Track meals, calories, macronutrients and daily water intake.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="feature-card">
+              <div class="feature-icon"><i class="bi bi-bullseye"></i></div>
+              <div class="feature-title">Goal Setting</div>
+              <p class="feature-desc">Create fitness goals and update progress values over time.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="feature-card">
+              <div class="feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
+              <div class="feature-title">Dashboard</div>
+              <p class="feature-desc">Show summaries and charts using JavaScript and Chart.js.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="feature-card">
+              <div class="feature-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+              <div class="feature-title">Profile</div>
+              <p class="feature-desc">Save personal information and calculate BMI.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="feature-card">
+              <div class="feature-icon"><i class="bi bi-phone"></i></div>
+              <div class="feature-title">Responsive Layout</div>
+              <p class="feature-desc">Bootstrap grid makes the pages usable on desktop and mobile screens.</p>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="feature-card">
-          <div class="feature-icon" style="background: rgba(0,229,160,0.1); color: var(--success);"><i class="bi bi-egg-fried"></i></div>
-          <div class="feature-title">Nutrition Log</div>
-          <p class="feature-desc">Track meals, calories, and macros. Get a clear picture of your daily intake and eating habits.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="feature-card">
-          <div class="feature-icon" style="background: rgba(0,102,255,0.1); color: var(--accent);"><i class="bi bi-bullseye"></i></div>
-          <div class="feature-title">Goal Setting</div>
-          <p class="feature-desc">Define personal fitness goals — weight, steps, calories — and track your progress with real-time indicators.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="feature-card">
-          <div class="feature-icon" style="background: rgba(255,184,0,0.1); color: var(--warning);"><i class="bi bi-graph-up-arrow"></i></div>
-          <div class="feature-title">Analytics Dashboard</div>
-          <p class="feature-desc">Visual charts and weekly summaries to help you understand your trends and stay on track.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="feature-card">
-          <div class="feature-icon" style="background: rgba(255,77,106,0.1); color: var(--danger);"><i class="bi bi-heart-pulse-fill"></i></div>
-          <div class="feature-title">Health Metrics</div>
-          <p class="feature-desc">Monitor BMI, body weight, hydration and resting heart rate all in one place.</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="feature-card">
-          <div class="feature-icon"><i class="bi bi-trophy-fill"></i></div>
-          <div class="feature-title">Achievements</div>
-          <p class="feature-desc">Stay motivated with streak tracking, milestone badges and weekly summaries of your best performances.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
+  </main>
 
-<!-- HOW IT WORKS -->
-<section style="padding: 5rem 0;">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 style="font-family: 'Poppins', sans-serif; font-size: 2rem; font-weight: 700; color: var(--text-primary);">
-        Start in <span style="color: var(--primary);">3 simple steps</span>
-      </h2>
-    </div>
-    <div class="row g-4 text-center">
-      <div class="col-md-4">
-        <div style="width: 56px; height: 56px; background: var(--primary-glow); border: 1px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--primary); margin: 0 auto 1rem;">1</div>
-        <h5 style="font-family: 'Poppins', sans-serif; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Create Your Account</h5>
-        <p style="font-size: 0.875rem; color: var(--text-secondary);">Sign up for free and set up your personal profile with your health stats and fitness goals.</p>
-      </div>
-      <div class="col-md-4">
-        <div style="width: 56px; height: 56px; background: var(--primary-glow); border: 1px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--primary); margin: 0 auto 1rem;">2</div>
-        <h5 style="font-family: 'Poppins', sans-serif; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Log Your Activity</h5>
-        <p style="font-size: 0.875rem; color: var(--text-secondary);">Track your workouts, meals, and daily habits in seconds using our clean, fast interface.</p>
-      </div>
-      <div class="col-md-4">
-        <div style="width: 56px; height: 56px; background: var(--primary-glow); border: 1px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--primary); margin: 0 auto 1rem;">3</div>
-        <h5 style="font-family: 'Poppins', sans-serif; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Achieve Your Goals</h5>
-        <p style="font-size: 0.875rem; color: var(--text-secondary);">Watch your analytics grow. Adjust your plans based on real data and hit your personal bests.</p>
+  <footer class="footer">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-4 mb-3 mb-md-0">
+          <div class="footer-brand">Fitly</div>
+          <div>Track Smarter, Live Better</div>
+        </div>
+        <div class="col-md-4 text-md-center mb-3 mb-md-0">
+          <a href="pages/dashboard.html" style="color:#999999; text-decoration:none; margin:0 10px;">Dashboard</a>
+          <a href="pages/workout.html" style="color:#999999; text-decoration:none; margin:0 10px;">Workout</a>
+          <a href="pages/nutrition.html" style="color:#999999; text-decoration:none; margin:0 10px;">Nutrition</a>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <span>&copy; 2025 Fitly. WIF2003 Group Project.</span>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </footer>
 
-<!-- CTA -->
-<section style="padding: 5rem 0; background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-  <div class="container text-center">
-    <h2 style="font-family: 'Poppins', sans-serif; font-size: 2.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem;">
-      Ready to <span style="color: var(--primary);">level up</span>?
-    </h2>
-    <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 2rem; font-size: 1rem;">
-      Join thousands of users already transforming their health with Fitly.
-    </p>
-    <a href="pages/register.html" class="btn-primary-custom" style="font-size: 1rem; padding: 14px 40px;">
-      Create Free Account <i class="bi bi-arrow-right ms-2"></i>
-    </a>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="row align-items-center">
-      <div class="col-md-4 mb-3 mb-md-0">
-        <div class="footer-brand">Fitly</div>
-        <div style="margin-top: 4px;">Track Smarter, Live Better</div>
-      </div>
-      <div class="col-md-4 text-md-center mb-3 mb-md-0">
-        <a href="pages/dashboard.html" style="color: var(--text-muted); text-decoration: none; margin: 0 10px;">Dashboard</a>
-        <a href="pages/workout.html" style="color: var(--text-muted); text-decoration: none; margin: 0 10px;">Workout</a>
-        <a href="pages/nutrition.html" style="color: var(--text-muted); text-decoration: none; margin: 0 10px;">Nutrition</a>
-      </div>
-      <div class="col-md-4 text-md-end">
-        <span style="color: var(--text-muted);">&copy; 2025 Fitly. WIF2003 Group Project.</span>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-<script src="js/main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js"></script>
 </body>
+
 </html>
