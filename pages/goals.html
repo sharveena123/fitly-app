@@ -10,6 +10,7 @@
 </head>
 <body>
 
+<!--  NAVBAR -->
 <nav class="navbar navbar-expand-lg">
   <div class="container">
     <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
@@ -32,21 +33,24 @@
   </div>
 </nav>
 
+<!-- MAIN CONTENT: GOAL SETTING & TRACKING-->
 <div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
 
+  <!-- Page Header with dynamic content -->
   <div class="page-header">
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
       <div>
         <h1 class="page-title">Goal Setting</h1>
-        <p class="page-subtitle">Define targets and track your progress</p>
+        <p class="page-subtitle" id="greetingMsg">Define targets and track your progress</p>
       </div>
+      <!-- Button triggers Bootstrap Modal -->
       <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addGoalModal">
         <i class="bi bi-plus-lg me-1"></i> New Goal
       </button>
     </div>
   </div>
 
-  <!-- Summary -->
+  <!-- Summary Cards -->
   <div class="row g-3 mb-4">
     <div class="col-4">
       <div class="card-stat">
@@ -83,7 +87,7 @@
 
 </div>
 
-<!-- Add Goal Modal -->
+<!-- MODAL: ADD GOAL -->
 <div class="modal fade" id="addGoalModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -92,6 +96,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
+        <!-- Form simulates HTTP POST request data capture  -->
         <form id="goalForm">
           <div class="mb-3">
             <label class="form-label-custom">Goal Title *</label>
@@ -131,13 +136,14 @@
       </div>
       <div class="modal-footer">
         <button class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+        <!-- saveGoal() function handles data persistence  -->
         <button class="btn-primary-custom" onclick="saveGoal()">Save Goal</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Update Progress Modal -->
+<!-- MODAL: UPDATE PROGRESS -->
 <div class="modal fade" id="updateModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-sm">
     <div class="modal-content">
@@ -158,120 +164,278 @@
   </div>
 </div>
 
+<!-- FOOTER PARTIAL -->
 <footer class="footer">
   <div class="container">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
       <div class="footer-brand">Fitly</div>
-      <span style="color: var(--text-muted);">&copy; 2025 Fitly. WIF2003 Group Project.</span>
+      <span style="color: var(--text-muted);">&copy; 2026 Fitly. WIF2003 Group Project.</span>
     </div>
   </div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 <script src="../js/main.js"></script>
-<script>
-  const catIcons = { Weight: 'bi-graph-down-arrow', Cardio: 'bi-heart-pulse-fill', Strength: 'bi-lightning-fill', Nutrition: 'bi-egg-fried', Hydration: 'bi-droplet-fill', Steps: 'bi-footprint', Custom: 'bi-bullseye' };
-  const catColors = { Weight: 'cyan', Cardio: 'green', Strength: 'blue', Nutrition: 'yellow', Hydration: 'blue', Steps: 'green', Custom: 'cyan' };
 
+<script>
+  //Helper: localStorage wrapper 
+  const Store = {
+    get: (key) => JSON.parse(localStorage.getItem(key)) || [],
+    set: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
+    getObj: (key, defaultVal) => {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : defaultVal;
+    }
+  };
+  
+  // Initialize sample goals if empty 
+  if (Store.get('goals').length === 0) {
+    const sampleGoals = [
+      { id: 1001, title: 'Daily Calorie Burn', category: 'Cardio', current: 380, target: 500, unit: 'kcal', deadline: new Date(Date.now() + 7*86400000).toISOString().split('T')[0] },
+      { id: 1002, title: 'Weekly Workout Sessions', category: 'Strength', current: 2, target: 5, unit: 'sessions', deadline: new Date(Date.now() + 5*86400000).toISOString().split('T')[0] },
+      { id: 1003, title: 'Hydration Goal', category: 'Hydration', current: 6, target: 8, unit: 'glasses', deadline: '' }
+    ];
+    Store.set('goals', sampleGoals);
+  }
+  
+  // Category mapping for icons and colors
+  const catIcons = { 
+    Weight: 'bi-graph-down-arrow', 
+    Cardio: 'bi-heart-pulse-fill', 
+    Strength: 'bi-lightning-fill', 
+    Nutrition: 'bi-egg-fried', 
+    Hydration: 'bi-droplet-fill', 
+    Steps: 'bi-footprint', 
+    Custom: 'bi-bullseye' 
+  };
+  const catColors = { 
+    Weight: 'cyan', 
+    Cardio: 'green', 
+    Strength: 'blue', 
+    Nutrition: 'yellow', 
+    Hydration: 'blue', 
+    Steps: 'green', 
+    Custom: 'cyan' 
+  };
+  
+  // Toast notification helper 
+  function showToast(message, type = 'success') {
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toastContainer';
+      toastContainer.style.position = 'fixed';
+      toastContainer.style.bottom = '20px';
+      toastContainer.style.right = '20px';
+      toastContainer.style.zIndex = '1100';
+      document.body.appendChild(toastContainer);
+    }
+    const toastEl = document.createElement('div');
+    toastEl.className = `custom-toast ${type === 'error' ? 'toast-error' : 'toast-success'}`;
+    toastEl.innerHTML = `<i class="bi ${type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'} me-2"></i>${message}`;
+    toastContainer.appendChild(toastEl);
+    setTimeout(() => { toastEl.remove(); }, 2800);
+  }
+  
+  // RENDER GOALS
   function renderGoals() {
     const goals = Store.get('goals');
     const total = goals.length;
     const completed = goals.filter(g => parseFloat(g.current) >= parseFloat(g.target)).length;
+    const inProgress = total - completed;
+    
+    // Update summary stat cards (DOM manipulation: textContent)
     document.getElementById('totalGoals').textContent = total;
     document.getElementById('completedGoals').textContent = completed;
-    document.getElementById('inProgressGoals').textContent = total - completed;
-
-    if (!total) {
+    document.getElementById('inProgressGoals').textContent = inProgress;
+    
+    // Dynamic greeting based on goals count
+    const greetingMsg = document.getElementById('greetingMsg');
+    if (greetingMsg) {
+      if (total === 0) greetingMsg.textContent = 'Start by adding your first fitness goal ';
+      else if (completed === total && total > 0) greetingMsg.textContent = 'Amazing! All goals achieved! 🏆 Set new challenges.';
+      else greetingMsg.textContent = 'Define targets and track your progress';
+    }
+    
+    // If no goals: show empty state with button 
+    if (total === 0) {
       document.getElementById('goalsGrid').innerHTML = `
         <div class="col-12">
           <div class="card-custom text-center" style="padding: 3rem;">
             <i class="bi bi-bullseye" style="font-size: 2.5rem; color: var(--text-muted);"></i>
-            <p style="color: var(--text-muted); margin-top: 1rem;">No goals set yet!</p>
-            <button class="btn-primary-custom mt-2" data-bs-toggle="modal" data-bs-target="#addGoalModal">Add Your First Goal</button>
+            <p style="color: var(--text-muted); margin-top: 1rem;">No goals set yet. Set your first goal to get started!</p>
+            <button class="btn-primary-custom mt-2" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+              <i class="bi bi-plus-lg me-1"></i> Add Your First Goal
+            </button>
           </div>
         </div>`;
       return;
     }
-
+    
     const html = goals.map(g => {
-      const pct = Math.min(100, Math.round((parseFloat(g.current) / parseFloat(g.target)) * 100));
-      const done = pct >= 100;
+      const currentVal = parseFloat(g.current);
+      const targetVal = parseFloat(g.target);
+      let pct = targetVal > 0 ? Math.min(100, Math.round((currentVal / targetVal) * 100)) : 0;
+      const done = currentVal >= targetVal;
       const color = catColors[g.category] || 'cyan';
       const icon = catIcons[g.category] || 'bi-bullseye';
-      const daysLeft = g.deadline ? Math.ceil((new Date(g.deadline) - new Date()) / 86400000) : null;
+      let daysLeft = null;
+      if (g.deadline) {
+        const deadlineDate = new Date(g.deadline);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const diffTime = deadlineDate - today;
+        daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      }
+      // Conditional badge styling based on completion
+      const statusBadge = done 
+        ? '<span class="badge-custom badge-green"><i class="bi bi-check2 me-1"></i>Done</span>' 
+        : `<span class="badge-custom badge-cyan">${pct}%</span>`;
+      
       return `
       <div class="col-md-6 col-lg-4">
         <div class="card-custom" style="${done ? 'border-color: var(--success);' : ''}">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 1rem;">
             <div class="stat-icon ${color}" style="margin-bottom:0;"><i class="bi ${icon}"></i></div>
             <div style="display:flex; gap:6px; align-items:center;">
-              ${done ? '<span class="badge-custom badge-green"><i class="bi bi-check2 me-1"></i>Done</span>' : `<span class="badge-custom badge-cyan">${pct}%</span>`}
+              ${statusBadge}
               <button class="btn-ghost" style="padding: 3px 8px; font-size: 0.75rem;" onclick="deleteGoal(${g.id})"><i class="bi bi-trash3"></i></button>
             </div>
           </div>
-          <div style="font-family: 'Poppins', sans-serif; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">${g.title}</div>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">${g.category}${daysLeft !== null ? ` · ${daysLeft > 0 ? daysLeft + 'd left' : 'Overdue'}` : ''}</div>
+          <div style="font-family: 'Poppins', sans-serif; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">${escapeHtml(g.title)}</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">${g.category}${daysLeft !== null ? ` · ${daysLeft > 0 ? daysLeft + 'd left' : daysLeft === 0 ? 'Due today' : 'Overdue'}` : ''}</div>
           <div class="progress-custom" style="margin-bottom: 8px;">
-            <div class="${done ? 'progress-bar-green' : 'progress-bar-custom'} progress-bar-custom" style="width: ${pct}%;"></div>
+            <div class="${done ? 'progress-bar-green' : 'progress-bar-custom'}" style="width: ${pct}%;"></div>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
-            <span>${g.current} ${g.unit}</span>
-            <span>Target: ${g.target} ${g.unit}</span>
+            <span>${g.current} ${g.unit || ''}</span>
+            <span>Target: ${g.target} ${g.unit || ''}</span>
           </div>
-          ${!done ? `<button class="btn-outline-custom w-100" style="font-size: 0.8rem; padding: 7px 14px;" onclick="openUpdate(${g.id}, '${g.title}', ${g.current})">
+          ${!done ? `<button class="btn-outline-custom w-100" style="font-size: 0.8rem; padding: 7px 14px;" onclick="openUpdate(${g.id}, '${escapeHtml(g.title)}', ${g.current})">
             <i class="bi bi-pencil me-1"></i> Update Progress
-          </button>` : ''}
+          </button>` : '<button class="btn-ghost w-100" disabled style="opacity:0.5; cursor:not-allowed;">Achieved ✓</button>'}
         </div>
       </div>`;
     }).join('');
     document.getElementById('goalsGrid').innerHTML = html;
   }
-
+  
+  // XSS prevention helper
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+  
+  //POST ROUTE SIMULATION
   function saveGoal() {
     const title = document.getElementById('gTitle').value.trim();
     const target = parseFloat(document.getElementById('gTarget').value);
-    const current = parseFloat(document.getElementById('gCurrent').value);
-    if (!title || isNaN(target)) { showToast('Fill in required fields.', 'error'); return; }
+    const current = parseFloat(document.getElementById('gCurrent').value) || 0;
+    if (!title || isNaN(target)) {
+      showToast('Please fill in Title and Target value.', 'error');
+      return;
+    }
+    if (target <= 0) {
+      showToast('Target must be greater than 0.', 'error');
+      return;
+    }
     const goals = Store.get('goals');
-    goals.push({
-      id: Date.now(), title,
+    const newGoal = {
+      id: Date.now(),
+      title: title,
       category: document.getElementById('gCategory').value,
-      current: current || 0, target,
-      unit: document.getElementById('gUnit').value || '',
-      deadline: document.getElementById('gDeadline').value
-    });
+      current: current,
+      target: target,
+      unit: document.getElementById('gUnit').value.trim(),
+      deadline: document.getElementById('gDeadline').value || ''
+    };
+    goals.push(newGoal);
     Store.set('goals', goals);
-    bootstrap.Modal.getInstance(document.getElementById('addGoalModal')).hide();
+    // Close modal and reset form
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addGoalModal'));
+    if (modal) modal.hide();
     document.getElementById('goalForm').reset();
     renderGoals();
-    showToast('Goal created!');
+    showToast(`Goal "${title}" created successfully!`);
   }
-
+  
+  // UPDATE PROGRESS
   function openUpdate(id, title, current) {
     document.getElementById('updateId').value = id;
-    document.getElementById('updateLabel').textContent = 'Current value for: ' + title;
+    document.getElementById('updateLabel').innerHTML = `Current value for: <strong>${escapeHtml(title)}</strong>`;
     document.getElementById('updateValue').value = current;
     new bootstrap.Modal(document.getElementById('updateModal')).show();
   }
-
+  
   function saveUpdate() {
     const id = parseInt(document.getElementById('updateId').value);
-    const val = parseFloat(document.getElementById('updateValue').value);
-    if (isNaN(val)) return;
-    const goals = Store.get('goals').map(g => g.id === id ? { ...g, current: val } : g);
-    Store.set('goals', goals);
-    bootstrap.Modal.getInstance(document.getElementById('updateModal')).hide();
+    const newVal = parseFloat(document.getElementById('updateValue').value);
+    if (isNaN(newVal)) {
+      showToast('Please enter a valid number.', 'error');
+      return;
+    }
+    let goals = Store.get('goals');
+    const updatedGoals = goals.map(g => {
+      if (g.id === id) {
+        return { ...g, current: newVal };
+      }
+      return g;
+    });
+    Store.set('goals', updatedGoals);
+    const modal = bootstrap.Modal.getInstance(document.getElementById('updateModal'));
+    if (modal) modal.hide();
     renderGoals();
-    showToast('Progress updated!');
+    showToast('Progress updated! Keep pushing 💪');
   }
-
+  
+  // DELETE GOAL 
   function deleteGoal(id) {
-    if (!confirm('Delete this goal?')) return;
-    Store.set('goals', Store.get('goals').filter(g => g.id !== id));
+    if (!confirm('Are you sure you want to delete this goal?')) return;
+    const goals = Store.get('goals');
+    const newGoals = goals.filter(g => g.id !== id);
+    Store.set('goals', newGoals);
     renderGoals();
-    showToast('Goal deleted.');
+    showToast('Goal removed.', 'error');
   }
-
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    renderGoals();
+    
+    const statCards = document.querySelectorAll('.card-stat');
+    statCards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-4px)';
+        card.style.transition = 'all 0.2s ease';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0)';
+      });
+    });
+    
+    // clear form modal when opened
+    const addModal = document.getElementById('addGoalModal');
+    if (addModal) {
+      addModal.addEventListener('hidden.bs.modal', () => {
+        document.getElementById('goalForm').reset();
+      });
+    }
+    
+    console.log('Goals page initialized (Lecture 04,05,06a,07 concepts applied)');
+  });
+  
+  // Expose global functions for onclick handlers
+  window.saveGoal = saveGoal;
+  window.openUpdate = openUpdate;
+  window.saveUpdate = saveUpdate;
+  window.deleteGoal = deleteGoal;
+  window.renderGoals = renderGoals;
+  
+  // Initial render
   renderGoals();
 </script>
 </body>

@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
+
 <nav class="navbar navbar-expand-lg">
   <div class="container">
     <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
@@ -43,6 +43,7 @@
         <p class="page-subtitle" id="dashDate">Loading...</p>
       </div>
       <div class="d-flex gap-2">
+        <!-- Simulated POST / GET route style: buttons navigate to form pages -->
         <a href="workout.html" class="btn-primary-custom" style="font-size: 0.8rem; padding: 8px 16px;">
           <i class="bi bi-plus-lg me-1"></i> Log Workout
         </a>
@@ -53,13 +54,13 @@
     </div>
   </div>
 
-  <!-- Motivational Quote -->
+  <!-- Motivational Quote  -->
   <div class="alert-custom mb-4" id="quoteBox">
     <i class="bi bi-chat-quote-fill me-2"></i>
     <span id="quoteText">Loading your daily motivation...</span>
   </div>
 
-  <!-- Stats Row -->
+  <!-- Stats Row: display dynamic numeric data -->
   <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
       <div class="card-stat">
@@ -95,7 +96,7 @@
     </div>
   </div>
 
-  <!-- Charts Row -->
+  <!-- Charts Row: using Chart.js to visualize data  -->
   <div class="row g-4 mb-4">
     <div class="col-lg-8">
       <div class="card-custom h-100">
@@ -129,7 +130,6 @@
     </div>
   </div>
 
-  <!-- Goals + Recent Activity Row -->
   <div class="row g-4">
     <div class="col-lg-5">
       <div class="card-custom h-100">
@@ -157,12 +157,12 @@
 
 </div>
 
-<!-- FOOTER -->
+<!-- FOOTER PARTIAL-->
 <footer class="footer">
   <div class="container">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
       <div class="footer-brand">Fitly</div>
-      <span style="color: var(--text-muted);">&copy; 2025 Fitly. WIF2003 Group Project.</span>
+      <span style="color: var(--text-muted);">&copy; 2026 Fitly. WIF2003 Group Project.</span>
     </div>
   </div>
 </footer>
@@ -170,13 +170,74 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="../js/main.js"></script>
-<script>
-  // Date
-  document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-MY', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-  });
 
-  // Quotes
+<script>
+  // Helper: get today's date in YYYY-MM-DD format
+  function todayStr() {
+    const d = new Date();
+    return d.toISOString().split('T')[0];
+  }
+  
+  // Helper: format date for display 
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  
+  // using localStorage to store user fitness data (workouts, meals, goals, water)
+  const Store = {
+    get: (key) => JSON.parse(localStorage.getItem(key)) || [],
+    set: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
+    getObj: (key, defaultVal) => {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : defaultVal;
+    }
+  };
+  
+  // Initialize sample data if empty to demonstrate dynamic content
+  if (Store.get('workouts').length === 0) {
+    const sampleWorkouts = [
+      { id: 'w1', exercise: 'Morning Run', date: todayStr(), calories: 320, duration: 30 },
+      { id: 'w2', exercise: 'Strength Training', date: todayStr(), calories: 210, duration: 45 },
+      { id: 'w3', exercise: 'Cycling', date: new Date(Date.now() - 86400000).toISOString().split('T')[0], calories: 280, duration: 40 }
+    ];
+    Store.set('workouts', sampleWorkouts);
+  }
+  
+  if (Store.get('meals').length === 0) {
+    const sampleMeals = [
+      { id: 'm1', mealName: 'Grilled Chicken Salad', date: todayStr(), calories: 450, carbs: 25, protein: 40, fat: 18 },
+      { id: 'm2', mealName: 'Protein Shake', date: todayStr(), calories: 200, carbs: 12, protein: 35, fat: 3 }
+    ];
+    Store.set('meals', sampleMeals);
+  }
+  
+  if (Store.get('goals').length === 0) {
+    const sampleGoals = [
+      { id: 'g1', title: 'Daily Calorie Burn', target: 500, current: 530, unit: 'kcal' },
+      { id: 'g2', title: 'Weekly Workouts', target: 5, current: 3, unit: 'sessions' }
+    ];
+    Store.set('goals', sampleGoals);
+  }
+  
+  // Water tracking
+  const waterData = Store.getObj('water', { count: 4, date: todayStr() });
+  if(waterData.date !== todayStr()) {
+    waterData.count = 0;
+    waterData.date = todayStr();
+    Store.set('water', waterData);
+  }
+    
+  // Display current date 
+  const dashDateSpan = document.getElementById('dashDate');
+  if (dashDateSpan) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dashDateSpan.textContent = new Date().toLocaleDateString('en-MY', options);
+  }
+  
+  // Daily motivation quote array
   const quotes = [
     "The only bad workout is the one that didn't happen.",
     "Push harder than yesterday if you want a different tomorrow.",
@@ -186,56 +247,65 @@
     "Success starts with self-discipline.",
     "Don't stop when you're tired. Stop when you're done."
   ];
-  document.getElementById('quoteText').textContent = quotes[new Date().getDay() % quotes.length];
-
-  // Load from storage
-  const workouts = Store.get('workouts');
-  const meals = Store.get('meals');
-  const goals = Store.get('goals');
-  const water = Store.getObj('water', { count: 0, date: '' });
-  const todayDate = todayStr();
-
-  // Stats
-  const todayWorkouts = workouts.filter(w => w.date === todayDate);
-  const todayMeals = meals.filter(m => m.date === todayDate);
-  const calBurned = todayWorkouts.reduce((s, w) => s + (parseInt(w.calories) || 0), 0);
-  const calIn = todayMeals.reduce((s, m) => s + (parseInt(m.calories) || 0), 0);
-  const activeMin = todayWorkouts.reduce((s, w) => s + (parseInt(w.duration) || 0), 0);
-  const waterCount = water.date === todayDate ? water.count : 0;
-
+  const quoteElement = document.getElementById('quoteText');
+  if (quoteElement) {
+    // using current day index to cycle quotes
+    const dayIndex = new Date().getDay() % quotes.length;
+    quoteElement.textContent = quotes[dayIndex];
+  }
+  
+  // Retrieve data arrays
+  let workouts = Store.get('workouts');
+  let meals = Store.get('meals');
+  let goals = Store.get('goals');
+  const today = todayStr();
+  
+  // Filter today's records 
+  const todayWorkouts = workouts.filter(w => w.date === today);
+  const todayMeals = meals.filter(m => m.date === today);
+  
+  // Calculate summary stats
+  const calBurned = todayWorkouts.reduce((sum, w) => sum + (parseInt(w.calories) || 0), 0);
+  const calIn = todayMeals.reduce((sum, m) => sum + (parseInt(m.calories) || 0), 0);
+  const activeMin = todayWorkouts.reduce((sum, w) => sum + (parseInt(w.duration) || 0), 0);
+  const waterCount = waterData.date === today ? waterData.count : 0;
+  
+  // Update stat cards
   document.getElementById('statCalBurned').textContent = calBurned;
   document.getElementById('statCalIn').textContent = calIn;
   document.getElementById('statWater').textContent = waterCount;
   document.getElementById('statActive').textContent = activeMin;
-
-  // Macro totals
-  const carbs = todayMeals.reduce((s, m) => s + (parseInt(m.carbs) || 0), 0);
-  const protein = todayMeals.reduce((s, m) => s + (parseInt(m.protein) || 0), 0);
-  const fat = todayMeals.reduce((s, m) => s + (parseInt(m.fat) || 0), 0);
-  document.getElementById('macroCarbs').textContent = carbs + 'g';
-  document.getElementById('macroProtein').textContent = protein + 'g';
-  document.getElementById('macroFat').textContent = fat + 'g';
-
-  // Weekly chart (last 7 days)
-  const days = [];
-  const dayCals = [];
-  for (let i = 6; i >= 0; i--) {
+  
+  // Macro totals (carbs, protein, fat) using reduce on today's meals
+  const totalCarbs = todayMeals.reduce((sum, m) => sum + (parseInt(m.carbs) || 0), 0);
+  const totalProtein = todayMeals.reduce((sum, m) => sum + (parseInt(m.protein) || 0), 0);
+  const totalFat = todayMeals.reduce((sum, m) => sum + (parseInt(m.fat) || 0), 0);
+  document.getElementById('macroCarbs').textContent = totalCarbs + 'g';
+  document.getElementById('macroProtein').textContent = totalProtein + 'g';
+  document.getElementById('macroFat').textContent = totalFat + 'g';
+  
+  // WEEKLY CHART
+  const labels = [];
+  const weeklyData = [];
+  for (let i = 6; i >= 0; i--) {          // loop to generate last 7 days
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const ds = d.toISOString().split('T')[0];
-    days.push(d.toLocaleDateString('en-MY', { weekday: 'short' }));
-    const wCals = workouts.filter(w => w.date === ds).reduce((s, w) => s + (parseInt(w.calories) || 0), 0);
-    dayCals.push(wCals || Math.floor(Math.random() * 400 + 200));
+    const dateKey = d.toISOString().split('T')[0];
+    const dayShort = d.toLocaleDateString('en-MY', { weekday: 'short' });
+    labels.push(dayShort);
+    // sum calories for that day
+    const dayCal = workouts.filter(wo => wo.date === dateKey).reduce((acc, wo) => acc + (parseInt(wo.calories) || 0), 0);
+    weeklyData.push(dayCal);
   }
-
+  
   const ctxWeekly = document.getElementById('weeklyChart').getContext('2d');
   new Chart(ctxWeekly, {
     type: 'bar',
     data: {
-      labels: days,
+      labels: labels,
       datasets: [{
         label: 'Calories Burned',
-        data: dayCals,
+        data: weeklyData,
         backgroundColor: 'rgba(0, 207, 255, 0.15)',
         borderColor: '#00CFFF',
         borderWidth: 2,
@@ -244,7 +314,8 @@
       }]
     },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
         x: { grid: { color: 'rgba(0,207,255,0.05)' }, ticks: { color: '#7DA8CC', font: { family: 'Inter' } } },
@@ -252,64 +323,107 @@
       }
     }
   });
-
-  // Macro donut
+  
+  // Macro Doughnut Chart (if data is zero, show placeholder values)
+  const macroData = (totalCarbs || totalProtein || totalFat) ? [totalCarbs, totalProtein, totalFat] : [45, 30, 25];
   const ctxMacro = document.getElementById('macroChart').getContext('2d');
   new Chart(ctxMacro, {
     type: 'doughnut',
     data: {
       labels: ['Carbs', 'Protein', 'Fat'],
       datasets: [{
-        data: [carbs || 45, protein || 30, fat || 25],
+        data: macroData,
         backgroundColor: ['rgba(0,207,255,0.7)', 'rgba(0,229,160,0.7)', 'rgba(255,184,0,0.7)'],
         borderColor: ['#00CFFF', '#00E5A0', '#FFB800'],
         borderWidth: 2
       }]
     },
     options: {
-      responsive: true, maintainAspectRatio: false, cutout: '65%',
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
       plugins: { legend: { display: false } }
     }
   });
-
+  
   // Recent Workouts
-  if (workouts.length > 0) {
-    const recent = workouts.slice(-5).reverse();
-    const html = recent.map(w => `
-      <div style="display:flex; align-items:center; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,207,255,0.06);">
-        <div style="display:flex; align-items:center; gap: 12px;">
-          <div class="stat-icon cyan" style="width:34px; height:34px; font-size:0.9rem; margin:0;"><i class="bi bi-lightning-fill"></i></div>
-          <div>
-            <div style="font-size: 0.875rem; font-weight: 500; color: var(--text-primary);">${w.exercise || 'Workout'}</div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">${formatDate(w.date)}</div>
+  const recentContainer = document.getElementById('recentWorkouts');
+  if (recentContainer) {
+    if (workouts.length > 0) {
+      const recentWorkouts = workouts.slice(-5).reverse();   // last 5 workouts
+      let htmlBuffer = '';
+      // for...of loop
+      for (const workout of recentWorkouts) {
+        htmlBuffer += `
+          <div style="display:flex; align-items:center; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,207,255,0.06);">
+            <div style="display:flex; align-items:center; gap: 12px;">
+              <div class="stat-icon cyan" style="width:34px; height:34px; font-size:0.9rem; margin:0;"><i class="bi bi-lightning-fill"></i></div>
+              <div>
+                <div style="font-size: 0.875rem; font-weight: 500; color: var(--text-primary);">${workout.exercise || 'Workout'}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">${formatDate(workout.date)}</div>
+              </div>
+            </div>
+            <div class="text-end">
+              <div style="font-size: 0.875rem; color: var(--primary);">${workout.calories || 0} kcal</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">${workout.duration || 0} min</div>
+            </div>
+          </div>`;
+      }
+      recentContainer.innerHTML = htmlBuffer;
+    } else {
+      recentContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.875rem;">No workouts logged yet. <a href="workout.html" style="color: var(--primary);">Log one →</a></div>`;
+    }
+  }
+  
+  // Goals Progress
+  const goalsContainer = document.getElementById('goalsList');
+  if (goalsContainer) {
+    if (goals.length > 0) {
+      let goalsHtml = '';
+      goals.forEach(goal => {
+        let percent = 0;
+        if (goal.target > 0) {
+          percent = Math.min(100, Math.round((goal.current / goal.target) * 100));
+        }
+        goalsHtml += `
+          <div style="margin-bottom: 1.25rem;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 5px;">
+              <span style="font-size: 0.8125rem; color: var(--text-secondary);">${goal.title}</span>
+              <span style="font-size: 0.8125rem; color: var(--primary); font-weight: 500;">${percent}%</span>
+            </div>
+            <div class="progress-custom">
+              <div class="progress-bar-custom" style="width: ${percent}%;"></div>
+            </div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px;">${goal.current} / ${goal.target} ${goal.unit}</div>
           </div>
-        </div>
-        <div class="text-end">
-          <div style="font-size: 0.875rem; color: var(--primary);">${w.calories || 0} kcal</div>
-          <div style="font-size: 0.75rem; color: var(--text-muted);">${w.duration || 0} min</div>
-        </div>
-      </div>`).join('');
-    document.getElementById('recentWorkouts').innerHTML = html;
+        `;
+      });
+      goalsContainer.innerHTML = goalsHtml;
+    } else {
+      goalsContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.875rem;">No goals set yet. <a href="goals.html" style="color: var(--primary);">Add goals →</a></div>`;
+    }
   }
-
-  // Goals progress
-  if (goals.length > 0) {
-    const html = goals.slice(0, 4).map(g => {
-      const pct = Math.min(100, Math.round((g.current / g.target) * 100));
-      return `
-      <div style="margin-bottom: 1.25rem;">
-        <div style="display:flex; justify-content:space-between; margin-bottom: 5px;">
-          <span style="font-size: 0.8125rem; color: var(--text-secondary);">${g.title}</span>
-          <span style="font-size: 0.8125rem; color: var(--primary); font-weight: 500;">${pct}%</span>
-        </div>
-        <div class="progress-custom">
-          <div class="progress-bar-custom" style="width: ${pct}%;"></div>
-        </div>
-        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px;">${g.current} / ${g.target} ${g.unit}</div>
-      </div>`;
-    }).join('');
-    document.getElementById('goalsList').innerHTML = html;
+  
+  const quoteBox = document.getElementById('quoteBox');
+  if (quoteBox) {
+    quoteBox.addEventListener('dblclick', function() {
+      alert('✨ Stay motivated! Double-click to refresh your mindset ✨');
+    });
   }
+  
+  const statCards = document.querySelectorAll('.card-stat');
+  statCards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-3px)';
+      card.style.transition = 'transform 0.2s ease';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
+    });
+  });
+  
+  console.log('Dashboard initialized - Fitly dynamic content');
+  console.log(`Today's stats: Burned ${calBurned} kcal, Intake ${calIn} kcal`);
 </script>
 </body>
 </html>

@@ -10,10 +10,11 @@
 </head>
 <body>
 
+<!-- BACKGROUND DECORATION -->
 <div class="hero-grid-bg" style="position:fixed; inset:0; pointer-events:none;"></div>
 <div style="position:fixed; width:500px; height:500px; background: radial-gradient(circle, rgba(0,207,255,0.06) 0%, transparent 70%); top:-100px; left:-100px; pointer-events:none;"></div>
 
-<!-- Minimal Navbar -->
+<!-- MINIMAL NAVBAR -->
 <nav style="padding: 1.25rem 0; border-bottom: 1px solid var(--border); position: relative; z-index: 10;">
   <div class="container d-flex justify-content-between align-items-center">
     <a href="../index.html" style="font-family: 'Poppins', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--primary); text-decoration: none;">Fit<span style="color: var(--white);">ly</span></a>
@@ -21,21 +22,27 @@
   </div>
 </nav>
 
+<!-- AUTHENTICATION FORM -->
 <div class="auth-wrapper" style="position: relative; z-index: 10;">
   <div class="auth-card">
     <div class="auth-logo">Welcome back</div>
     <p class="auth-tagline">Sign in to continue tracking your fitness journey</p>
 
+    <!-- Dynamic alert container -->
     <div id="loginAlert" style="display:none;" class="alert-custom warning mb-3">
       <i class="bi bi-exclamation-circle me-2"></i><span id="loginAlertMsg"></span>
     </div>
 
+    <!-- LOGIN FORM-->
     <form id="loginForm">
+      <!-- Email field -->
       <div class="mb-3">
         <label class="form-label-custom">Email Address</label>
         <input type="email" id="loginEmail" class="form-control-custom" placeholder="you@example.com" required />
         <div class="field-error" style="display:none; font-size:0.75rem; color:var(--danger); margin-top:4px;">Please enter a valid email.</div>
       </div>
+      
+      <!-- Password field with show/hide toggle -->
       <div class="mb-4">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
           <label class="form-label-custom" style="margin-bottom:0;">Password</label>
@@ -49,10 +56,14 @@
         </div>
         <div class="field-error" style="display:none; font-size:0.75rem; color:var(--danger); margin-top:4px;">Please enter your password.</div>
       </div>
+      
+      <!-- Remember Me checkbox -->
       <div class="mb-4 d-flex align-items-center gap-2">
         <input type="checkbox" id="rememberMe" style="accent-color: var(--primary); width: 16px; height: 16px;" />
         <label for="rememberMe" style="font-size: 0.875rem; color: var(--text-secondary); cursor: pointer;">Remember me</label>
       </div>
+      
+      <!-- Submit button -->
       <button type="submit" class="btn-primary-custom w-100" style="padding: 12px; font-size: 0.95rem;">
         Sign In <i class="bi bi-arrow-right ms-2"></i>
       </button>
@@ -60,6 +71,7 @@
 
     <div class="auth-divider">or</div>
 
+    <!-- Demo Account Button -->
     <button class="btn-ghost w-100" onclick="demoLogin()" style="padding: 12px; font-size: 0.875rem;">
       <i class="bi bi-lightning-fill me-2" style="color: var(--primary);"></i>
       Continue with Demo Account
@@ -71,9 +83,63 @@
   </div>
 </div>
 
+<!-- FOOTER -->
+<footer class="footer" style="margin-top: 2rem; position: relative; z-index: 10;">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div class="footer-brand">Fitly</div>
+      <span style="color: var(--text-muted);">&copy; 2026 Fitly. WIF2003 Group Project.</span>
+    </div>
+  </div>
+</footer>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 <script src="../js/main.js"></script>
+
 <script>
+  // STORAGE WRAPPER 
+  // Simulates server-side database using localStorage 
+  const Store = {
+    get: (key) => JSON.parse(localStorage.getItem(key)) || [],
+    set: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
+    getObj: (key, defaultVal) => {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : defaultVal;
+    }
+  };
+  
+  //INITIALIZE DEMO USERS
+  // Simulates a user database table 
+  if (Store.get('users').length === 0) {
+    const demoUsers = [
+      { id: 1, name: 'Alex Johnson', email: 'alex@fitly.com', password: 'password123', joinDate: '2026-01-15' },
+      { id: 2, name: 'Sarah Williams', email: 'sarah@fitly.com', password: 'fitly2026', joinDate: '2026-02-20' },
+      { id: 3, name: 'Michael Chen', email: 'michael@fitly.com', password: 'gymlife', joinDate: '2026-03-10' },
+      { id: 4, name: 'Emma Davis', email: 'emma@fitly.com', password: 'wellness', joinDate: '2026-03-25' }
+    ];
+    Store.set('users', demoUsers);
+  }
+  
+  // TOAST NOTIFICATION SYSTEM 
+  function showToast(message, type = 'success') {
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toastContainer';
+      toastContainer.style.position = 'fixed';
+      toastContainer.style.bottom = '20px';
+      toastContainer.style.right = '20px';
+      toastContainer.style.zIndex = '1100';
+      document.body.appendChild(toastContainer);
+    }
+    const toastEl = document.createElement('div');
+    toastEl.className = `custom-toast ${type === 'error' ? 'toast-error' : 'toast-success'}`;
+    toastEl.innerHTML = `<i class="bi ${type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'} me-2"></i>${message}`;
+    toastContainer.appendChild(toastEl);
+    setTimeout(() => { toastEl.remove(); }, 2800);
+  }
+  
+  // PASSWORD SHOW/HIDE TOGGLE 
   function togglePass(inputId, iconId) {
     const inp = document.getElementById(inputId);
     const icon = document.getElementById(iconId);
@@ -85,30 +151,187 @@
       icon.className = 'bi bi-eye';
     }
   }
-
-  document.getElementById('loginForm').addEventListener('submit', function (e) {
-    e.preventDefault();
+  
+  // FORM VALIDATION HELPER 
+  function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+  
+  //LOGIN HANDLER
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();  // preventDefault to handle async validation
+    
+    // Capture form data
     const email = document.getElementById('loginEmail').value.trim();
-    const pass = document.getElementById('loginPassword').value;
-    if (!email || !pass) { return; }
-    // Front-end demo validation
+    const password = document.getElementById('loginPassword').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
+    
+    // Front-end validation
+    let isValid = true;
+    const emailError = document.querySelector('#loginEmail').closest('.mb-3').querySelector('.field-error');
+    const passError = document.querySelector('#loginPassword').closest('.mb-4').querySelector('.field-error');
+    
+    if (!email || !validateEmail(email)) {
+      emailError.style.display = 'block';
+      isValid = false;
+    } else {
+      emailError.style.display = 'none';
+    }
+    
+    if (!password || password.length < 3) {
+      passError.style.display = 'block';
+      if (password && password.length < 3) {
+        passError.textContent = 'Password must be at least 3 characters.';
+      } else {
+        passError.textContent = 'Please enter your password.';
+      }
+      isValid = false;
+    } else {
+      passError.style.display = 'none';
+    }
+    
+    if (!isValid) return;
+    
+    // Query user database 
     const users = Store.get('users');
-    const user = users.find(u => u.email === email && u.password === pass);
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    //Handle authentication result 
+    const alertBox = document.getElementById('loginAlert');
+    const alertMsg = document.getElementById('loginAlertMsg');
+    
     if (!user) {
-      document.getElementById('loginAlert').style.display = 'block';
-      document.getElementById('loginAlertMsg').textContent = 'Incorrect email or password.';
+      // Failed login - show error message 
+      alertBox.style.display = 'block';
+      alertMsg.textContent = 'Incorrect email or password. Please try again.';
+      // Clear password field for security
+      document.getElementById('loginPassword').value = '';
       return;
     }
-    Store.set('currentUser', user);
-    showToast('Welcome back, ' + user.name + '!');
-    setTimeout(() => window.location.href = 'dashboard.html', 800);
+    
+    // Hide any previous error alerts
+    alertBox.style.display = 'none';
+    
+    // Store current user in localStorage 
+    const sessionUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      joinDate: user.joinDate,
+      loggedInAt: new Date().toISOString(),
+      rememberMe: rememberMe
+    };
+    Store.set('currentUser', sessionUser);
+    
+    // If "Remember Me" is checked, also store a persistent flag 
+    if (rememberMe) {
+      localStorage.setItem('fitly_remember_token', user.email);
+    } else {
+      localStorage.removeItem('fitly_remember_token');
+    }
+    
+    console.log(`User logged in: ${user.email} at ${new Date().toLocaleTimeString()}`);
+    
+    // Show success toast 
+    showToast(`Welcome back, ${user.name}! Redirecting to dashboard...`, 'success');
+    
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 800);
   });
-
+  
+  //  DEMO LOGIN (Quick authentication for testing)
   function demoLogin() {
-    Store.set('currentUser', { name: 'Demo User', email: 'demo@fitly.com' });
-    showToast('Signed in as Demo User!');
-    setTimeout(() => window.location.href = 'dashboard.html', 800);
+    // Find or create demo user
+    let users = Store.get('users');
+    let demoUser = users.find(u => u.email === 'demo@fitly.com');
+    
+    if (!demoUser) {
+      // Create demo user if doesn't exist 
+      demoUser = {
+        id: Date.now(),
+        name: 'Demo User',
+        email: 'demo@fitly.com',
+        password: 'demo123',
+        joinDate: new Date().toISOString().split('T')[0]
+      };
+      users.push(demoUser);
+      Store.set('users', users);
+    }
+    
+    // Store current session (simulates authentication)
+    const sessionUser = {
+      id: demoUser.id,
+      name: demoUser.name,
+      email: demoUser.email,
+      joinDate: demoUser.joinDate,
+      loggedInAt: new Date().toISOString(),
+      isDemo: true
+    };
+    Store.set('currentUser', sessionUser);
+    
+    showToast('Signed in as Demo User! Explore the app ', 'success');
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 600);
   }
+  
+  // AUTO-FILL REMEMBERED USER 
+  document.addEventListener('DOMContentLoaded', () => {
+    const currentUser = Store.getObj('currentUser', null);
+    const rememberToken = localStorage.getItem('fitly_remember_token');
+    
+    // If already logged in, redirect to dashboard (prevent re-login)
+    if (currentUser && currentUser.email) {
+      showToast('You are already signed in. Redirecting...', 'success');
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 500);
+      return;
+    }
+    
+    // If remember token exists but no currentUser, pre-fill email for convenience
+    if (rememberToken && !currentUser) {
+      const emailField = document.getElementById('loginEmail');
+      if (emailField && rememberToken) {
+        emailField.value = rememberToken;
+      }
+    }
+    
+    // Add input event listeners for real-time validation
+    const passwordInput = document.getElementById('loginPassword');
+    
+    if (emailInput) {
+      emailInput.addEventListener('input', function() {
+        const errorDiv = this.closest('.mb-3').querySelector('.field-error');
+        if (this.value.trim() && validateEmail(this.value.trim())) {
+          errorDiv.style.display = 'none';
+        }
+        // Hide global alert when user starts typing
+        document.getElementById('loginAlert').style.display = 'none';
+      });
+    }
+    
+    if (passwordInput) {
+      passwordInput.addEventListener('input', function() {
+        const errorDiv = this.closest('.mb-4').querySelector('.field-error');
+        if (this.value && this.value.length >= 3) {
+          errorDiv.style.display = 'none';
+        }
+        // Hide global alert when user starts typing
+        document.getElementById('loginAlert').style.display = 'none';
+      });
+    }
+    
+    console.log('Login page initialized - POST route simulation ready (Lecture 06b, 07 concepts)');
+  });
+  
+  // EXPOSE GLOBAL FUNCTIONS FOR HTML BUTTONS
+  window.togglePass = togglePass;
+  window.demoLogin = demoLogin;
+  window.showToast = showToast;
+  
 </script>
 </body>
 </html>
