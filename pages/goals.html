@@ -19,7 +19,6 @@
     </button>
     <div class="collapse navbar-collapse" id="fitlyNav">
       <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
-        <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link" href="workout.html">Workout</a></li>
         <li class="nav-item"><a class="nav-link" href="nutrition.html">Nutrition</a></li>
@@ -32,6 +31,14 @@
     </div>
   </div>
 </nav>
+
+<script src="../js/main.js"></script>
+<script>
+  // Update navbar auth state on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    updateNavbarAuthState();
+  });
+</script>
 
 <!-- MAIN CONTENT: GOAL SETTING & TRACKING-->
 <div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">

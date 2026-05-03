@@ -47,24 +47,81 @@ document.addEventListener('DOMContentLoaded', function () {
 function updateNavbarAuthState() {
   var currentUser = Store.getObj('currentUser', null);
   var navbarAuth = document.querySelector('.navbar-nav .ms-2');
+  var navProtected = document.querySelectorAll('.nav-protected');
+  
+  if (!navbarAuth) return; // Safety check
   
   if (currentUser && currentUser.email) {
-    // User is logged in - show logout button on all pages
-    navbarAuth.innerHTML = '<a class="btn-primary-custom" href="#" onclick="handleLogout(); return false;" style="padding: 8px 18px; font-size: 0.8rem;"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>';
+    // User is logged in - show logout button and show protected nav items
+    navbarAuth.innerHTML = '<a id="logout-btn" class="btn-primary-custom" href="#" onclick="handleLogout(); return false;" style="padding: 8px 18px; font-size: 0.8rem;"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>';
+    // Show protected nav items
+    for (var i = 0; i < navProtected.length; i++) {
+      navProtected[i].style.display = 'block';
+    }
   } else {
     // User is not logged in
     var currentPage = window.location.pathname.split('/').pop() || 'index.html';
     
     if (currentPage === 'index.html' || currentPage === '') {
-      // On landing page - show Sign Up + Sign In
+      // On landing page - hide protected nav items and show Sign Up + Sign In
+      for (var i = 0; i < navProtected.length; i++) {
+        navProtected[i].style.display = 'none';
+      }
       navbarAuth.innerHTML = '<a class="btn-primary-custom" href="pages/register.html" style="padding: 8px 18px; font-size: 0.8rem; margin-right: 8px; display: inline-block;">Sign Up</a>' +
         '<a class="btn-primary-custom" href="pages/login.html" style="padding: 8px 18px; font-size: 0.8rem; display: inline-block;">Sign In</a>';
     } else {
-      // On other pages - show only Sign In
+      // On other pages - show protected nav items and show Sign In button
+      for (var i = 0; i < navProtected.length; i++) {
+        navProtected[i].style.display = 'block';
+      }
       navbarAuth.innerHTML = '<a class="btn-primary-custom" href="login.html" style="padding: 8px 18px; font-size: 0.8rem;">Sign In</a>';
     }
   }
 }
+
+// DEMO USER LOGIN
+function loginDemoUser() {
+  var demoUser = {
+    email: 'demo@fitly.com',
+    name: 'Demo User',
+    age: 28,
+    weight: 75,
+    height: 175,
+    goal: 'Build muscle',
+    isDemo: true
+  };
+  
+  Store.setObj('currentUser', demoUser);
+  showToast('Welcome to Fitly! You\'re logged in as a demo user.', 'success');
+  
+  setTimeout(function() {
+    var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    if (currentPage === 'login.html' || currentPage === 'register.html') {
+      window.location.href = 'dashboard.html';
+    } else {
+      window.location.href = '../pages/dashboard.html';
+    }
+  }, 800);
+}
+
+// DEMO USER LOGIN (alternate version for Store.setObj compatibility)
+function Store_setObj(key, val) {
+  try { 
+    localStorage.setItem('fitly_' + key, JSON.stringify(val)); 
+  }
+  catch (e) { 
+    console.warn('Storage error', e); 
+  }
+}
+
+Store.setObj = function(key, val) {
+  try { 
+    localStorage.setItem('fitly_' + key, JSON.stringify(val)); 
+  }
+  catch (e) { 
+    console.warn('Storage error', e); 
+  }
+};
 
 // LOGOUT HANDLER
 function handleLogout() {
@@ -73,10 +130,9 @@ function handleLogout() {
   }
   localStorage.removeItem('fitly_currentUser');
   localStorage.removeItem('fitly_remember_token');
-  updateNavbarAuthState();
   showToast('You have been logged out successfully.', 'success');
   setTimeout(function() {
-    window.location.href = 'login.html';
+    window.location.href = '../index.html';
   }, 800);
 }
 

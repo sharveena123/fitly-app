@@ -39,13 +39,12 @@ h1, h2, h3, h4, h5, h6 {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    text-decoration: none;
     font-size: 14px;
     transition: all 0.2s ease;
 }
 
 .btn-primary-custom:hover {
-    background-color: #0052a3;
+    background-color: #8ec5fb;
 }
 
 .btn-outline-custom {
@@ -63,6 +62,19 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-outline-custom:hover {
     background-color: #f0f5ff;
+}
+
+/* AUTH BUTTONS */
+#signin-btn,
+#signup-btn,
+#logout-btn {
+    color: #ffffff;
+}
+
+#signin-btn:hover,
+#signup-btn:hover,
+#logout-btn:hover {
+    color: #ffffff;
 }
 
 /* CARDS */
