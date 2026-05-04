@@ -35,16 +35,26 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-block;
     padding: 10px 20px;
     background-color: #0066cc;
-    color: #ffffff;
+    color: #ffffff !important;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
+    text-decoration: none !important;
     transition: all 0.2s ease;
 }
 
+.btn-primary-custom:link,
+.btn-primary-custom:visited,
+.btn-primary-custom:hover,
+.btn-primary-custom:active,
+.btn-primary-custom:focus {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
 .btn-primary-custom:hover {
-    background-color: #8ec5fb;
+    background-color: #0052a3;
 }
 
 .btn-outline-custom {
