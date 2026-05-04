@@ -100,34 +100,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 <script src="../js/main.js"></script>
 
+
 <script>
-  // STORAGE WRAPPER 
-  const Store = {
-    get: (key) => JSON.parse(localStorage.getItem('fitly_' + key)) || [],
-    set: (key, data) => localStorage.setItem('fitly_' + key, JSON.stringify(data)),
-    getObj: (key, defaultVal) => {
-      const item = localStorage.getItem('fitly_' + key);
-      return item ? JSON.parse(item) : defaultVal;
-    }
-  };
-  
-  // TOAST NOTIFICATION SYSTEM
-  function showToast(message, type = 'success') {
-    let toastContainer = document.getElementById('toastContainer');
-    if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.id = 'toastContainer';
-      toastContainer.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:1100;';
-      document.body.appendChild(toastContainer);
-    }
-    const toastEl = document.createElement('div');
-    toastEl.className = type === 'error' ? 'custom-toast toast-error' : 'custom-toast toast-success';
-    const icon = type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill';
-    toastEl.innerHTML = `<i class="bi ${icon} me-2"></i>${message}`;
-    toastContainer.appendChild(toastEl);
-    setTimeout(() => { toastEl.remove(); }, 2800);
-  }
-  
   // PASSWORD SHOW/HIDE TOGGLE
   function togglePass(inputId, iconId) {
     const inp = document.getElementById(inputId);
