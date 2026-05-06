@@ -12,7 +12,7 @@
 </head>
 
 <body>
-  <!-- bootstrap navbar for main page navigation -->
+  <!-- bootstrap navbar -->
   <nav class="navbar navbar-expand-lg">
     <div class="container">
       <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
@@ -235,7 +235,7 @@
   <script>
     var profilePhotoData = '';
 
-    // update bmi calculation based on weight and height
+    // update bmi calculation 
     function updateBMICalc() {
       var weight = parseFloat(document.getElementById('bmiWeight').value);
       var height = parseFloat(document.getElementById('bmiHeight').value);
@@ -371,7 +371,7 @@
       reader.readAsDataURL(file);
     });
 
-    // ============== CHANGE PASSWORD FUNCTION ==============
+    //change pass function
     function changePassword() {
       var currentPassword = document.getElementById('pCurrentPassword').value;
       var newPassword = document.getElementById('pNewPassword').value;
@@ -417,7 +417,7 @@
       }, 1500);
     }
 
-    // ============== DELETE ACCOUNT FUNCTION ==============
+    //delete acc function
     function deleteAccount() {
       var confirmed = confirm('Are you sure you want to delete your account?');
 
