@@ -1,284 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Goals — Fitly</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
+
 <body>
 
-<!--  NAVBAR -->
-<nav class="navbar navbar-expand-lg">
-  <div class="container">
-    <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#fitlyNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="fitlyNav">
-      <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
-        <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="workout.html">Workout</a></li>
-        <li class="nav-item"><a class="nav-link" href="nutrition.html">Nutrition</a></li>
-        <li class="nav-item"><a class="nav-link active" href="goals.html">Goals</a></li>
-        <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
-        <!-- Notification Dropdown -->
-        <li class="nav-item dropdown ms-1">
-          <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="position: relative;">
-            <i class="bi bi-bell-fill"></i>
-            <span class="badge bg-danger rounded-pill" style="font-size: 0.55rem; position: absolute; top: 0px; right: 0px;">3</span>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="notificationDropdown" style="min-width: 200px;">
-            <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">New workout available!</a></li>
-            <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">You hit your step goal.</a></li>
-            <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">Don't forget to log lunch.</a></li>
-          </ul>
-        </li>
-        <li class="nav-item ms-2">
-          <a class="btn-primary-custom" href="login.html" style="padding: 8px 18px; font-size: 0.8rem;">Sign In</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<script src="../js/main.js"></script>
-<script>
-  // Update navbar auth state on page load
-  document.addEventListener('DOMContentLoaded', function() {
-    updateNavbarAuthState();
-  });
-</script>
-
-<!-- MAIN CONTENT: GOAL SETTING & TRACKING-->
-<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
-
-  <!-- Page Header with dynamic content -->
-  <div class="page-header">
-    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-      <div>
-        <h1 class="page-title">Goal Setting</h1>
-        <p class="page-subtitle" id="greetingMsg">Define targets and track your progress</p>
-      </div>
-      <!-- Button triggers Bootstrap Modal -->
-      <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addGoalModal">
-        <i class="bi bi-plus-lg me-1"></i> New Goal
+  <!--  NAVBAR -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#fitlyNav">
+        <span class="navbar-toggler-icon"></span>
       </button>
+      <div class="collapse navbar-collapse" id="fitlyNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+          <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="workout.html">Workout</a></li>
+          <li class="nav-item"><a class="nav-link" href="nutrition.html">Nutrition</a></li>
+          <li class="nav-item"><a class="nav-link active" href="goals.html">Goals</a></li>
+          <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+          <!-- Notification Dropdown -->
+          <li class="nav-item dropdown ms-1">
+            <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false" style="position: relative;">
+              <i class="bi bi-bell-fill"></i>
+              <span class="badge bg-danger rounded-pill"
+                style="font-size: 0.55rem; position: absolute; top: 0px; right: 0px;">3</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="notificationDropdown"
+              style="min-width: 200px;">
+              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">New workout available!</a></li>
+              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">You hit your step goal.</a></li>
+              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">Don't forget to log lunch.</a></li>
+            </ul>
+          </li>
+          <li class="nav-item ms-2">
+            <a class="btn-primary-custom" href="login.html" style="padding: 8px 18px; font-size: 0.8rem;">Sign In</a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
+  </nav>
 
-  <!-- Summary Cards -->
-  <div class="row g-3 mb-4">
-    <div class="col-4">
-      <div class="card-stat">
-        <div class="stat-label">Total Goals</div>
-        <div class="stat-value" id="totalGoals">0</div>
-      </div>
-    </div>
-    <div class="col-4">
-      <div class="card-stat">
-        <div class="stat-label">Completed</div>
-        <div class="stat-value" style="color: var(--success);" id="completedGoals">0</div>
-      </div>
-    </div>
-    <div class="col-4">
-      <div class="card-stat">
-        <div class="stat-label">In Progress</div>
-        <div class="stat-value" style="color: var(--primary);" id="inProgressGoals">0</div>
-      </div>
-    </div>
-  </div>
+  <!-- MAIN CONTENT: GOAL SETTING & TRACKING-->
+  <div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
 
-  <!-- Goals Grid -->
-  <div class="row g-4" id="goalsGrid">
-    <div class="col-12">
-      <div class="card-custom text-center" style="padding: 3rem;">
-        <i class="bi bi-bullseye" style="font-size: 2.5rem; color: var(--text-muted);"></i>
-        <p style="color: var(--text-muted); margin-top: 1rem;">No goals set yet. Set your first goal to get started!</p>
-        <button class="btn-primary-custom mt-2" data-bs-toggle="modal" data-bs-target="#addGoalModal">
-          <i class="bi bi-plus-lg me-1"></i> Add Your First Goal
+    <!-- Page Header with dynamic content -->
+    <div class="page-header">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>
+          <h1 class="page-title">Goal Setting</h1>
+          <p class="page-subtitle" id="greetingMsg">Define targets and track your progress</p>
+        </div>
+        <!-- Button triggers Bootstrap Modal -->
+        <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+          <i class="bi bi-plus-lg me-1"></i> New Goal
         </button>
       </div>
     </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-4">
+        <div class="card-stat">
+          <div class="stat-label">Total Goals</div>
+          <div class="stat-value" id="totalGoals">0</div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card-stat">
+          <div class="stat-label">Completed</div>
+          <div class="stat-value" style="color: var(--success);" id="completedGoals">0</div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card-stat">
+          <div class="stat-label">In Progress</div>
+          <div class="stat-value" style="color: var(--primary);" id="inProgressGoals">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goals Grid -->
+    <div class="row g-4" id="goalsGrid">
+      <div class="col-12">
+        <div class="card-custom text-center" style="padding: 3rem;">
+          <i class="bi bi-bullseye" style="font-size: 2.5rem; color: var(--text-muted);"></i>
+          <p style="color: var(--text-muted); margin-top: 1rem;">No goals set yet. Set your first goal to get started!
+          </p>
+          <button class="btn-primary-custom mt-2" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+            <i class="bi bi-plus-lg me-1"></i> Add Your First Goal
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-</div>
-
-<!-- MODAL: ADD GOAL -->
-<div class="modal fade" id="addGoalModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Set New Goal</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Form simulates HTTP POST request data capture  -->
-        <form id="goalForm">
-          <div class="mb-3">
-            <label class="form-label-custom">Goal Title *</label>
-            <input type="text" id="gTitle" class="form-control-custom" placeholder="e.g. Lose 5kg, Run 5km" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label-custom">Category</label>
-            <select id="gCategory" class="form-select-custom">
-              <option>Weight</option>
-              <option>Cardio</option>
-              <option>Strength</option>
-              <option>Nutrition</option>
-              <option>Hydration</option>
-              <option>Steps</option>
-              <option>Custom</option>
-            </select>
-          </div>
-          <div class="row g-3 mb-3">
-            <div class="col-4">
-              <label class="form-label-custom">Current *</label>
-              <input type="number" id="gCurrent" class="form-control-custom" placeholder="0" step="any" required />
+  <!-- MODAL: ADD GOAL -->
+  <div class="modal fade" id="addGoalModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Set New Goal</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="goalForm" onsubmit="saveGoal(event); return false;">
+          <div class="modal-body">
+            <!-- Form simulates HTTP POST request data capture  -->
+            <div class="mb-3">
+              <label class="form-label-custom">Goal Title *</label>
+              <input type="text" id="gTitle" class="form-control-custom" placeholder="e.g. Lose 5kg, Run 5km"
+                required />
             </div>
-            <div class="col-4">
-              <label class="form-label-custom">Target *</label>
-              <input type="number" id="gTarget" class="form-control-custom" placeholder="100" step="any" required />
+            <div class="mb-3">
+              <label class="form-label-custom">Category</label>
+              <select id="gCategory" class="form-select-custom">
+                <option>Weight</option>
+                <option>Cardio</option>
+                <option>Strength</option>
+                <option>Nutrition</option>
+                <option>Hydration</option>
+                <option>Steps</option>
+                <option>Custom</option>
+              </select>
             </div>
-            <div class="col-4">
-              <label class="form-label-custom">Unit</label>
-              <input type="text" id="gUnit" class="form-control-custom" placeholder="kg, km, steps" />
+            <div class="row g-3 mb-3">
+              <div class="col-4">
+                <label class="form-label-custom">Current *</label>
+                <input type="number" id="gCurrent" class="form-control-custom" placeholder="0" step="any" required />
+              </div>
+              <div class="col-4">
+                <label class="form-label-custom">Target *</label>
+                <input type="number" id="gTarget" class="form-control-custom" placeholder="100" step="any" required />
+              </div>
+              <div class="col-4">
+                <label class="form-label-custom">Unit</label>
+                <input type="text" id="gUnit" class="form-control-custom" placeholder="kg, km, steps" />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label-custom">Deadline</label>
+              <input type="date" id="gDeadline" class="form-control-custom" />
             </div>
           </div>
-          <div class="mb-3">
-            <label class="form-label-custom">Deadline</label>
-            <input type="date" id="gDeadline" class="form-control-custom" />
+          <div class="modal-footer">
+            <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+            <!-- saveGoal() function handles data persistence  -->
+            <button type="submit" class="btn-primary-custom">Save Goal</button>
           </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <button class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
-        <!-- saveGoal() function handles data persistence  -->
-        <button class="btn-primary-custom" onclick="saveGoal()">Save Goal</button>
+    </div>
+  </div>
+
+  <!-- MODAL: UPDATE PROGRESS -->
+  <div class="modal fade" id="updateModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Update Progress</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="updateId" />
+          <label class="form-label-custom" id="updateLabel">Current Value</label>
+          <input type="number" id="updateValue" class="form-control-custom" step="any" />
+        </div>
+        <div class="modal-footer">
+          <button class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn-primary-custom" onclick="saveUpdate()">Update</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- MODAL: UPDATE PROGRESS -->
-<div class="modal fade" id="updateModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Update Progress</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="updateId" />
-        <label class="form-label-custom" id="updateLabel">Current Value</label>
-        <input type="number" id="updateValue" class="form-control-custom" step="any" />
-      </div>
-      <div class="modal-footer">
-        <button class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
-        <button class="btn-primary-custom" onclick="saveUpdate()">Update</button>
+  <!-- FOOTER PARTIAL -->
+  <footer class="footer">
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="footer-brand">Fitly</div>
+        <span style="color: var(--text-muted);">&copy; 2026 Fitly. WIF2003 Group Project.</span>
       </div>
     </div>
-  </div>
-</div>
+  </footer>
 
-<!-- FOOTER PARTIAL -->
-<footer class="footer">
-  <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-      <div class="footer-brand">Fitly</div>
-      <span style="color: var(--text-muted);">&copy; 2026 Fitly. WIF2003 Group Project.</span>
-    </div>
-  </div>
-</footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/main.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-<script src="../js/main.js"></script>
 
-<script>
-  //Helper: localStorage wrapper 
-  const Store = {
-    get: (key) => JSON.parse(localStorage.getItem(key)) || [],
-    set: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
-    getObj: (key, defaultVal) => {
-      const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : defaultVal;
-    }
-  };
-  
-  // Initialize sample goals if empty 
-  if (Store.get('goals').length === 0) {
-    const sampleGoals = [
-      { id: 1001, title: 'Daily Calorie Burn', category: 'Cardio', current: 380, target: 500, unit: 'kcal', deadline: new Date(Date.now() + 7*86400000).toISOString().split('T')[0] },
-      { id: 1002, title: 'Weekly Workout Sessions', category: 'Strength', current: 2, target: 5, unit: 'sessions', deadline: new Date(Date.now() + 5*86400000).toISOString().split('T')[0] },
-      { id: 1003, title: 'Hydration Goal', category: 'Hydration', current: 6, target: 8, unit: 'glasses', deadline: '' }
-    ];
-    Store.set('goals', sampleGoals);
-  }
-  
-  // Category mapping for icons and colors
-  const catIcons = { 
-    Weight: 'bi-graph-down-arrow', 
-    Cardio: 'bi-heart-pulse-fill', 
-    Strength: 'bi-lightning-fill', 
-    Nutrition: 'bi-egg-fried', 
-    Hydration: 'bi-droplet-fill', 
-    Steps: 'bi-footprint', 
-    Custom: 'bi-bullseye' 
-  };
-  const catColors = { 
-    Weight: 'cyan', 
-    Cardio: 'green', 
-    Strength: 'blue', 
-    Nutrition: 'yellow', 
-    Hydration: 'blue', 
-    Steps: 'green', 
-    Custom: 'cyan' 
-  };
-  
-  // Toast notification helper 
-  function showToast(message, type = 'success') {
-    let toastContainer = document.getElementById('toastContainer');
-    if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.id = 'toastContainer';
-      toastContainer.style.position = 'fixed';
-      toastContainer.style.bottom = '20px';
-      toastContainer.style.right = '20px';
-      toastContainer.style.zIndex = '1100';
-      document.body.appendChild(toastContainer);
-    }
-    const toastEl = document.createElement('div');
-    toastEl.className = `custom-toast ${type === 'error' ? 'toast-error' : 'toast-success'}`;
-    toastEl.innerHTML = `<i class="bi ${type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'} me-2"></i>${message}`;
-    toastContainer.appendChild(toastEl);
-    setTimeout(() => { toastEl.remove(); }, 2800);
-  }
-  
-  // RENDER GOALS
-  function renderGoals() {
-    const goals = Store.get('goals');
-    const total = goals.length;
-    const completed = goals.filter(g => parseFloat(g.current) >= parseFloat(g.target)).length;
-    const inProgress = total - completed;
+  <script>
+    // Helper: localStorage wrapper for goals page
+    const GoalStore = {
+      get: (key) => {
+        const item = localStorage.getItem('fitly_' + key);
+        return item ? JSON.parse(item) : [];
+      },
+      set: (key, data) => {
+        localStorage.setItem('fitly_' + key, JSON.stringify(data));
+      }
+    };
+
     
-    // Update summary stat cards (DOM manipulation: textContent)
-    document.getElementById('totalGoals').textContent = total;
-    document.getElementById('completedGoals').textContent = completed;
-    document.getElementById('inProgressGoals').textContent = inProgress;
-    
-    // Dynamic greeting based on goals count
-    const greetingMsg = document.getElementById('greetingMsg');
-    if (greetingMsg) {
-      if (total === 0) greetingMsg.textContent = 'Start by adding your first fitness goal ';
-      else if (completed === total && total > 0) greetingMsg.textContent = 'Amazing! All goals achieved! 🏆 Set new challenges.';
-      else greetingMsg.textContent = 'Define targets and track your progress';
+
+    // Category mapping for icons and colors
+    const catIcons = {
+      Weight: 'bi-graph-down-arrow',
+      Cardio: 'bi-heart-pulse-fill',
+      Strength: 'bi-lightning-fill',
+      Nutrition: 'bi-egg-fried',
+      Hydration: 'bi-droplet-fill',
+      Steps: 'bi-footprint',
+      Custom: 'bi-bullseye'
+    };
+    const catColors = {
+      Weight: 'cyan',
+      Cardio: 'green',
+      Strength: 'blue',
+      Nutrition: 'yellow',
+      Hydration: 'blue',
+      Steps: 'green',
+      Custom: 'cyan'
+    };
+
+    // Toast notification helper 
+    function showToast(message, type = 'success') {
+      let toastContainer = document.getElementById('toastContainer');
+      if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toastContainer';
+        toastContainer.style.position = 'fixed';
+        toastContainer.style.bottom = '20px';
+        toastContainer.style.right = '20px';
+        toastContainer.style.zIndex = '1100';
+        document.body.appendChild(toastContainer);
+      }
+      const toastEl = document.createElement('div');
+      toastEl.className = `custom-toast ${type === 'error' ? 'toast-error' : 'toast-success'}`;
+      toastEl.innerHTML = `<i class="bi ${type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'} me-2"></i>${message}`;
+      toastContainer.appendChild(toastEl);
+      setTimeout(() => { toastEl.remove(); }, 2800);
     }
-    
-    // If no goals: show empty state with button 
-    if (total === 0) {
-      document.getElementById('goalsGrid').innerHTML = `
+
+    // RENDER GOALS
+    function renderGoals() {
+      const goals = GoalStore.get('goals');
+      const total = goals.length;
+      const completed = goals.filter(g => parseFloat(g.current) >= parseFloat(g.target)).length;
+      const inProgress = total - completed;
+
+      // Update summary stat cards (DOM manipulation: textContent)
+      document.getElementById('totalGoals').textContent = total;
+      document.getElementById('completedGoals').textContent = completed;
+      document.getElementById('inProgressGoals').textContent = inProgress;
+
+      // Dynamic greeting based on goals count
+      const greetingMsg = document.getElementById('greetingMsg');
+      if (greetingMsg) {
+        if (total === 0) greetingMsg.textContent = 'Start by adding your first fitness goal ';
+        else if (completed === total && total > 0) greetingMsg.textContent = 'Amazing! All goals achieved! 🏆 Set new challenges.';
+        else greetingMsg.textContent = 'Define targets and track your progress';
+      }
+
+      // If no goals: show empty state with button 
+      if (total === 0) {
+        document.getElementById('goalsGrid').innerHTML = `
         <div class="col-12">
           <div class="card-custom text-center" style="padding: 3rem;">
             <i class="bi bi-bullseye" style="font-size: 2.5rem; color: var(--text-muted);"></i>
@@ -288,30 +282,30 @@
             </button>
           </div>
         </div>`;
-      return;
-    }
-    
-    const html = goals.map(g => {
-      const currentVal = parseFloat(g.current);
-      const targetVal = parseFloat(g.target);
-      let pct = targetVal > 0 ? Math.min(100, Math.round((currentVal / targetVal) * 100)) : 0;
-      const done = currentVal >= targetVal;
-      const color = catColors[g.category] || 'cyan';
-      const icon = catIcons[g.category] || 'bi-bullseye';
-      let daysLeft = null;
-      if (g.deadline) {
-        const deadlineDate = new Date(g.deadline);
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        const diffTime = deadlineDate - today;
-        daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return;
       }
-      // Conditional badge styling based on completion
-      const statusBadge = done 
-        ? '<span class="badge-custom badge-green"><i class="bi bi-check2 me-1"></i>Done</span>' 
-        : `<span class="badge-custom badge-cyan">${pct}%</span>`;
-      
-      return `
+
+      const html = goals.map(g => {
+        const currentVal = parseFloat(g.current);
+        const targetVal = parseFloat(g.target);
+        let pct = targetVal > 0 ? Math.min(100, Math.round((currentVal / targetVal) * 100)) : 0;
+        const done = currentVal >= targetVal;
+        const color = catColors[g.category] || 'cyan';
+        const icon = catIcons[g.category] || 'bi-bullseye';
+        let daysLeft = null;
+        if (g.deadline) {
+          const deadlineDate = new Date(g.deadline);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const diffTime = deadlineDate - today;
+          daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+        // Conditional badge styling based on completion
+        const statusBadge = done
+          ? '<span class="badge-custom badge-green"><i class="bi bi-check2 me-1"></i>Done</span>'
+          : `<span class="badge-custom badge-cyan">${pct}%</span>`;
+
+        return `
       <div class="col-md-6 col-lg-4">
         <div class="card-custom" style="${done ? 'border-color: var(--success);' : ''}">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 1rem;">
@@ -335,127 +329,129 @@
           </button>` : '<button class="btn-ghost w-100" disabled style="opacity:0.5; cursor:not-allowed;">Achieved ✓</button>'}
         </div>
       </div>`;
-    }).join('');
-    document.getElementById('goalsGrid').innerHTML = html;
-  }
-  
-  // XSS prevention helper
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
-  }
-  
-  //POST ROUTE SIMULATION
-  function saveGoal() {
-    const title = document.getElementById('gTitle').value.trim();
-    const target = parseFloat(document.getElementById('gTarget').value);
-    const current = parseFloat(document.getElementById('gCurrent').value) || 0;
-    if (!title || isNaN(target)) {
-      showToast('Please fill in Title and Target value.', 'error');
-      return;
+      }).join('');
+      document.getElementById('goalsGrid').innerHTML = html;
     }
-    if (target <= 0) {
-      showToast('Target must be greater than 0.', 'error');
-      return;
+
+    // XSS prevention helper
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>]/g, function (m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      });
     }
-    const goals = Store.get('goals');
-    const newGoal = {
-      id: Date.now(),
-      title: title,
-      category: document.getElementById('gCategory').value,
-      current: current,
-      target: target,
-      unit: document.getElementById('gUnit').value.trim(),
-      deadline: document.getElementById('gDeadline').value || ''
-    };
-    goals.push(newGoal);
-    Store.set('goals', goals);
-    // Close modal and reset form
-    const modal = bootstrap.Modal.getInstance(document.getElementById('addGoalModal'));
-    if (modal) modal.hide();
-    document.getElementById('goalForm').reset();
-    renderGoals();
-    showToast(`Goal "${title}" created successfully!`);
-  }
-  
-  // UPDATE PROGRESS
-  function openUpdate(id, title, current) {
-    document.getElementById('updateId').value = id;
-    document.getElementById('updateLabel').innerHTML = `Current value for: <strong>${escapeHtml(title)}</strong>`;
-    document.getElementById('updateValue').value = current;
-    new bootstrap.Modal(document.getElementById('updateModal')).show();
-  }
-  
-  function saveUpdate() {
-    const id = parseInt(document.getElementById('updateId').value);
-    const newVal = parseFloat(document.getElementById('updateValue').value);
-    if (isNaN(newVal)) {
-      showToast('Please enter a valid number.', 'error');
-      return;
-    }
-    let goals = Store.get('goals');
-    const updatedGoals = goals.map(g => {
-      if (g.id === id) {
-        return { ...g, current: newVal };
+
+    //POST ROUTE SIMULATION
+    function saveGoal(e) {
+      if (e) e.preventDefault();
+      const title = document.getElementById('gTitle').value.trim();
+      const target = parseFloat(document.getElementById('gTarget').value);
+      const current = parseFloat(document.getElementById('gCurrent').value) || 0;
+      if (!title || isNaN(target)) {
+        showToast('Please fill in Title and Target value.', 'error');
+        return;
       }
-      return g;
-    });
-    Store.set('goals', updatedGoals);
-    const modal = bootstrap.Modal.getInstance(document.getElementById('updateModal'));
-    if (modal) modal.hide();
-    renderGoals();
-    showToast('Progress updated! Keep pushing 💪');
-  }
-  
-  // DELETE GOAL 
-  function deleteGoal(id) {
-    if (!confirm('Are you sure you want to delete this goal?')) return;
-    const goals = Store.get('goals');
-    const newGoals = goals.filter(g => g.id !== id);
-    Store.set('goals', newGoals);
-    renderGoals();
-    showToast('Goal removed.', 'error');
-  }
-  
-  document.addEventListener('DOMContentLoaded', () => {
-    renderGoals();
-    
-    const statCards = document.querySelectorAll('.card-stat');
-    statCards.forEach(card => {
-      card.addEventListener('mouseenter', () => {
-        card.style.transform = 'translateY(-4px)';
-        card.style.transition = 'all 0.2s ease';
-      });
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'translateY(0)';
-      });
-    });
-    
-    // clear form modal when opened
-    const addModal = document.getElementById('addGoalModal');
-    if (addModal) {
-      addModal.addEventListener('hidden.bs.modal', () => {
-        document.getElementById('goalForm').reset();
-      });
+      if (target <= 0) {
+        showToast('Target must be greater than 0.', 'error');
+        return;
+      }
+      const goals = GoalStore.get('goals');
+      const newGoal = {
+        id: Date.now(),
+        title: title,
+        category: document.getElementById('gCategory').value,
+        current: current,
+        target: target,
+        unit: document.getElementById('gUnit').value.trim(),
+        deadline: document.getElementById('gDeadline').value || ''
+      };
+      goals.push(newGoal);
+      GoalStore.set('goals', goals);
+      // Close modal and reset form
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('addGoalModal')).hide();
+      document.getElementById('goalForm').reset();
+      renderGoals();
+      showToast(`Goal "${title}" created successfully!`);
     }
-    
-    console.log('Goals page initialized (Lecture 04,05,06a,07 concepts applied)');
-  });
-  
-  // Expose global functions for onclick handlers
-  window.saveGoal = saveGoal;
-  window.openUpdate = openUpdate;
-  window.saveUpdate = saveUpdate;
-  window.deleteGoal = deleteGoal;
-  window.renderGoals = renderGoals;
-  
-  // Initial render
-  renderGoals();
-</script>
+
+    // UPDATE PROGRESS
+    function openUpdate(id, title, current) {
+      document.getElementById('updateId').value = id;
+      document.getElementById('updateLabel').innerHTML = `Current value for: <strong>${escapeHtml(title)}</strong>`;
+      document.getElementById('updateValue').value = current;
+      new bootstrap.Modal(document.getElementById('updateModal')).show();
+    }
+
+    function saveUpdate() {
+      const id = parseInt(document.getElementById('updateId').value);
+      const newVal = parseFloat(document.getElementById('updateValue').value);
+      if (isNaN(newVal)) {
+        showToast('Please enter a valid number.', 'error');
+        return;
+      }
+      let goals = GoalStore.get('goals');
+      const updatedGoals = goals.map(g => {
+        if (g.id === id) {
+          return { ...g, current: newVal };
+        }
+        return g;
+      });
+      GoalStore.set('goals', updatedGoals);
+      const modal = bootstrap.Modal.getInstance(document.getElementById('updateModal'));
+      if (modal) modal.hide();
+      renderGoals();
+      showToast('Progress updated! Keep pushing 💪');
+    }
+
+    // DELETE GOAL 
+    function deleteGoal(id) {
+      if (!confirm('Are you sure you want to delete this goal?')) return;
+      const goals = GoalStore.get('goals');
+      const newGoals = goals.filter(g => g.id !== id);
+      GoalStore.set('goals', newGoals);
+      renderGoals();
+      showToast('Goal removed.', 'error');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderGoals();
+
+      const statCards = document.querySelectorAll('.card-stat');
+      statCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          card.style.transform = 'translateY(-4px)';
+          card.style.transition = 'all 0.2s ease';
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'translateY(0)';
+        });
+      });
+
+      // clear form modal when opened
+      const addModal = document.getElementById('addGoalModal');
+      if (addModal) {
+        addModal.addEventListener('hidden.bs.modal', () => {
+          document.getElementById('goalForm').reset();
+        });
+      }
+
+      console.log('Goals page initialized (Lecture 04,05,06a,07 concepts applied)');
+    });
+
+    // Expose global functions for onclick handlers
+    window.saveGoal = saveGoal;
+    window.openUpdate = openUpdate;
+    window.saveUpdate = saveUpdate;
+    window.deleteGoal = deleteGoal;
+    window.renderGoals = renderGoals;
+
+    // Initial render
+    renderGoals();
+  </script>
+
 </body>
+
 </html>
