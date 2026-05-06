@@ -254,7 +254,13 @@
     function renderGoals() {
       const goals = GoalStore.get('goals');
       const total = goals.length;
-      const completed = goals.filter(g => parseFloat(g.current) >= parseFloat(g.target)).length;
+      const completed = goals.filter(g => {
+        const cur = parseFloat(g.current);
+        const tar = parseFloat(g.target);
+        const start = parseFloat(g.start) || 0;
+        if (tar < start) return cur <= tar; // Reduction goal
+        return cur >= tar; // Increase goal
+      }).length;
       const inProgress = total - completed;
 
       // Update summary stat cards (DOM manipulation: textContent)
@@ -288,8 +294,21 @@
       const html = goals.map(g => {
         const currentVal = parseFloat(g.current);
         const targetVal = parseFloat(g.target);
-        let pct = targetVal > 0 ? Math.min(100, Math.round((currentVal / targetVal) * 100)) : 0;
-        const done = currentVal >= targetVal;
+        const startVal = parseFloat(g.start) || 0;
+        let pct = 0;
+        if (targetVal !== startVal) {
+          if (targetVal < startVal) {
+            // Reduction goal progress: (start - current) / (start - target)
+            pct = Math.max(0, Math.min(100, Math.round(((startVal - currentVal) / (startVal - targetVal)) * 100)));
+          } else {
+            // Increase goal progress: (current - start) / (target - start)
+            // Or simpler for increase: current / target if start is 0
+            pct = Math.max(0, Math.min(100, Math.round(((currentVal - startVal) / (targetVal - startVal)) * 100)));
+          }
+        } else if (currentVal >= targetVal) {
+          pct = 100;
+        }
+        const done = targetVal < startVal ? currentVal <= targetVal : currentVal >= targetVal;
         const color = catColors[g.category] || 'cyan';
         const icon = catIcons[g.category] || 'bi-bullseye';
         let daysLeft = null;
@@ -364,6 +383,7 @@
         title: title,
         category: document.getElementById('gCategory').value,
         current: current,
+        start: current, // Store starting value to determine direction
         target: target,
         unit: document.getElementById('gUnit').value.trim(),
         deadline: document.getElementById('gDeadline').value || ''
