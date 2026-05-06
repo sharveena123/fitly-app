@@ -257,29 +257,8 @@
 <script src="../js/main.js"></script>
 
 <script>
-  // Helper: get today's date in YYYY-MM-DD format
-  function todayStr() {
-    const d = new Date();
-    return d.toISOString().split('T')[0];
-  }
-  
-  // Helper: format date for display 
-  function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const parts = dateStr.split('-');
-    if (parts.length !== 3) return dateStr;
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-  }
-  
-  // using localStorage to store user fitness data (workouts, meals, goals, water)
-  const Store = {
-    get: (key) => JSON.parse(localStorage.getItem(key)) || [],
-    set: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
-    getObj: (key, defaultVal) => {
-      const item = localStorage.getItem(key);
-      return item ? JSON.parse(item) : defaultVal;
-    }
-  };
+  // using the global Store from main.js (which uses 'fitly_' prefix)
+
   
   // Initialize sample data if empty to demonstrate dynamic content
   if (Store.get('workouts').length === 0) {
