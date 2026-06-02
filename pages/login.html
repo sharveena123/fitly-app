@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — Fitly</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+
+  <div class="hero-grid-bg" style="position:fixed; inset:0; pointer-events:none;"></div>
+  <div
+    style="position:fixed; width:500px; height:500px; background: radial-gradient(circle, rgba(0,207,255,0.06) 0%, transparent 70%); top:-100px; left:-100px; pointer-events:none;">
+  </div>
+
+  <nav style="padding: 1.25rem 0; border-bottom: 1px solid var(--border); position: relative; z-index: 10;">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a href="../index.html"
+        style="font-family: 'Poppins', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--primary); text-decoration: none;">Fit<span
+          style="color: var(--white);">ly</span></a>
+      <span style="font-size: 0.875rem; color: var(--text-muted);">Don't have an account? <a href="register.html"
+          style="color: var(--primary); text-decoration: none; font-weight: 500;">Sign up</a></span>
+    </div>
+  </nav>
+
+  <div class="auth-wrapper" style="position: relative; z-index: 10;">
+    <div class="auth-card">
+      <div class="auth-logo">Welcome back</div>
+      <p class="auth-tagline">Sign in to continue tracking your fitness journey</p>
+
+      <div id="loginAlert" style="display:none;" class="alert-custom warning mb-3">
+        <i class="bi bi-exclamation-circle me-2"></i><span id="loginAlertMsg"></span>
+      </div>
+
+      <form id="loginForm">
+        <div class="mb-3">
+          <label class="form-label-custom">Email Address</label>
+          <input type="email" id="loginEmail" class="form-control-custom" placeholder="you@example.com" required />
+          <div class="field-error" style="display:none; font-size:0.75rem; color:var(--danger); margin-top:4px;">Please
+            enter a valid email.</div>
+        </div>
+
+        <div class="mb-4">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label-custom" style="margin-bottom:0;">Password</label>
+            <a href="resetPassword.html" style="font-size: 0.8rem; color: var(--primary); text-decoration: none;">Forgot
+              password?</a>
+          </div>
+          <div style="position: relative;">
+            <input type="password" id="loginPassword" class="form-control-custom" placeholder="••••••••" required
+              style="padding-right: 40px;" />
+            <button type="button" onclick="togglePass('loginPassword', 'toggleIcon1')"
+              style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; padding:0;">
+              <i class="bi bi-eye" id="toggleIcon1" style="font-size: 1rem;"></i>
+            </button>
+          </div>
+          <div class="field-error" style="display:none; font-size:0.75rem; color:var(--danger); margin-top:4px;">Please
+            enter your password.</div>
+        </div>
+
+        <div class="mb-4 d-flex align-items-center gap-2">
+          <input type="checkbox" id="rememberMe" style="accent-color: var(--primary); width: 16px; height: 16px;" />
+          <label for="rememberMe" style="font-size: 0.875rem; color: var(--text-secondary); cursor: pointer;">Remember
+            me</label>
+        </div>
+
+        <button type="submit" class="btn-primary-custom w-100" style="padding: 12px; font-size: 0.95rem;">
+          Sign In <i class="bi bi-arrow-right ms-2"></i>
+        </button>
+      </form>
+
+      <div style="display: flex; align-items: center; gap: 12px; margin: 1.5rem 0;">
+        <div style="flex: 1; height: 1px; background: var(--border);"></div>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">OR</span>
+        <div style="flex: 1; height: 1px; background: var(--border);"></div>
+      </div>
+
+      <button type="button" onclick="loginDemoUser()" class="btn-primary-custom w-100"
+        style="padding: 12px; font-size: 0.95rem;">
+        <i class="bi bi-play-fill me-2"></i> Continue as Demo User
+      </button>
+
+      <p style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-muted);">
+        New to Fitly? <a href="register.html"
+          style="color: var(--primary); text-decoration: none; font-weight: 500;">Create an account</a>
+      </p>
+    </div>
+  </div>
+
+  <footer class="footer" style="margin-top: 2rem; position: relative; z-index: 10;">
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="footer-brand">Fitly</div>
+        <span style="color: var(--text-muted);">&copy; 2026 Fitly. WIF2003 Group Project.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/main.js"></script>
+
+  <script>
+    // password show/hide toggle
+    function togglePass(inputId, iconId) {
+      const inp = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+      } else {
+        inp.type = 'password';
+        icon.className = 'bi bi-eye';
+      }
+    }
+
+    // form validation helper
+    function validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOMContentLoaded fired');
+
+      // setup login form
+      const loginForm = document.getElementById('loginForm');
+      if (loginForm) {
+        
+        // backend login request handler
+        loginForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const email = document.getElementById('loginEmail').value.trim();
+          const password = document.getElementById('loginPassword').value;
+          const rememberMe = document.getElementById('rememberMe').checked;
+
+          let isValid = true;
+          const emailError = document.querySelector('#loginEmail').closest('.mb-3').querySelector('.field-error');
+          const passError = document.querySelector('#loginPassword').closest('.mb-4').querySelector('.field-error');
+
+          if (!email || !validateEmail(email)) {
+            emailError.style.display = 'block';
+            isValid = false;
+          } else {
+            emailError.style.display = 'none';
+          }
+
+          if (!password || password.length < 3) {
+            passError.style.display = 'block';
+            isValid = false;
+          } else {
+            passError.style.display = 'none';
+          }
+
+          if (!isValid) return;
+
+          const alertBox = document.getElementById('loginAlert');
+          const alertMsg = document.getElementById('loginAlertMsg');
+
+          try {
+            // send the email and password to the express backend server
+            const response = await fetch('http://localhost:3000/api/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, password })
+            });
+
+            // read the JSON data returned from the server
+            const result = await response.json();
+
+            // if login fails, show the error message from the backend
+            if (!result.success) {
+              alertBox.style.display = 'block';
+              alertMsg.textContent = result.message;
+              document.getElementById('loginPassword').value = '';
+              return;
+            }
+
+            // hide alert if login is successful
+            alertBox.style.display = 'none';
+            
+            // save the login token from the backend into browser storage
+            localStorage.setItem('token', result.token);
+
+            // packages the live server data to sync with the offline pages
+            const frontendProfileObj = {
+              name: result.user.name,       // Dynamic name from registration
+              email: result.user.email,     // Dynamic email
+              age: result.user.age,         // Dynamic age
+              weight: result.user.weight,   // Dynamic weight
+              height: result.user.height,   // Dynamic height
+              goal: result.user.goal,       // Dynamic goal
+              photo: "" 
+            };
+            
+            // inject into standard frontend keys so profile.html can render normally
+            localStorage.setItem('fitly_profile', JSON.stringify(frontendProfileObj));
+            localStorage.setItem('fitly_currentUser', JSON.stringify({ email: result.user.email }));
+
+            if (rememberMe) {
+              localStorage.setItem('fitly_remember_token', email);
+            } else {
+              localStorage.removeItem('fitly_remember_token');
+            }
+
+            // success alert and redirect the user to the dashboard page
+            alert('Login successful! Redirecting...');
+            setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
+
+          } catch (err) {
+            // error message if the frontend cannot connect to the backend server
+            alertBox.style.display = 'block';
+            alertMsg.textContent = 'Server connection failed. Is your backend server up?';
+          }
+        });
+      }
+
+      // auto fill remembered user
+      const currentUser = localStorage.getItem('token');
+      if (currentUser) {
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
+        return;
+      }
+
+      const rememberToken = localStorage.getItem('fitly_remember_token');
+      if (rememberToken && !currentUser) {
+        const emailField = document.getElementById('loginEmail');
+        if (emailField) emailField.value = rememberToken;
+      }
+
+      // real-time validation
+      const emailInput = document.getElementById('loginEmail');
+      const passwordInput = document.getElementById('loginPassword');
+
+      if (emailInput) {
+        emailInput.addEventListener('input', function () {
+          const errorDiv = this.closest('.mb-3').querySelector('.field-error');
+          if (this.value.trim() && validateEmail(this.value.trim())) {
+            errorDiv.style.display = 'none';
+          }
+          document.getElementById('loginAlert').style.display = 'none';
+        });
+      }
+
+      if (passwordInput) {
+        passwordInput.addEventListener('input', function () {
+          const errorDiv = this.closest('.mb-4').querySelector('.field-error');
+          if (this.value && this.value.length >= 3) {
+            errorDiv.style.display = 'none';
+          }
+          document.getElementById('loginAlert').style.display = 'none';
+        });
+      }
+
+      console.log('Login page initialized');
+    });
+
+    window.togglePass = togglePass;
+  </script>
+</body>
+
+</html>
