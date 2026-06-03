@@ -6,8 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Workout Tracker - Fitly</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 
@@ -49,7 +48,7 @@
 
   <script src="../js/main.js"></script>
   <script>
-    // update navbar auth state on page load
+    // Update navbar auth state on page load
     document.addEventListener('DOMContentLoaded', function () {
       updateNavbarAuthState();
     });
@@ -264,7 +263,7 @@
 
     var intensityCalMap = { low: 4, moderate: 7, high: 10 };
 
-    // save workout data in local storage when user submits quick workout form
+    //save workout data in local storage when user submits quick workout form
     document.getElementById('quickWorkoutForm').addEventListener('submit', function (event) {
       event.preventDefault();
 
@@ -306,7 +305,7 @@
     document.getElementById('filterType').addEventListener('change', renderWorkouts);
     document.getElementById('filterDate').addEventListener('change', renderWorkouts);
 
-    // render the workout table
+    //render the workout table
     function renderWorkouts() {
       var workouts = Store.get('workouts');
       var filterType = document.getElementById('filterType').value;
@@ -370,6 +369,7 @@
     }
 
     // fetch API handler linking frontend context variables directly to Express AI engine
+    // update API handler linking frontend context variables directly to Express AI engine
     async function updateAIRecommendation(totalMinutesToday) {
       const displayField = document.getElementById('aiRecommendationText');
       
@@ -395,7 +395,7 @@
           
           // dynamically mirror workout table's native badge design tokens
           let intensityBadgeClass = "badge-yellow"; 
-          const intensityLower = rec.intensityLevel.toLowerCase();
+          const intensityLower = rec.intensityLevel ? rec.intensityLevel.toLowerCase() : '';
           
           if (intensityLower.includes('high')) {
             intensityBadgeClass = "badge-red";
@@ -403,7 +403,7 @@
             intensityBadgeClass = "badge-green";
           }
 
-          // form fields
+          // Renders properly without the escaping backslashes
           displayField.innerHTML = `
             <div class="row g-3 mb-3">
               <div class="col-6">
@@ -437,7 +437,7 @@
       }
     }
 
-    // delete a workout record after user confirmation
+    //delete a workout record after user confirmation
     function deleteWorkout(id) {
       if (confirm('Delete this workout?') === false) {
         return;

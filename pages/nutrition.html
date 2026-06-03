@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,345 +9,669 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
+
 <body>
-
-<nav class="navbar navbar-expand-lg">
-  <div class="container">
-    <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#fitlyNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="fitlyNav">
-      <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
-        <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="workout.html">Workout</a></li>
-        <li class="nav-item"><a class="nav-link active" href="nutrition.html">Nutrition</a></li>
-        <li class="nav-item"><a class="nav-link" href="goals.html">Goals</a></li>
-        <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
-        <li class="nav-item ms-2">
-          <a class="btn-primary-custom" href="login.html" style="padding: 8px 18px; font-size: 0.8rem;">Sign In</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
-
-  <div class="page-header">
-    <h1 class="page-title">Nutrition Log</h1>
-    <p class="page-subtitle">Track your meals, calories and macronutrients</p>
-  </div>
-
-  <!-- Daily Summary -->
-  <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-      <div class="card-stat">
-        <div class="stat-icon cyan"><i class="bi bi-fire"></i></div>
-        <div class="stat-label">Calories Today</div>
-        <div class="stat-value" id="todayCal">0</div>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#fitlyNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="fitlyNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+          <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="workout.html">Workout</a></li>
+          <li class="nav-item"><a class="nav-link active" href="nutrition.html">Nutrition</a></li>
+          <li class="nav-item"><a class="nav-link" href="goals.html">Goals</a></li>
+          <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+          <li class="nav-item dropdown ms-1">
+            <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false" style="position: relative;">
+              <i class="bi bi-bell-fill"></i>
+              <span class="badge bg-danger rounded-pill"
+                style="font-size: 0.55rem; position: absolute; top: 0px; right: 0px;">3</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="notificationDropdown"
+              style="min-width: 200px;">
+              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">New workout available!</a></li>
+              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">You hit your step goal.</a></li>
+              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">Don't forget to log lunch.</a></li>
+            </ul>
+          </li>
+          <li class="nav-item ms-2">
+            <a class="btn-primary-custom" href="login.html" style="padding: 8px 18px; font-size: 0.8rem;">Sign In</a>
+          </li>
+        </ul>
       </div>
     </div>
-    <div class="col-6 col-md-3">
-      <div class="card-stat">
-        <div class="stat-icon blue"><i class="bi bi-virus"></i></div>
-        <div class="stat-label">Carbs (g)</div>
-        <div class="stat-value" id="todayCarbs">0</div>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="card-stat">
-        <div class="stat-icon green"><i class="bi bi-heart-fill"></i></div>
-        <div class="stat-label">Protein (g)</div>
-        <div class="stat-value" id="todayProtein">0</div>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
-      <div class="card-stat">
-        <div class="stat-icon yellow"><i class="bi bi-droplet-half"></i></div>
-        <div class="stat-label">Fat (g)</div>
-        <div class="stat-value" id="todayFat">0</div>
-      </div>
-    </div>
-  </div>
+  </nav>
 
-  <!-- Calorie Progress -->
-  <div class="card-custom mb-4">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <div class="section-title" style="margin-bottom:0;">Daily Calorie Goal</div>
-      <span style="font-size: 0.875rem; color: var(--text-secondary);"><span id="calProgress">0</span> / <span id="calGoal">2000</span> kcal</span>
-    </div>
-    <div class="progress-custom" style="height: 8px;">
-      <div class="progress-bar-custom" id="calBar" style="width: 0%;"></div>
-    </div>
-    <div id="calAlert" style="margin-top: 8px;"></div>
-  </div>
+  <script src="../js/main.js"></script>
+  <script>
+    // update navbar auth state on page load
+    document.addEventListener('DOMContentLoaded', function () {
+      updateNavbarAuthState();
+    });
+  </script>
 
-  <div class="row g-4">
-    <!-- Log Meal Form -->
-    <div class="col-lg-4">
-      <div class="card-custom">
-        <div class="section-title">Log a Meal</div>
-        <form id="mealForm">
-          <div class="mb-3">
-            <label class="form-label-custom">Food Name *</label>
-            <input type="text" id="mFoodName" class="form-control-custom" placeholder="e.g. Nasi Lemak" required />
-          </div>
-          <div class="mb-3">
-            <label class="form-label-custom">Meal Type *</label>
-            <select id="mMealType" class="form-select-custom" required>
-              <option value="">Select meal</option>
-              <option>Breakfast</option>
-              <option>Lunch</option>
-              <option>Dinner</option>
-              <option>Snack</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label-custom">Calories (kcal) *</label>
-            <input type="number" id="mCalories" class="form-control-custom" placeholder="e.g. 450" min="0" required />
-          </div>
-          <div class="row g-2 mb-3">
-            <div class="col-4">
-              <label class="form-label-custom">Carbs (g)</label>
-              <input type="number" id="mCarbs" class="form-control-custom" placeholder="50" min="0" />
+  <main class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <div class="page-header">
+      <h1 class="page-title">Nutrition Log</h1>
+      <p class="page-subtitle">Track your meals, calories and macronutrients</p>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="card-stat">
+          <div class="stat-icon cyan"><i class="bi bi-fire"></i></div>
+          <div class="stat-label">Calories Today</div>
+          <div class="stat-value" id="todayCal">0</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card-stat">
+          <div class="stat-icon blue"><i class="bi bi-virus"></i></div>
+          <div class="stat-label">Carbs (g)</div>
+          <div class="stat-value" id="todayCarbs">0</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card-stat">
+          <div class="stat-icon green"><i class="bi bi-heart-fill"></i></div>
+          <div class="stat-label">Protein (g)</div>
+          <div class="stat-value" id="todayProtein">0</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card-stat">
+          <div class="stat-icon yellow"><i class="bi bi-droplet-half"></i></div>
+          <div class="stat-label">Fat (g)</div>
+          <div class="stat-value" id="todayFat">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-custom mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="section-title" style="margin-bottom:0;">Daily Calorie Goal</div>
+        <span><span id="calProgress">0</span> / <span id="calGoal">2000</span> kcal</span>
+      </div>
+      <div class="progress-custom" style="height: 8px;">
+        <div class="progress-bar-custom" id="calBar" style="width: 0%;"></div>
+      </div>
+      <div id="calAlert" style="margin-top: 8px;"></div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="card-custom">
+          <div class="section-title">Log a Meal</div>
+          <form id="mealForm">
+            <div class="mb-3">
+              <label class="form-label-custom" for="mFoodName">Food Name *</label>
+              <div class="d-flex gap-2">
+                <input type="text" id="mFoodName" class="form-control-custom" placeholder="e.g. Nasi Lemak" required />
+                <button type="button" class="btn-outline-custom" onclick="openFoodSearch()" title="Search Foods"><i class="bi bi-search"></i></button>
+              </div>
             </div>
-            <div class="col-4">
-              <label class="form-label-custom">Protein (g)</label>
-              <input type="number" id="mProtein" class="form-control-custom" placeholder="20" min="0" />
+            <div class="mb-3">
+              <label class="form-label-custom" for="mMealType">Meal Type *</label>
+              <select id="mMealType" class="form-select-custom" required>
+                <option value="">Select meal</option>
+                <option>Breakfast</option>
+                <option>Lunch</option>
+                <option>Dinner</option>
+                <option>Snack</option>
+              </select>
             </div>
-            <div class="col-4">
-              <label class="form-label-custom">Fat (g)</label>
-              <input type="number" id="mFat" class="form-control-custom" placeholder="15" min="0" />
+            <div class="mb-3">
+              <label class="form-label-custom" for="mCalories">Calories (kcal) *</label>
+              <input type="number" id="mCalories" class="form-control-custom" placeholder="e.g. 450" min="0" required />
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-4">
+                <label class="form-label-custom" for="mCarbs">Carbs (g)</label>
+                <input type="number" id="mCarbs" class="form-control-custom" placeholder="50" min="0" />
+              </div>
+              <div class="col-4">
+                <label class="form-label-custom" for="mProtein">Protein (g)</label>
+                <input type="number" id="mProtein" class="form-control-custom" placeholder="20" min="0" />
+              </div>
+              <div class="col-4">
+                <label class="form-label-custom" for="mFat">Fat (g)</label>
+                <input type="number" id="mFat" class="form-control-custom" placeholder="15" min="0" />
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="form-label-custom" for="mDate">Date *</label>
+              <input type="date" id="mDate" class="form-control-custom" required />
+            </div>
+            <button type="submit" class="btn-primary-custom w-100">Add Meal</button>
+          </form>
+        </div>
+
+        <div class="card-custom mt-3">
+          <div class="section-title">Water Intake</div>
+          <div class="text-center mb-3">
+            <div class="stat-value" style="font-family: 'Poppins', sans-serif; font-size: 2.5rem; font-weight: 700; color: var(--primary);" id="waterCount">0</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">glasses of water today</div>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn-primary-custom flex-fill" onclick="changeWater(1)">
+              <i class="bi bi-plus-lg"></i> Add Glass
+            </button>
+            <button class="btn-ghost" onclick="changeWater(-1)">
+              <i class="bi bi-dash-lg"></i>
+            </button>
+          </div>
+          <div style="margin-top: 1rem;">
+            <div class="d-flex justify-content-between mb-1">
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Goal: 8 glasses</span>
+              <span style="font-size: 0.75rem; color: var(--primary);" id="waterPct">0%</span>
+            </div>
+            <div class="progress-custom">
+              <div class="progress-bar-custom" id="waterBar" style="width: 0%;"></div>
             </div>
           </div>
-          <div class="mb-4">
-            <label class="form-label-custom">Date *</label>
-            <input type="date" id="mDate" class="form-control-custom" required />
-          </div>
-          <button type="submit" class="btn-primary-custom w-100">Add Meal</button>
-        </form>
+        </div>
       </div>
 
-      <!-- Water tracker -->
-      <div class="card-custom mt-3">
-        <div class="section-title">Water Intake</div>
-        <div class="text-center mb-3">
-          <div style="font-family: 'Poppins', sans-serif; font-size: 2.5rem; font-weight: 700; color: var(--primary);" id="waterCount">0</div>
-          <div style="font-size: 0.8rem; color: var(--text-muted);">glasses of water today</div>
-        </div>
-        <div class="d-flex gap-2">
-          <button class="btn-primary-custom flex-fill" onclick="changeWater(1)">
-            <i class="bi bi-plus-lg"></i> Add Glass
-          </button>
-          <button class="btn-ghost" onclick="changeWater(-1)">
-            <i class="bi bi-dash-lg"></i>
-          </button>
-        </div>
-        <div style="margin-top: 1rem;">
-          <div class="d-flex justify-content-between mb-1">
-            <span style="font-size: 0.75rem; color: var(--text-muted);">Goal: 8 glasses</span>
-            <span style="font-size: 0.75rem; color: var(--primary);" id="waterPct">0%</span>
+      <div class="col-lg-8">
+        <div class="card-custom mb-4" style="padding: 0;">
+          <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+            <span class="section-title" style="margin-bottom: 0;">Meal History</span>
+            <input type="date" id="filterMealDate" class="form-control-custom" style="width: auto;" />
           </div>
-          <div class="progress-custom">
-            <div class="progress-bar-custom" id="waterBar" style="width: 0%;"></div>
+          <div id="mealGroups" style="padding: 1.25rem;">
+            <div style="color: var(--text-muted); font-size: 0.875rem; text-align: center; padding: 2rem;">No meals logged yet.</div>
+          </div>
+        </div>
+
+        <div class="card-custom">
+          <div class="section-title mb-3">Weekly Calorie Intake</div>
+          <div class="chart-container">
+            <canvas id="nutritionChart"></canvas>
           </div>
         </div>
       </div>
     </div>
+  </main>
 
-    <!-- Meal History -->
-    <div class="col-lg-8">
-      <div class="card-custom" style="padding: 0; margin-bottom: 1rem;">
-        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-          <span class="section-title" style="margin-bottom: 0;">Meal History</span>
-          <input type="date" id="filterMealDate" class="form-control-custom" style="width: auto;" onchange="renderMeals()" />
+  <div class="modal fade" id="foodSearchModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Search Common Foods</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div id="mealGroups" style="padding: 1.25rem;">
-          <div style="color: var(--text-muted); font-size: 0.875rem; text-align: center; padding: 2rem;">No meals logged yet.</div>
-        </div>
-      </div>
-
-      <!-- Nutrition Chart -->
-      <div class="card-custom">
-        <div class="section-title mb-3">Weekly Calorie Intake</div>
-        <div class="chart-container">
-          <canvas id="nutritionChart"></canvas>
+        <div class="modal-body">
+          <div class="mb-3">
+            <input type="text" id="foodSearchInput" class="form-control-custom" placeholder="Search for food..." onkeyup="searchFoods()" />
+          </div>
+          <div id="foodSearchResults" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<footer class="footer">
-  <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+  <div class="modal fade" id="editMealModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Meal</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editMealForm">
+            <input type="hidden" id="editMealId" />
+            <div class="mb-3">
+              <label class="form-label-custom" for="editMealFood">Food Name *</label>
+              <input type="text" id="editMealFood" class="form-control-custom" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label-custom" for="editMealType">Meal Type *</label>
+              <select id="editMealType" class="form-select-custom" required>
+                <option value="">Select type</option>
+                <option>Breakfast</option>
+                <option>Lunch</option>
+                <option>Dinner</option>
+                <option>Snack</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label-custom" for="editMealCalories">Calories (kcal) *</label>
+              <input type="number" id="editMealCalories" class="form-control-custom" min="0" required />
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-4">
+                <label class="form-label-custom" for="editMealCarbs">Carbs (g)</label>
+                <input type="number" id="editMealCarbs" class="form-control-custom" min="0" placeholder="0" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-custom" for="editMealProtein">Protein (g)</label>
+                <input type="number" id="editMealProtein" class="form-control-custom" min="0" placeholder="0" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-custom" for="editMealFat">Fat (g)</label>
+                <input type="number" id="editMealFat" class="form-control-custom" min="0" placeholder="0" />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label-custom" for="editMealDate">Date *</label>
+              <input type="date" id="editMealDate" class="form-control-custom" required />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer" style="gap: 10px;">
+          <button class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn-primary-custom" onclick="saveMealEdit()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
       <div class="footer-brand">Fitly</div>
-      <span style="color: var(--text-muted);">&copy; 2025 Fitly. WIF2003 Group Project.</span>
+      <span>&copy; 2026 Fitly. WIF2003 Group Project.</span>
     </div>
-  </div>
-</footer>
+  </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="../js/main.js"></script>
-<script>
-  document.getElementById('mDate').value = todayStr();
-
-  function updateTodaySummary() {
-    const meals = Store.get('meals').filter(m => m.date === todayStr());
-    const cal = meals.reduce((s, m) => s + (parseInt(m.calories) || 0), 0);
-    const carbs = meals.reduce((s, m) => s + (parseInt(m.carbs) || 0), 0);
-    const protein = meals.reduce((s, m) => s + (parseInt(m.protein) || 0), 0);
-    const fat = meals.reduce((s, m) => s + (parseInt(m.fat) || 0), 0);
-    document.getElementById('todayCal').textContent = cal;
-    document.getElementById('todayCarbs').textContent = carbs;
-    document.getElementById('todayProtein').textContent = protein;
-    document.getElementById('todayFat').textContent = fat;
-    const goal = 2000;
-    const pct = Math.min(100, Math.round((cal / goal) * 100));
-    document.getElementById('calProgress').textContent = cal;
-    document.getElementById('calGoal').textContent = goal;
-    document.getElementById('calBar').style.width = pct + '%';
-    if (pct >= 100) {
-      document.getElementById('calAlert').innerHTML = '<div class="alert-custom warning mt-2"><i class="bi bi-exclamation-triangle me-2"></i>You have reached your daily calorie goal!</div>';
-      document.getElementById('calBar').className = 'progress-bar-custom progress-bar-yellow';
-    } else {
-      document.getElementById('calAlert').innerHTML = '';
-      document.getElementById('calBar').className = 'progress-bar-custom';
-    }
-  }
-
-  document.getElementById('mealForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    const food = document.getElementById('mFoodName').value.trim();
-    const type = document.getElementById('mMealType').value;
-    const calories = parseInt(document.getElementById('mCalories').value);
-    const date = document.getElementById('mDate').value;
-    if (!food || !type || !calories || !date) { showToast('Fill in required fields.', 'error'); return; }
-    const meals = Store.get('meals');
-    meals.push({
-      id: Date.now(), food, type, calories, date,
-      carbs: parseInt(document.getElementById('mCarbs').value) || 0,
-      protein: parseInt(document.getElementById('mProtein').value) || 0,
-      fat: parseInt(document.getElementById('mFat').value) || 0
-    });
-    Store.set('meals', meals);
-    showToast('Meal logged!');
-    this.reset();
+  <script src="https://cdnjs.cloudflare.com/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script>
+    var nutritionChart = null;
     document.getElementById('mDate').value = todayStr();
-    updateTodaySummary();
-    renderMeals();
-  });
+    document.getElementById('filterMealDate').addEventListener('change', renderMeals);
 
-  function renderMeals() {
-    let meals = Store.get('meals');
-    const fd = document.getElementById('filterMealDate').value;
-    if (fd) meals = meals.filter(m => m.date === fd);
-    if (!meals.length) {
-      document.getElementById('mealGroups').innerHTML = '<div style="color: var(--text-muted); font-size: 0.875rem; text-align: center; padding: 2rem;">No meals logged.</div>';
-      return;
-    }
-    const types = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
-    const mealBadge = { Breakfast: 'badge-cyan', Lunch: 'badge-green', Dinner: 'badge-yellow', Snack: 'badge-red' };
-    let html = '';
-    types.forEach(type => {
-      const group = meals.filter(m => m.type === type);
-      if (!group.length) return;
-      const totalCal = group.reduce((s, m) => s + (m.calories || 0), 0);
-      html += `
-        <div style="margin-bottom: 1.5rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
-            <span class="badge-custom ${mealBadge[type] || 'badge-cyan'}">${type}</span>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">Total: ${totalCal} kcal</span>
-          </div>
-          ${group.reverse().map(m => `
-          <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 12px; background: var(--bg-dark); border-radius: var(--radius-sm); margin-bottom: 6px;">
-            <div>
-              <div style="font-size: 0.875rem; font-weight: 500; color: var(--text-primary);">${m.food}</div>
-              <div style="font-size: 0.75rem; color: var(--text-muted);">C:${m.carbs}g · P:${m.protein}g · F:${m.fat}g — ${formatDate(m.date)}</div>
-            </div>
-            <div style="display:flex; align-items:center; gap: 10px;">
-              <span style="color: var(--primary); font-weight: 600; font-size: 0.875rem;">${m.calories} kcal</span>
-              <button class="btn-ghost" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteMeal(${m.id})"><i class="bi bi-trash3"></i></button>
-            </div>
-          </div>`).join('')}
-        </div>`;
+    // handle meal form submission
+    document.getElementById('mealForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      var food = document.getElementById('mFoodName').value.trim();
+      var type = document.getElementById('mMealType').value;
+      var calories = parseInt(document.getElementById('mCalories').value);
+      var date = document.getElementById('mDate').value;
+
+      if (food === '' || type === '' || !calories || date === '') {
+        showToast('Fill in required fields.', 'error');
+        return;
+      }
+
+      // get meals from local storage
+      var meals = Store.get('meals');
+      meals.push({
+        id: Date.now(),
+        food: food,
+        type: type,
+        calories: calories,
+        date: date,
+        carbs: parseInt(document.getElementById('mCarbs').value) || 0,
+        protein: parseInt(document.getElementById('mProtein').value) || 0,
+        fat: parseInt(document.getElementById('mFat').value) || 0
+      });
+
+      Store.set('meals', meals);
+      showToast('Meal logged!');
+      this.reset();
+      document.getElementById('mDate').value = todayStr();
+      updateTodaySummary();
+      renderMeals();
+      drawNutritionChart();
     });
-    document.getElementById('mealGroups').innerHTML = html;
-  }
 
-  function deleteMeal(id) {
-    if (!confirm('Delete this meal?')) return;
-    Store.set('meals', Store.get('meals').filter(m => m.id !== id));
-    updateTodaySummary();
-    renderMeals();
-    showToast('Meal deleted.');
-  }
+    //Recalculate today's totals after adding or deleting meals.
+    function updateTodaySummary() {
+      var meals = Store.get('meals').filter(function (meal) {
+        return meal.date === todayStr();
+      });
+      var cal = 0;
+      var carbs = 0;
+      var protein = 0;
+      var fat = 0;
 
-  function updateWaterUI() {
-    const w = Store.getObj('water', { count: 0, date: '' });
-    const count = w.date === todayStr() ? w.count : 0;
-    document.getElementById('waterCount').textContent = count;
-    const pct = Math.min(100, Math.round((count / 8) * 100));
-    document.getElementById('waterBar').style.width = pct + '%';
-    document.getElementById('waterPct').textContent = pct + '%';
-  }
+      meals.forEach(function (meal) {
+        cal += meal.calories || 0;
+        carbs += meal.carbs || 0;
+        protein += meal.protein || 0;
+        fat += meal.fat || 0;
+      });
 
-  function changeWater(delta) {
-    const w = Store.getObj('water', { count: 0, date: '' });
-    const today = todayStr();
-    const count = (w.date === today ? w.count : 0) + delta;
-    Store.set('water', { count: Math.max(0, count), date: today });
-    updateWaterUI();
-  }
+      document.getElementById('todayCal').textContent = cal;
+      document.getElementById('todayCarbs').textContent = carbs;
+      document.getElementById('todayProtein').textContent = protein;
+      document.getElementById('todayFat').textContent = fat;
 
-  // Weekly chart
-  const days = [], calData = [];
-  const meals = Store.get('meals');
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const ds = d.toISOString().split('T')[0];
-    days.push(d.toLocaleDateString('en-MY', { weekday: 'short' }));
-    calData.push(meals.filter(m => m.date === ds).reduce((s, m) => s + (m.calories || 0), 0) || Math.floor(Math.random() * 500 + 1400));
-  }
-  const ctx = document.getElementById('nutritionChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: days,
-      datasets: [{
-        label: 'Calories Consumed',
-        data: calData,
-        borderColor: '#00E5A0',
-        backgroundColor: 'rgba(0,229,160,0.08)',
-        tension: 0.4,
-        fill: true,
-        pointBackgroundColor: '#00E5A0',
-        pointRadius: 4
-      }, {
-        label: 'Goal (2000 kcal)',
-        data: Array(7).fill(2000),
-        borderColor: 'rgba(255,184,0,0.5)',
-        borderDash: [5, 5],
-        pointRadius: 0,
-        fill: false
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#7DA8CC', font: { family: 'Inter', size: 12 } } } },
-      scales: {
-        x: { grid: { color: 'rgba(0,207,255,0.05)' }, ticks: { color: '#7DA8CC', font: { family: 'Inter' } } },
-        y: { grid: { color: 'rgba(0,207,255,0.05)' }, ticks: { color: '#7DA8CC', font: { family: 'Inter' } } }
+      var goal = 2000;
+      var pct = Math.min(100, Math.round((cal / goal) * 100));
+      document.getElementById('calProgress').textContent = cal;
+      document.getElementById('calGoal').textContent = goal;
+      document.getElementById('calBar').style.width = pct + '%';
+
+      if (pct >= 100) {
+        document.getElementById('calBar').className = 'progress-bar-custom progress-bar-yellow';
+        document.getElementById('calAlert').innerHTML = '<div class="alert-custom warning">You have reached your daily calorie goal!</div>';
+      } else {
+        document.getElementById('calBar').className = 'progress-bar-custom';
+        document.getElementById('calAlert').innerHTML = '';
       }
     }
-  });
 
-  updateTodaySummary();
-  renderMeals();
-  updateWaterUI();
-</script>
+    //display meals by meal type
+    function renderMeals() {
+      var meals = Store.get('meals');
+      var selectedDate = document.getElementById('filterMealDate').value;
+
+      if (selectedDate !== '') {
+        meals = meals.filter(function (meal) {
+          return meal.date === selectedDate;
+        });
+      }
+
+      if (meals.length === 0) {
+        document.getElementById('mealGroups').innerHTML = '<div style="text-align:center; padding:2rem; color:#999999;">No meals logged.</div>';
+        return;
+      }
+
+      var types = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+      var badges = { Breakfast: 'badge-cyan', Lunch: 'badge-green', Dinner: 'badge-yellow', Snack: 'badge-red' };
+      var html = '';
+
+      types.forEach(function (type) {
+        var group = meals.filter(function (meal) {
+          return meal.type === type;
+        });
+
+        if (group.length === 0) {
+          return;
+        }
+
+        var totalCal = group.reduce(function (total, meal) {
+          return total + meal.calories;
+        }, 0);
+
+        html += '<div style="margin-bottom:1.5rem;">';
+        html += '<div class="d-flex justify-content-between align-items-center mb-2">';
+        html += '<span class="badge-custom ' + badges[type] + '">' + type + '</span>';
+        html += '<span style="font-size:0.8rem; color:#999999;">Total: ' + totalCal + ' kcal</span>';
+        html += '</div>';
+
+        group.reverse().forEach(function (meal) {
+          html += '<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background: var(--bg-dark); border-radius: var(--radius-sm); margin-bottom:6px;">';
+          html += '<div><div style="font-size: 0.875rem; font-weight: 500; color: var(--text-primary);">' + meal.food + '</div>';
+          html += '<span style="font-size:0.75rem; color:#999999;">C:' + meal.carbs + 'g · P:' + meal.protein + 'g · F:' + meal.fat + 'g — ' + formatDate(meal.date) + '</span></div>';
+          html += '<div style="display:flex; align-items:center; gap: 10px;"><span style="color:var(--primary); font-weight: 600; font-size: 0.875rem;">' + meal.calories + ' kcal</span> ';
+          html += '<button class="btn-ghost" style="padding: 4px 8px; font-size: 0.75rem;" onclick="openEditMeal(' + meal.id + ')" title="Edit"><i class="bi bi-pencil-square"></i></button>';
+          html += '<button class="btn-ghost" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteMeal(' + meal.id + ')" title="Delete"><i class="bi bi-trash3"></i></button></div>';
+          html += '</div>';
+        });
+
+        html += '</div>';
+      });
+
+      document.getElementById('mealGroups').innerHTML = html;
+    }
+
+    function deleteMeal(id) {
+      if (confirm('Delete this meal?') === false) {
+        return;
+      }
+
+      var meals = Store.get('meals').filter(function (meal) {
+        return meal.id !== id;
+      });
+
+      var config = {
+        currentHours: 15 / 60
+      };
+
+      Store.set('meals', meals);
+      updateTodaySummary();
+      renderMeals();
+      drawNutritionChart();
+      showToast('Meal deleted.');
+    }
+
+    function updateWaterUI() {
+      var water = Store.getObj('water', { count: 0, date: '' });
+      var count = 0;
+
+      if (water.date === todayStr()) {
+        count = water.count;
+      }
+
+      var pct = Math.min(100, Math.round((count / 8) * 100));
+      document.getElementById('waterCount').textContent = count;
+      document.getElementById('waterBar').style.width = pct + '%';
+      document.getElementById('waterPct').textContent = pct + '%';
+    }
+
+    // add or minus one glass of water for today's date.
+    function changeWater(delta) {
+      var water = Store.getObj('water', { count: 0, date: '' });
+      var count = 0;
+
+      if (water.date === todayStr()) {
+        count = water.count;
+      }
+
+      count += delta;
+      if (count < 0) {
+        count = 0;
+      }
+
+      Store.set('water', { count: count, date: todayStr() });
+      updateWaterUI();
+    }
+
+    // draw nutrition chart
+    function drawNutritionChart() {
+      var days = [];
+      var calData = [];
+      var meals = Store.get('meals');
+
+      for (var i = 6; i >= 0; i--) {
+        var date = new Date();
+        date.setDate(date.getDate() - i);
+        var dateString = date.toISOString().split('T');
+        days.push(date.toLocaleDateString('en-MY', { weekday: 'short' }));
+        calData.push(meals.filter(function (meal) {
+          return meal.date === dateString;
+        }).reduce(function (total, meal) {
+          return total + meal.calories;
+        }, 0));
+      }
+
+      if (nutritionChart !== null) {
+        nutritionChart.destroy();
+      }
+
+      nutritionChart = new Chart(document.getElementById('nutritionChart'), {
+        type: 'line',
+        data: {
+          labels: days,
+          datasets: [{
+            label: 'Calories Consumed',
+            data: calData,
+            borderColor: '#00E5A0',
+            backgroundColor: 'rgba(0,229,160,0.08)',
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#00E5A0',
+            pointRadius: 4
+          }, {
+            label: 'Goal (2000 kcal)',
+            data: new Array(days.length).fill(2000),
+            borderColor: 'rgba(255,184,0,0.5)',
+            borderDash: [5, 5],
+            pointRadius: 0,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#7DA8CC', font: { family: 'Inter', size: 12 } } } },
+          scales: {
+            x: { grid: { color: 'rgba(0,207,255,0.05)' }, ticks: { color: '#7DA8CC', font: { family: 'Inter' } } },
+            y: { grid: { color: 'rgba(0,207,255,0.05)' }, ticks: { color: '#7DA8CC', font: { family: 'Inter' } } }
+          }
+        }
+      });
+    }
+
+    updateTodaySummary();
+    renderMeals();
+    updateWaterUI();
+    drawNutritionChart();
+
+    //to edit meal 
+    function openEditMeal(id) {
+      var meals = Store.get('meals');
+      var meal = meals.find(function (m) { return m.id === id; });
+
+      if (!meal) {
+        showToast('Meal not found.', 'error');
+        return;
+      }
+
+      document.getElementById('editMealId').value = id;
+      document.getElementById('editMealFood').value = meal.food;
+      document.getElementById('editMealType').value = meal.type;
+      document.getElementById('editMealCalories').value = meal.calories;
+      document.getElementById('editMealCarbs').value = meal.carbs || 0;
+      document.getElementById('editMealProtein').value = meal.protein || 0;
+      document.getElementById('editMealFat').value = meal.fat || 0;
+      document.getElementById('editMealDate').value = meal.date;
+
+      new bootstrap.Modal(document.getElementById('editMealModal')).show();
+    }
+
+    function saveMealEdit() {
+      var id = parseInt(document.getElementById('editMealId').value);
+      var food = document.getElementById('editMealFood').value.trim();
+      var type = document.getElementById('editMealType').value;
+      var calories = parseInt(document.getElementById('editMealCalories').value);
+      var carbs = parseInt(document.getElementById('editMealCarbs').value) || 0;
+      var protein = parseInt(document.getElementById('editMealProtein').value) || 0;
+      var fat = parseInt(document.getElementById('editMealFat').value) || 0;
+      var date = document.getElementById('editMealDate').value;
+
+      if (!food || !type || !calories || !date) {
+        showToast('Please fill in all required fields.', 'error');
+        return;
+      }
+
+      var meals = Store.get('meals');
+      var mealIndex = meals.findIndex(function (m) { return m.id === id; });
+
+      if (mealIndex === -1) {
+        showToast('Meal not found.', 'error');
+        return;
+      }
+
+      meals[mealIndex] = {
+        id: id,
+        food: food,
+        type: type,
+        calories: calories,
+        carbs: carbs,
+        protein: protein,
+        fat: fat,
+        date: date
+      };
+
+      Store.set('meals', meals);
+      const modal = bootstrap.Modal.getInstance(document.getElementById('editMealModal'));
+      if (modal) modal.hide();
+      updateTodaySummary();
+      renderMeals();
+      drawNutritionChart();
+      showToast('Meal updated successfully!');
+    }
+
+    //food sample database
+    const COMMON_FOODS = [
+      { name: 'Nasi Lemak', calories: 650, carbs: 75, protein: 15, fat: 28 },
+      { name: 'Roti Canai', calories: 350, carbs: 40, protein: 8, fat: 16 },
+      { name: 'Chicken Rice', calories: 520, carbs: 65, protein: 30, fat: 12 },
+      { name: 'Fish & Chips', calories: 580, carbs: 45, protein: 28, fat: 28 },
+      { name: 'Laksa', calories: 450, carbs: 48, protein: 18, fat: 20 },
+      { name: 'Satay', calories: 280, carbs: 8, protein: 28, fat: 16 },
+      { name: 'Nasi Goreng', calories: 580, carbs: 68, protein: 18, fat: 24 },
+      { name: 'Mee Goreng', calories: 420, carbs: 52, protein: 14, fat: 18 },
+      { name: 'Tom Yum Soup', calories: 120, carbs: 12, protein: 8, fat: 5 },
+      { name: 'Pad Thai', calories: 480, carbs: 55, protein: 16, fat: 22 },
+      { name: 'Sushi Roll', calories: 280, carbs: 38, protein: 10, fat: 8 },
+      { name: 'Tandoori Chicken', calories: 320, carbs: 5, protein: 42, fat: 15 },
+      { name: 'Biriyani', calories: 520, carbs: 68, protein: 18, fat: 18 },
+      { name: 'Chicken Biryani', calories: 520, carbs: 68, protein: 18, fat: 18 },
+      { name: 'Rendang Chicken', calories: 580, carbs: 12, protein: 38, fat: 44 },
+      { name: 'Teh Tarik', calories: 170, carbs: 22, protein: 4, fat: 7 },
+      { name: 'Kopi O', calories: 5, carbs: 1, protein: 0, fat: 0 },
+      { name: 'Cendol', calories: 280, carbs: 45, protein: 4, fat: 8 },
+      { name: 'ABC Ice', calories: 200, carbs: 48, protein: 2, fat: 1 },
+      { name: 'Roti Telur', calories: 320, carbs: 28, protein: 10, fat: 18 },
+      { name: 'Banana', calories: 89, carbs: 23, protein: 1, fat: 0 },
+      { name: 'Apple', calories: 52, carbs: 14, protein: 0, fat: 0 },
+      { name: 'Orange', calories: 47, carbs: 12, protein: 1, fat: 0 },
+      { name: 'Chicken Breast', calories: 165, carbs: 0, protein: 31, fat: 3 },
+      { name: 'Salmon', calories: 208, carbs: 0, protein: 20, fat: 13 },
+      { name: 'Eggs', calories: 155, carbs: 1, protein: 13, fat: 11 },
+      { name: 'Almonds', calories: 579, carbs: 22, protein: 21, fat: 50 },
+      { name: 'Yogurt', calories: 100, carbs: 6, protein: 10, fat: 5 },
+      { name: 'Milk', calories: 61, carbs: 5, protein: 3, fat: 3 },
+      { name: 'Brown Rice', calories: 111, carbs: 23, protein: 3, fat: 1 },
+      { name: 'Bread', calories: 80, carbs: 14, protein: 3, fat: 1 }
+    ];
+
+    function openFoodSearch() {
+      document.getElementById('foodSearchInput').value = '';
+      document.getElementById('foodSearchResults').innerHTML = COMMON_FOODS.map(function (food) {
+        return '<div style="padding: 12px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 6px; cursor: pointer;" onclick="selectFood(\'' + food.name + '\', ' + food.calories + ', ' + food.carbs + ', ' + food.protein + ', ' + food.fat + ')">' +
+          '<div style="font-weight: bold; color: #0066cc;">' + food.name + '</div>' +
+          '<div style="font-size: 0.75rem; color: #999;">Cal: ' + food.calories + ' | C: ' + food.carbs + 'g | P: ' + food.protein + 'g | F: ' + food.fat + 'g</div>' +
+          '</div>';
+      }).join('');
+      new bootstrap.Modal(document.getElementById('foodSearchModal')).show();
+    }
+
+    function searchFoods() {
+      var query = document.getElementById('foodSearchInput').value.toLowerCase();
+      var results = COMMON_FOODS.filter(function (food) {
+        return food.name.toLowerCase().indexOf(query) !== -1;
+      });
+
+      if (results.length === 0) {
+        document.getElementById('foodSearchResults').innerHTML = '<div style="text-align: center; padding: 2rem; color: #999;">No foods found.</div>';
+        return;
+      }
+
+      document.getElementById('foodSearchResults').innerHTML = results.map(function (food) {
+        return '<div style="padding: 12px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 6px; cursor: pointer;" onclick="selectFood(\'' + food.name + '\', ' + food.calories + ', ' + food.carbs + ', ' + food.protein + ', ' + food.fat + ')">' +
+          '<div style="font-weight: bold; color: #0066cc;">' + food.name + '</div>' +
+          '<div style="font-size: 0.75rem; color: #999;">Cal: ' + food.calories + ' | C: ' + food.carbs + 'g | P: ' + food.protein + 'g | F: ' + food.fat + 'g</div>' +
+          '</div>';
+      }).join('');
+    }
+
+    function selectFood(name, calories, carbs, protein, fat) {
+      document.getElementById('mFoodName').value = name;
+      document.getElementById('mCalories').value = calories;
+      document.getElementById('mCarbs').value = carbs;
+      document.getElementById('mProtein').value = protein;
+      document.getElementById('mFat').value = fat;
+      var modal = bootstrap.Modal.getInstance(document.getElementById('foodSearchModal'));
+      if (modal) modal.hide();
+      showToast('Food selected: ' + name, 'success');
+    }
+
+    window.openEditMeal = openEditMeal;
+    window.saveMealEdit = saveMealEdit;
+    window.openFoodSearch = openFoodSearch;
+    window.searchFoods = searchFoods;
+    window.selectFood = selectFood;
+  </script>
 </body>
+
 </html>

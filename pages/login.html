@@ -1,30 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign In — Fitly</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-
 <body>
 
   <div class="hero-grid-bg" style="position:fixed; inset:0; pointer-events:none;"></div>
-  <div
-    style="position:fixed; width:500px; height:500px; background: radial-gradient(circle, rgba(0,207,255,0.06) 0%, transparent 70%); top:-100px; left:-100px; pointer-events:none;">
-  </div>
+  <div style="position:fixed; width:500px; height:500px; background: radial-gradient(circle, rgba(0,207,255,0.06) 0%, transparent 70%); top:-100px; left:-100px; pointer-events:none;"></div>
 
   <nav style="padding: 1.25rem 0; border-bottom: 1px solid var(--border); position: relative; z-index: 10;">
     <div class="container d-flex justify-content-between align-items-center">
-      <a href="../index.html"
-        style="font-family: 'Poppins', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--primary); text-decoration: none;">Fit<span
-          style="color: var(--white);">ly</span></a>
-      <span style="font-size: 0.875rem; color: var(--text-muted);">Don't have an account? <a href="register.html"
-          style="color: var(--primary); text-decoration: none; font-weight: 500;">Sign up</a></span>
+      <a href="../index.html" style="font-family: 'Poppins', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--primary); text-decoration: none;">Fit<span style="color: var(--white);">ly</span></a>
+      <span style="font-size: 0.875rem; color: var(--text-muted);">Don't have an account? <a href="register.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">Sign up</a></span>
     </div>
   </nav>
 
@@ -41,32 +33,26 @@
         <div class="mb-3">
           <label class="form-label-custom">Email Address</label>
           <input type="email" id="loginEmail" class="form-control-custom" placeholder="you@example.com" required />
-          <div class="field-error" style="display:none; font-size:0.75rem; color:var(--danger); margin-top:4px;">Please
-            enter a valid email.</div>
+          <div class="field-error" style="display:none; font-size:0.75rem; color:var(--danger); margin-top:4px;">Please enter a valid email.</div>
         </div>
 
         <div class="mb-4">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <label class="form-label-custom" style="margin-bottom:0;">Password</label>
-            <a href="resetPassword.html" style="font-size: 0.8rem; color: var(--primary); text-decoration: none;">Forgot
-              password?</a>
+            <a href="resetPassword.html" style="font-size: 0.8rem; color: var(--primary); text-decoration: none;">Forgot password?</a>
           </div>
           <div style="position: relative;">
-            <input type="password" id="loginPassword" class="form-control-custom" placeholder="••••••••" required
-              style="padding-right: 40px;" />
-            <button type="button" onclick="togglePass('loginPassword', 'toggleIcon1')"
-              style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; padding:0;">
+            <input type="password" id="loginPassword" class="form-control-custom" placeholder="••••••••" required style="padding-right: 40px;" />
+            <button type="button" onclick="togglePass('loginPassword', 'toggleIcon1')" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; padding:0;">
               <i class="bi bi-eye" id="toggleIcon1" style="font-size: 1rem;"></i>
             </button>
           </div>
-          <div class="field-error" style="display:none; font-size:0.75rem; color:var(--danger); margin-top:4px;">Please
-            enter your password.</div>
+          <div class="field-error" style="display:none; font-size:0.75rem; color:var(--danger); margin-top:4px;">Please enter your password.</div>
         </div>
 
         <div class="mb-4 d-flex align-items-center gap-2">
           <input type="checkbox" id="rememberMe" style="accent-color: var(--primary); width: 16px; height: 16px;" />
-          <label for="rememberMe" style="font-size: 0.875rem; color: var(--text-secondary); cursor: pointer;">Remember
-            me</label>
+          <label for="rememberMe" style="font-size: 0.875rem; color: var(--text-secondary); cursor: pointer;">Remember me</label>
         </div>
 
         <button type="submit" class="btn-primary-custom w-100" style="padding: 12px; font-size: 0.95rem;">
@@ -80,14 +66,12 @@
         <div style="flex: 1; height: 1px; background: var(--border);"></div>
       </div>
 
-      <button type="button" onclick="loginDemoUser()" class="btn-primary-custom w-100"
-        style="padding: 12px; font-size: 0.95rem;">
+      <button type="button" onclick="loginDemoUser()" class="btn-primary-custom w-100" style="padding: 12px; font-size: 0.95rem;">
         <i class="bi bi-play-fill me-2"></i> Continue as Demo User
       </button>
 
       <p style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-muted);">
-        New to Fitly? <a href="register.html"
-          style="color: var(--primary); text-decoration: none; font-weight: 500;">Create an account</a>
+        New to Fitly? <a href="register.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">Create an account</a>
       </p>
     </div>
   </div>
@@ -152,6 +136,7 @@
 
           if (!password || password.length < 3) {
             passError.style.display = 'block';
+            passError.textContent = password && password.length < 3 ? 'Password must be at least 3 characters.' : 'Please enter your password.';
             isValid = false;
           } else {
             passError.style.display = 'none';
@@ -221,19 +206,19 @@
       }
 
       // auto fill remembered user
-      const currentUser = localStorage.getItem('token');
-      if (currentUser) {
+      const tokenExists = localStorage.getItem('token');
+      if (tokenExists) {
         setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
         return;
       }
 
       const rememberToken = localStorage.getItem('fitly_remember_token');
-      if (rememberToken && !currentUser) {
+      if (rememberToken && !tokenExists) {
         const emailField = document.getElementById('loginEmail');
         if (emailField) emailField.value = rememberToken;
       }
 
-      // real-time validation
+      // Real-time validation
       const emailInput = document.getElementById('loginEmail');
       const passwordInput = document.getElementById('loginPassword');
 
@@ -263,5 +248,4 @@
     window.togglePass = togglePass;
   </script>
 </body>
-
 </html>

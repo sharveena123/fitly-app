@@ -105,7 +105,12 @@ function loginDemoUser() {
     if (currentPage === 'login.html' || currentPage === 'register.html') {
       window.location.href = 'dashboard.html';
     } else {
-      window.location.href = 'pages/dashboard.html'; // 🔴 FIXED REDIRECTION PATH ERROR
+      // determine base path to route safely based on environment context
+      if (typeof window.location.pathname.includes === 'function' && window.location.pathname.includes('/pages/')) {
+        window.location.href = 'dashboard.html';
+      } else {
+        window.location.href = 'pages/dashboard.html'; 
+      }
     }
   }, 800);
 }
