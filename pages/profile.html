@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile - Fitly</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <!-- bootstrap navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#fitlyNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="fitlyNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+          <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="workout.html">Workout</a></li>
+          <li class="nav-item"><a class="nav-link" href="nutrition.html">Nutrition</a></li>
+          <li class="nav-item"><a class="nav-link" href="goals.html">Goals</a></li>
+          <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+          <!-- Notification Dropdown -->
+          <li class="nav-item dropdown ms-1">
+            <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false" style="position: relative;">
+              <i class="bi bi-bell-fill"></i>
+              <span class="badge bg-danger rounded-pill"
+                style="font-size: 0.55rem; position: absolute; top: 0px; right: 0px;">3</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="notificationDropdown"
+              style="min-width: 200px;">
+              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">New workout available!</a></li>
+              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">You hit your step goal.</a></li>
+              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">Don't forget to log lunch.</a></li>
+            </ul>
+          </li>
+          <li class="nav-item ms-2">
+            <a class="btn-primary-custom" href="login.html" style="padding: 8px 18px; font-size: 0.8rem;">Sign In</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // Update navbar auth state on page load
+    document.addEventListener('DOMContentLoaded', function () {
+      updateNavbarAuthState();
+    });
+  </script>
+
+  <main class="container" style="padding-top:2rem; padding-bottom:4rem;">
+    <div class="page-header">
+      <h1 class="page-title">My Profile</h1>
+      <p class="page-subtitle">Manage your personal health information</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <!-- Profile Summary Card-->
+        <div class="card-custom text-center" style="padding:2rem;">
+          <div class="avatar mx-auto mb-3" id="profileAvatar">?</div>
+          <h4 id="profileName">-</h4>
+          <p style="font-size:0.875rem; color:#999999;" id="profileEmail">-</p>
+          <hr class="divider" />
+          <div class="row g-2 text-center">
+            <div class="col-4">
+              <div class="stat-value" id="pWeight">-</div>
+              <div class="stat-label">kg</div>
+            </div>
+            <div class="col-4">
+              <div class="stat-value" id="pHeight">-</div>
+              <div class="stat-label">cm</div>
+            </div>
+            <div class="col-4">
+              <div class="stat-value" id="pAge">-</div>
+              <div class="stat-label">age</div>
+            </div>
+          </div>
+          <hr class="divider" />
+          <div style="background:#f5f5f5; padding:1rem;">
+            <div class="stat-label">BMI Index</div>
+            <div class="stat-value" id="bmiValue">-</div>
+            <div id="bmiLabel">-</div>
+          </div>
+        </div>
+
+        <div class="card-custom mt-3">
+          <div class="section-title">Activity Summary</div>
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span>Total Workouts</span><strong id="sumWorkouts">0</strong>
+          </div>
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span>Meals Logged</span><strong id="sumMeals">0</strong>
+          </div>
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span>Goals Set</span><strong id="sumGoals">0</strong>
+          </div>
+          <div class="d-flex justify-content-between py-2">
+            <span>Total Cal Burned</span><strong id="sumCal">0 kcal</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="card-custom">
+          <div class="section-title">Edit Profile</div>
+          <!-- form to update user details-->
+          <form id="profileForm">
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label-custom" for="pName">Full Name *</label>
+                <input type="text" id="pName" class="form-control-custom" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom" for="pEmailInput">Email</label>
+                <input type="email" id="pEmailInput" class="form-control-custom" />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label-custom" for="pPhoto">Profile Picture</label>
+              <input type="file" id="pPhoto" class="form-control-custom" accept="image/*" />
+              <div style="font-size:0.75rem; color:#999999; margin-top:4px;">Choose an image file to show on your
+                profile card.</div>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-4">
+                <label class="form-label-custom" for="pAgeInput">Age</label>
+                <input type="number" id="pAgeInput" class="form-control-custom" min="1" max="120" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-custom" for="pGender">Gender</label>
+                <select id="pGender" class="form-select-custom">
+                  <option value="">Prefer not to say</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-custom" for="pActivity">Activity Level</label>
+                <select id="pActivity" class="form-select-custom">
+                  <option value="sedentary">Sedentary</option>
+                  <option value="light">Lightly Active</option>
+                  <option value="moderate">Moderately Active</option>
+                  <option value="active">Very Active</option>
+                </select>
+              </div>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label-custom" for="pWeightInput">Weight (kg)</label>
+                <input type="number" id="pWeightInput" class="form-control-custom" step="0.1" min="0" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom" for="pHeightInput">Height (cm)</label>
+                <input type="number" id="pHeightInput" class="form-control-custom" min="0" />
+              </div>
+            </div>
+
+            <hr class="divider" />
+
+            <div class="section-title">BMI Calculator</div>
+            <div class="card-custom" style="background:#f5f5f5;">
+              <div class="row g-3 align-items-center">
+                <div class="col-md-4">
+                  <label class="form-label-custom" for="bmiWeight">Weight (kg)</label>
+                  <input type="number" id="bmiWeight" class="form-control-custom" oninput="updateBMICalc()" />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label-custom" for="bmiHeight">Height (cm)</label>
+                  <input type="number" id="bmiHeight" class="form-control-custom" oninput="updateBMICalc()" />
+                </div>
+                <div class="col-md-4 text-center">
+                  <div class="stat-label">Your BMI</div>
+                  <div class="stat-value" id="liveBMI">-</div>
+                  <div id="liveBMILabel">-</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-3">
+              <button type="submit" class="btn-primary-custom">Save Profile</button>
+            </div>
+
+            <hr class="divider" />
+
+            <div class="section-title">Change Password</div>
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label-custom" for="pCurrentPassword">Current Password *</label>
+                <input type="password" id="pCurrentPassword" class="form-control-custom" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom" for="pNewPassword">New Password *</label>
+                <input type="password" id="pNewPassword" class="form-control-custom" />
+              </div>
+            </div>
+            <button type="button" class="btn-outline-custom mb-4" onclick="changePassword()">Update Password</button>
+
+            <hr class="divider" />
+
+            <div class="section-title" style="color: #dc3545;">Danger Zone</div>
+            <div class="card-custom" style="border: 1px solid #dc3545; background: #fff5f5;">
+              <p style="color: #666666; margin-bottom: 1rem;">Permanently delete your account and all associated data.
+                This action cannot be undone.</p>
+              <button type="button" class="btn-ghost" style="border-color: #dc3545; color: #dc3545;"
+                onclick="deleteAccount()">
+                <i class="bi bi-trash3 me-1"></i> Delete Account
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div class="footer-brand">Fitly</div>
+      <span>&copy; 2026 Fitly. WIF2003 Group Project.</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    var profilePhotoData = '';
+
+    // update bmi calculation 
+    function updateBMICalc() {
+      var weight = parseFloat(document.getElementById('bmiWeight').value);
+      var height = parseFloat(document.getElementById('bmiHeight').value);
+      var bmi = calcBMI(weight, height);
+
+      if (bmi === null) {
+        document.getElementById('liveBMI').textContent = '-';
+        document.getElementById('liveBMILabel').textContent = '-';
+        return;
+      }
+
+      var cat = bmiCategory(parseFloat(bmi));
+      document.getElementById('liveBMI').textContent = bmi;
+      document.getElementById('liveBMILabel').innerHTML = '<span style="color:' + cat.color + '">' + cat.label + '</span>';
+    }
+
+    // update profile card with user details
+    function updateProfileCard(profile) {
+      var initials = '?';
+      var avatar = document.getElementById('profileAvatar');
+
+      if (profile.name) {
+        initials = profile.name.split(' ').map(function (name) {
+          return name[0];
+        }).join('').toUpperCase().slice(0, 2);
+      }
+
+      avatar.innerHTML = '';
+      //upload photo
+      if (profile.photo) {
+        var image = document.createElement('img');
+        image.src = profile.photo;
+        image.alt = 'Profile picture';
+        image.style.width = '100%';
+        image.style.height = '100%';
+        image.style.objectFit = 'cover';
+        image.style.borderRadius = '50%';
+        avatar.appendChild(image);
+      } else {
+        avatar.textContent = initials;
+      }
+      document.getElementById('profileName').textContent = profile.name || '-';
+      document.getElementById('profileEmail').textContent = profile.email || '-';
+      document.getElementById('pWeight').textContent = profile.weight || '-';
+      document.getElementById('pHeight').textContent = profile.height || '-';
+      document.getElementById('pAge').textContent = profile.age || '-';
+
+      var bmi = calcBMI(profile.weight, profile.height);
+
+      if (bmi !== null) {
+        var cat = bmiCategory(parseFloat(bmi));
+        document.getElementById('bmiValue').textContent = bmi;
+        document.getElementById('bmiLabel').innerHTML = '<span style="color:' + cat.color + '">' + cat.label + '</span>';
+      } else {
+        document.getElementById('bmiValue').textContent = '-';
+        document.getElementById('bmiLabel').textContent = '-';
+      }
+
+      document.getElementById('sumWorkouts').textContent = Store.get('workouts').length;
+      document.getElementById('sumMeals').textContent = Store.get('meals').length;
+      document.getElementById('sumGoals').textContent = Store.get('goals').length;
+      document.getElementById('sumCal').textContent = Store.get('workouts').reduce(function (total, workout) {
+        return total + (workout.calories || 0);
+      }, 0) + ' kcal';
+    }
+
+    // load profile from local storage
+    function loadProfile() {
+      var profile = Store.getObj('profile', {});
+      profilePhotoData = profile.photo || '';
+      document.getElementById('pName').value = profile.name || '';
+      document.getElementById('pEmailInput').value = profile.email || '';
+      document.getElementById('pPhoto').value = '';
+      document.getElementById('pAgeInput').value = profile.age || '';
+      document.getElementById('pGender').value = profile.gender || '';
+      document.getElementById('pActivity').value = profile.activity || 'moderate';
+      document.getElementById('pWeightInput').value = profile.weight || '';
+      document.getElementById('pHeightInput').value = profile.height || '';
+      document.getElementById('bmiWeight').value = profile.weight || '';
+      document.getElementById('bmiHeight').value = profile.height || '';
+      updateBMICalc();
+      updateProfileCard(profile);
+    }
+
+    // save form data in localstorage when user submits profile form
+    document.getElementById('profileForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      var profile = {
+        name: document.getElementById('pName').value.trim(),
+        email: document.getElementById('pEmailInput').value.trim(),
+        age: parseInt(document.getElementById('pAgeInput').value) || null,
+        gender: document.getElementById('pGender').value,
+        activity: document.getElementById('pActivity').value,
+        weight: parseFloat(document.getElementById('pWeightInput').value) || null,
+        height: parseFloat(document.getElementById('pHeightInput').value) || null,
+        photo: profilePhotoData
+      };
+
+      Store.set('profile', profile);
+      updateProfileCard(profile);
+      showToast('Profile saved!');
+    });
+
+    // FileReader changes the selected image into text so it can be saved locally.
+    document.getElementById('pPhoto').addEventListener('change', function () {
+      var file = this.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      if (file.type.indexOf('image/') !== 0) {
+        showToast('Please choose an image file.', 'error');
+        this.value = '';
+        return;
+      }
+
+      var reader = new FileReader();
+
+      reader.onload = function () {
+        profilePhotoData = reader.result;
+        updateProfileCard({
+          name: document.getElementById('pName').value.trim(),
+          email: document.getElementById('pEmailInput').value.trim(),
+          age: document.getElementById('pAgeInput').value,
+          weight: document.getElementById('pWeightInput').value,
+          height: document.getElementById('pHeightInput').value,
+          photo: profilePhotoData
+        });
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    //change pass function
+    function changePassword() {
+      var currentPassword = document.getElementById('pCurrentPassword').value;
+      var newPassword = document.getElementById('pNewPassword').value;
+
+      if (!currentPassword || !newPassword) {
+        showToast('Please fill in all password fields.', 'error');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        showToast('New password must be at least 6 characters.', 'error');
+        return;
+      }
+
+      var currentUser = Store.getObj('currentUser', null);
+      if (!currentUser || !currentUser.email) {
+        showToast('Please login first.', 'error');
+        return;
+      }
+
+      var users = Store.get('users');
+      var userIndex = users.findIndex(function (u) {
+        return u.email === currentUser.email;
+      });
+
+      if (userIndex === -1) {
+        showToast('User not found.', 'error');
+        return;
+      }
+
+      if (users[userIndex].password !== currentPassword) {
+        showToast('Current password is incorrect.', 'error');
+        return;
+      }
+
+      users[userIndex].password = newPassword;
+      Store.set('users', users);
+      document.getElementById('pCurrentPassword').value = '';
+      document.getElementById('pNewPassword').value = '';
+      showToast('Password changed successfully! You will be logged out.', 'success');
+      setTimeout(function () {
+        handleLogout();
+      }, 1500);
+    }
+
+    //delete acc function
+    function deleteAccount() {
+      var confirmed = confirm('Are you sure you want to delete your account?');
+
+      if (!confirmed) {
+        showToast('Account deletion cancelled.', 'error');
+        return;
+      }
+
+      var currentUser = Store.getObj('currentUser', null);
+      if (!currentUser || !currentUser.email) {
+        showToast('Please login first.', 'error');
+        return;
+      }
+
+      var users = Store.get('users');
+      var updatedUsers = users.filter(function (u) {
+        return u.email !== currentUser.email;
+      });
+      Store.set('users', updatedUsers);
+
+      localStorage.removeItem('fitly_currentUser');
+      localStorage.removeItem('fitly_remember_token');
+      localStorage.removeItem('fitly_profile');
+      localStorage.removeItem('fitly_workouts');
+      localStorage.removeItem('fitly_meals');
+      localStorage.removeItem('fitly_goals');
+      localStorage.removeItem('fitly_water');
+
+      showToast('Your account has been deleted. Redirecting...', 'success');
+
+      setTimeout(function () {
+        window.location.href = '../index.html';
+      }, 1500);
+    }
+
+    // Expose functions globally
+    window.changePassword = changePassword;
+    window.deleteAccount = deleteAccount;
+
+    loadProfile();
+  </script>
+</body>
+
+</html>

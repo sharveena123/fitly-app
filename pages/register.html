@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account - Fitly</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <nav style="padding:1.25rem 0; border-bottom:1px solid #dddddd;">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a href="../index.html" class="navbar-brand" style="text-decoration:none;">Fit<span>ly</span></a>
+      <span style="font-size:0.875rem; color:#999999;">Already have an account? <a href="login.html">Sign in</a></span>
+    </div>
+  </nav>
+
+  <!-- register form-->
+  <main class="auth-wrapper">
+    <div class="auth-card" style="max-width:520px;">
+      <div class="auth-logo">Create your account</div>
+      <p class="auth-tagline">Start your fitness journey with Fitly today</p>
+
+      <div id="regAlert" style="display:none;" class="alert-custom warning mb-3">
+        <span id="regAlertMsg"></span>
+      </div>
+      <div id="regSuccess" style="display:none;" class="alert-custom mb-3">
+        Account created. Redirecting you to sign in...
+      </div>
+
+      <form id="registerForm">
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label-custom" for="rName">Full Name *</label>
+            <input type="text" id="rName" class="form-control-custom" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-custom" for="rAge">Age</label>
+            <input type="number" id="rAge" class="form-control-custom" min="1" max="120" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label-custom" for="rEmail">Email Address *</label>
+          <input type="email" id="rEmail" class="form-control-custom" required />
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label-custom" for="rWeight">Weight (kg)</label>
+            <input type="number" id="rWeight" class="form-control-custom" step="0.1" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-custom" for="rHeight">Height (cm)</label>
+            <input type="number" id="rHeight" class="form-control-custom" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label-custom" for="rGoal">Fitness Goal</label>
+          <select id="rGoal" class="form-select-custom">
+            <option value="">Select a goal</option>
+            <option>Lose weight</option>
+            <option>Build muscle</option>
+            <option>Improve endurance</option>
+            <option>Stay healthy</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label-custom" for="rPassword">Password *</label>
+          <input type="password" id="rPassword" class="form-control-custom" required oninput="checkStrength()" />
+          <div class="progress-custom mt-2" style="height:4px;">
+            <div id="strengthBar" class="progress-bar-custom" style="width:0%;"></div>
+          </div>
+          <div style="font-size:0.72rem; color:#999999; margin-top:4px;" id="strengthLabel">Password strength</div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label-custom" for="rConfirm">Confirm Password *</label>
+          <input type="password" id="rConfirm" class="form-control-custom" required />
+        </div>
+        <div class="mb-4 d-flex align-items-center gap-2">
+          <input type="checkbox" id="agreeTerms" required />
+          <label for="agreeTerms">I agree to the Terms of Service and Privacy Policy</label>
+        </div>
+        <button type="submit" class="btn-primary-custom w-100">Create Account</button>
+      </form>
+
+      <!-- Divider -->
+      <div style="display: flex; align-items: center; gap: 12px; margin: 1.5rem 0;">
+        <div style="flex: 1; height: 1px; background: var(--border);"></div>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">OR</span>
+        <div style="flex: 1; height: 1px; background: var(--border);"></div>
+      </div>
+
+      <!-- Demo User Button -->
+      <button type="button" onclick="loginDemoUser()" class="btn-primary-custom w-100">
+        <i class="bi bi-play-fill me-2"></i> Continue as Demo User
+      </button>
+
+      <p style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-muted);">
+        Already have an account? <a href="login.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">Sign in</a>
+      </p>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    //small helper to show validation messages above the form
+    function showRegisterError(message) {
+      document.getElementById('regAlert').style.display = 'block';
+      document.getElementById('regAlertMsg').textContent = message;
+    }
+
+    // simple check for password strength
+    function checkStrength() {
+      var password = document.getElementById('rPassword').value;
+      var score = 0;
+
+      if (password.length >= 6) {
+        score++;
+      }
+      if (password.length >= 10) {
+        score++;
+      }
+      if (/[A-Z]/.test(password)) {
+        score++;
+      }
+      if (/[0-9]/.test(password)) {
+        score++;
+      }
+
+      var width = score * 25;
+      var label = 'Weak';
+      var color = '#cc0000';
+
+      if (score >= 3) {
+        label = 'Strong';
+        color = '#00aa55';
+      } else if (score === 2) {
+        label = 'Fair';
+        color = '#ff9900';
+      }
+
+      document.getElementById('strengthBar').style.width = width + '%';
+      document.getElementById('strengthBar').style.backgroundColor = color;
+      document.getElementById('strengthLabel').textContent = label;
+      document.getElementById('strengthLabel').style.color = color;
+    }
+
+    // validate form and save on submit
+    document.getElementById('registerForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      var name = document.getElementById('rName').value.trim();
+      var email = document.getElementById('rEmail').value.trim();
+      var password = document.getElementById('rPassword').value;
+      var confirm = document.getElementById('rConfirm').value;
+
+      if (password.length < 6) {
+        showRegisterError('Password must be at least 6 characters.');
+        return;
+      }
+
+      if (password !== confirm) {
+        showRegisterError('Passwords do not match.');
+        return;
+      }
+
+      var users = Store.get('users');
+      var existingUser = users.find(function (user) {
+        return user.email === email;
+      });
+
+      if (existingUser) {
+        showRegisterError('This email is already registered.');
+        return;
+      }
+
+      users.push({
+        name: name,
+        email: email,
+        password: password,
+        age: parseInt(document.getElementById('rAge').value) || null,
+        weight: parseFloat(document.getElementById('rWeight').value) || null,
+        height: parseFloat(document.getElementById('rHeight').value) || null,
+        goal: document.getElementById('rGoal').value
+      });
+
+      Store.set('users', users);
+      Store.set('profile', {
+        name: name,
+        email: email,
+        age: parseInt(document.getElementById('rAge').value) || null,
+        weight: parseFloat(document.getElementById('rWeight').value) || null,
+        height: parseFloat(document.getElementById('rHeight').value) || null,
+        activity: 'moderate'
+      });
+
+      document.getElementById('regAlert').style.display = 'none';
+      document.getElementById('regSuccess').style.display = 'block';
+      this.style.display = 'none';
+
+      setTimeout(function () {
+        window.location.href = 'login.html';
+      }, 1500);
+    });
+  </script>
+</body>
+
+</html>
