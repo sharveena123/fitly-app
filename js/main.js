@@ -39,38 +39,41 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-
   updateNavbarAuthState();
 });
 
 // update navbar auth state
 function updateNavbarAuthState() {
+  // check for backend token 
+  var token = localStorage.getItem('token');
+  // Read the original currentUser object to keep teammate's demo profile data alive
   var currentUser = Store.getObj('currentUser', null);
   var navbarAuth = document.querySelector('.navbar-nav .ms-2');
   var navProtected = document.querySelectorAll('.nav-protected');
 
   if (!navbarAuth) return;
 
-  if (currentUser && currentUser.email) {
-    // User is logged in, show logout button and show protected nav items
+  // check if either a live token or a dummy demo configuration profile exists
+  if (token || (currentUser && currentUser.email)) {
+    // user is logged in, show logout button and show protected nav items
     navbarAuth.innerHTML = '<a id="logout-btn" class="btn-primary-custom" href="#" onclick="handleLogout(); return false;" style="padding: 8px 18px; font-size: 0.8rem;"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>';
-    // Show protected nav items
+    // show protected nav items
     for (var i = 0; i < navProtected.length; i++) {
       navProtected[i].style.display = 'block';
     }
   } else {
-    // User is not logged in
+    // user is not logged in
     var currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
     if (currentPage === 'index.html' || currentPage === '') {
-      // On landing page, hide protected nav items and show Sign Up + Sign In
+      // on landing page, hide protected nav items and show Sign Up + Sign In
       for (var i = 0; i < navProtected.length; i++) {
         navProtected[i].style.display = 'none';
       }
       navbarAuth.innerHTML = '<a class="btn-primary-custom" href="pages/register.html" style="padding: 8px 18px; font-size: 0.8rem; margin-right: 8px; display: inline-block;">Sign Up</a>' +
         '<a class="btn-primary-custom" href="pages/login.html" style="padding: 8px 18px; font-size: 0.8rem; display: inline-block;">Sign In</a>';
     } else {
-      // On other pages, show protected nav items and show Sign In button
+      // on other pages, show protected nav items and show Sign In button
       for (var i = 0; i < navProtected.length; i++) {
         navProtected[i].style.display = 'block';
       }
@@ -81,6 +84,9 @@ function updateNavbarAuthState() {
 
 // demo user login
 function loginDemoUser() {
+  // keep data synced by setting a fake token wrapper when demo mode triggers
+  localStorage.setItem('token', 'mock-demo-token-xyz-12345');
+  
   var demoUser = {
     email: 'demo@fitly.com',
     name: 'Demo User',
@@ -99,7 +105,12 @@ function loginDemoUser() {
     if (currentPage === 'login.html' || currentPage === 'register.html') {
       window.location.href = 'dashboard.html';
     } else {
-      window.location.href = '../pages/dashboard.html';
+      // determine base path to route safely based on environment context
+      if (typeof window.location.pathname.includes === 'function' && window.location.pathname.includes('/pages/')) {
+        window.location.href = 'dashboard.html';
+      } else {
+        window.location.href = 'pages/dashboard.html'; 
+      }
     }
   }, 800);
 }
@@ -128,11 +139,19 @@ function handleLogout() {
   if (!confirm('Are you sure you want to logout?')) {
     return;
   }
+  // clean out all session values upon request
+  localStorage.removeItem('token');
   localStorage.removeItem('fitly_currentUser');
   localStorage.removeItem('fitly_remember_token');
   showToast('You have been logged out successfully.', 'success');
+  
   setTimeout(function () {
-    window.location.href = '../index.html';
+    var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    if (currentPage === 'index.html' || currentPage === '') {
+      window.location.href = 'index.html';
+    } else {
+      window.location.href = '../index.html';
+    }
   }, 800);
 }
 
@@ -197,17 +216,19 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
+// today string generator
 function todayStr() {
-  return new Date().toISOString().split('T')[0];
+  return new Date().toISOString().split('T');
 }
 
-// BMI 
+// BMI calculation
 function calcBMI(weightKg, heightCm) {
   if (!weightKg || !heightCm) return null;
   var h = heightCm / 100;
   return (weightKg / (h * h)).toFixed(1);
 }
 
+// BMI categorization
 function bmiCategory(bmi) {
   if (bmi < 18.5) return { label: 'Underweight', color: '#ff9900' };
   if (bmi < 25) return { label: 'Normal', color: '#00aa55' };

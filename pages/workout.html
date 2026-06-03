@@ -6,13 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Workout Tracker - Fitly</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 
 <body>
-  <!-- bootstrap navbar -->
   <nav class="navbar navbar-expand-lg">
     <div class="container">
       <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
@@ -26,7 +24,6 @@
           <li class="nav-item"><a class="nav-link" href="nutrition.html">Nutrition</a></li>
           <li class="nav-item"><a class="nav-link" href="goals.html">Goals</a></li>
           <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
-          <!-- Notification Dropdown -->
           <li class="nav-item dropdown ms-1">
             <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown"
               aria-expanded="false" style="position: relative;">
@@ -67,7 +64,6 @@
       <div class="col-lg-4">
         <div class="card-custom">
           <div class="section-title">Quick Log</div>
-          <!--quick log workout form-->
           <form id="quickWorkoutForm">
             <div class="mb-3">
               <label class="form-label-custom" for="qExercise">Exercise Name *</label>
@@ -112,7 +108,6 @@
       </div>
 
       <div class="col-lg-8">
-        <!--filter workout by type and date-->
         <div class="card-custom mb-3">
           <div class="row g-2 align-items-end">
             <div class="col-md-4">
@@ -158,6 +153,17 @@
           </div>
         </div>
 
+        <div class="card-custom mb-3">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="section-title" style="margin-bottom:0; font-weight: 600;">Fitly AI Smart Insights</span>
+          </div>
+          <div id="aiRecommendationText">
+            <p style="font-size: 0.9rem; margin-bottom: 0; color: #999999; font-style: italic;">
+              Analyzing your fitness logs...
+            </p>
+          </div>
+        </div>
+
         <div class="card-custom" style="padding:0;">
           <div style="padding:20px; border-bottom:1px solid #dddddd;">
             <span class="section-title" style="margin-bottom:0;">Workout History</span>
@@ -187,7 +193,6 @@
     </div>
   </main>
 
-  <!-- Edit Workout Modal -->
   <div class="modal fade" id="editWorkoutModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -318,6 +323,10 @@
         });
       }
 
+      // calculate total duration completed today
+      var today = todayStr();
+      var minutesToday = workouts.filter(w => w.date === today).reduce((sum, w) => sum + (w.duration || 0), 0);
+
       document.getElementById('totalSessions').textContent = workouts.length;
       document.getElementById('totalCalories').textContent = workouts.reduce(function (total, workout) {
         return total + (workout.calories || 0);
@@ -330,6 +339,8 @@
 
       if (workouts.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem; color:#999999;">No workouts found.</td></tr>';
+        // trigger AI analysis with 0 minutes logged if empty
+        updateAIRecommendation(0);
         return;
       }
 
@@ -352,6 +363,78 @@
       });
 
       tbody.innerHTML = rows;
+
+      // update the recommendation string based on active log variations
+      updateAIRecommendation(minutesToday);
+    }
+
+    // fetch API handler linking frontend context variables directly to Express AI engine
+    // update API handler linking frontend context variables directly to Express AI engine
+    async function updateAIRecommendation(totalMinutesToday) {
+      const displayField = document.getElementById('aiRecommendationText');
+      
+      const currentWeeklyHours = totalMinutesToday / 60; // convert minutes to hours parameter
+      const targetedGoalHours = 3.5; 
+      const preferredActivityType = "Cardio"; 
+
+      try {
+        const response = await fetch('http://localhost:3000/api/ai/recommend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            currentWeeklyHours: currentWeeklyHours,
+            targetedGoalHours: targetedGoalHours,
+            preferredActivityType: preferredActivityType
+          })
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+          const rec = result.recommendation;
+          
+          // dynamically mirror workout table's native badge design tokens
+          let intensityBadgeClass = "badge-yellow"; 
+          const intensityLower = rec.intensityLevel ? rec.intensityLevel.toLowerCase() : '';
+          
+          if (intensityLower.includes('high')) {
+            intensityBadgeClass = "badge-red";
+          } else if (intensityLower.includes('low')) {
+            intensityBadgeClass = "badge-green";
+          }
+
+          // Renders properly without the escaping backslashes
+          displayField.innerHTML = `
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <span class="form-label-custom" style="display: block; margin-bottom: 2px;">Strategy Focus</span>
+                <span style="font-size: 0.95rem; font-weight: bold; color: #333333;">${rec.strategy}</span>
+              </div>
+              <div class="col-6">
+                <span class="form-label-custom" style="display: block; margin-bottom: 2px;">Intensity Level</span>
+                <div style="margin-top: 2px;">
+                  <span class="badge-custom ${intensityBadgeClass}">${rec.intensityLevel}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3" style="padding-top: 12px; border-top: 1px solid #dddddd;">
+              <span class="form-label-custom" style="display: block; margin-bottom: 2px;">Suggested Activity</span>
+              <span style="font-size: 0.95rem; font-weight: bold; color: #38bdf8;">${rec.suggestedActivity}</span>
+              <span style="font-size: 0.85rem; color: #666666; margin-left: 4px;">(${rec.recommendedDurationMinutes} mins)</span>
+            </div>
+
+            <p style="font-size: 0.85rem; margin-bottom: 0; color: #666666; font-style: italic; padding-top: 10px; border-top: 1px solid #dddddd; line-height: 1.4;">
+              "${rec.personalizedAdvice}"
+            </p>
+          `;
+        } else {
+          displayField.innerHTML = '<p style="font-size: 0.9rem; margin-bottom: 0; color: #dc3545; font-style: normal;"><i class="bi bi-exclamation-circle-fill me-1"></i>Unable to process AI advice details at this time.</p>';
+        }
+      } catch (err) {
+        console.error("AI connection error:", err);
+        displayField.innerHTML = '<p style="font-size: 0.9rem; margin-bottom: 0; color: #ff9900; font-style: normal;"><i class="bi bi-wifi-off me-1"></i>Could not sync with backend AI engine. Make sure node server.js is running.</p>';
+      }
     }
 
     //delete a workout record after user confirmation

@@ -6,8 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Create Account - Fitly</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 
@@ -19,7 +18,6 @@
     </div>
   </nav>
 
-  <!-- register form-->
   <main class="auth-wrapper">
     <div class="auth-card" style="max-width:520px;">
       <div class="auth-logo">Create your account</div>
@@ -28,8 +26,8 @@
       <div id="regAlert" style="display:none;" class="alert-custom warning mb-3">
         <span id="regAlertMsg"></span>
       </div>
-      <div id="regSuccess" style="display:none;" class="alert-custom mb-3">
-        Account created. Redirecting you to sign in...
+      <div id="regSuccess" style="display:none;" class="alert-custom mb-3" style="background-color: #e6f7ed; color: #1e7e34; border: 1px solid #c3e6cb; padding: 12px; border-radius: 8px;">
+        Account created successfully! Redirecting you to sign in...
       </div>
 
       <form id="registerForm">
@@ -81,35 +79,36 @@
         </div>
         <div class="mb-4 d-flex align-items-center gap-2">
           <input type="checkbox" id="agreeTerms" required />
-          <label for="agreeTerms">I agree to the Terms of Service and Privacy Policy</label>
+          <label for="agreeTerms" style="cursor: pointer; font-size: 0.85rem; color: #666666;">I agree to the Terms of Service and Privacy Policy</label>
         </div>
-        <button type="submit" class="btn-primary-custom w-100">Create Account</button>
+        <button type="submit" class="btn-primary-custom w-100" style="padding: 12px; font-size: 0.95rem;">Create Account</button>
       </form>
 
-      <!-- Divider -->
       <div style="display: flex; align-items: center; gap: 12px; margin: 1.5rem 0;">
-        <div style="flex: 1; height: 1px; background: var(--border);"></div>
-        <span style="font-size: 0.75rem; color: var(--text-muted);">OR</span>
-        <div style="flex: 1; height: 1px; background: var(--border);"></div>
+        <div style="flex: 1; height: 1px; background: var(--border, #dddddd);"></div>
+        <span style="font-size: 0.75rem; color: var(--text-muted, #999999);">OR</span>
+        <div style="flex: 1; height: 1px; background: var(--border, #dddddd);"></div>
       </div>
 
-      <!-- Demo User Button -->
-      <button type="button" onclick="loginDemoUser()" class="btn-primary-custom w-100">
+      <button type="button" onclick="loginDemoUser()" class="btn-primary-custom w-100" style="padding: 12px; font-size: 0.95rem; background-color: #6c757d; border-color: #6c757d;">
         <i class="bi bi-play-fill me-2"></i> Continue as Demo User
       </button>
 
-      <p style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-muted);">
-        Already have an account? <a href="login.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">Sign in</a>
+      <p style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-muted, #999999);">
+        Already have an account? <a href="login.html" style="color: var(--primary, #38bdf8); text-decoration: none; font-weight: 500;">Sign in</a>
       </p>
+    </div>
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
   <script src="../js/main.js"></script>
   <script>
-    //small helper to show validation messages above the form
+    // helper to show validation messages above the form
     function showRegisterError(message) {
       document.getElementById('regAlert').style.display = 'block';
       document.getElementById('regAlertMsg').textContent = message;
+      // Scroll smoothly back to top of form so user sees the message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // simple check for password strength
@@ -117,18 +116,10 @@
       var password = document.getElementById('rPassword').value;
       var score = 0;
 
-      if (password.length >= 6) {
-        score++;
-      }
-      if (password.length >= 10) {
-        score++;
-      }
-      if (/[A-Z]/.test(password)) {
-        score++;
-      }
-      if (/[0-9]/.test(password)) {
-        score++;
-      }
+      if (password.length >= 6) { score++; }
+      if (password.length >= 10) { score++; }
+      if (/[A-Z]/.test(password)) { score++; }
+      if (/[0-9]/.test(password)) { score++; }
 
       var width = score * 25;
       var label = 'Weak';
@@ -148,12 +139,16 @@
       document.getElementById('strengthLabel').style.color = color;
     }
 
-    // validate form and save on submit
-    document.getElementById('registerForm').addEventListener('submit', function (event) {
+    // validate form data fields and submit to Express endpoint pipeline
+    document.getElementById('registerForm').addEventListener('submit', async function (event) {
       event.preventDefault();
 
       var name = document.getElementById('rName').value.trim();
+      var age = parseInt(document.getElementById('rAge').value) || 0;
       var email = document.getElementById('rEmail').value.trim();
+      var weight = parseFloat(document.getElementById('rWeight').value) || 0;
+      var height = parseFloat(document.getElementById('rHeight').value) || 0;
+      var goal = document.getElementById('rGoal').value || "Not specified";
       var password = document.getElementById('rPassword').value;
       var confirm = document.getElementById('rConfirm').value;
 
@@ -167,43 +162,43 @@
         return;
       }
 
-      var users = Store.get('users');
-      var existingUser = users.find(function (user) {
-        return user.email === email;
-      });
+      try {
+        // fetch request targeted straight at account router endpoint
+        const response = await fetch('http://localhost:3000/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name,        
+            email: email,
+            password: password,
+            age: age,
+            weight: weight,
+            height: height,
+            goal: goal
+          })
+        });
 
-      if (existingUser) {
-        showRegisterError('This email is already registered.');
-        return;
+        const result = await response.json();
+
+        if (!result.success) {
+          showRegisterError(result.message);
+          return;
+        }
+
+        // hide errors, hide form layout, reveal success notice container
+        document.getElementById('regAlert').style.display = 'none';
+        document.getElementById('regSuccess').style.display = 'block';
+        this.style.display = 'none';
+
+        // window destination transition timer
+        setTimeout(function () {
+          window.location.href = 'login.html';
+        }, 1500);
+
+      } catch (err) {
+        console.error("Connection Error:", err);
+        showRegisterError('Could not bridge connection to local server endpoint pipeline. Ensure terminal node server.js execution is continuous.');
       }
-
-      users.push({
-        name: name,
-        email: email,
-        password: password,
-        age: parseInt(document.getElementById('rAge').value) || null,
-        weight: parseFloat(document.getElementById('rWeight').value) || null,
-        height: parseFloat(document.getElementById('rHeight').value) || null,
-        goal: document.getElementById('rGoal').value
-      });
-
-      Store.set('users', users);
-      Store.set('profile', {
-        name: name,
-        email: email,
-        age: parseInt(document.getElementById('rAge').value) || null,
-        weight: parseFloat(document.getElementById('rWeight').value) || null,
-        height: parseFloat(document.getElementById('rHeight').value) || null,
-        activity: 'moderate'
-      });
-
-      document.getElementById('regAlert').style.display = 'none';
-      document.getElementById('regSuccess').style.display = 'block';
-      this.style.display = 'none';
-
-      setTimeout(function () {
-        window.location.href = 'login.html';
-      }, 1500);
     });
   </script>
 </body>

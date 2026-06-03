@@ -6,13 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profile - Fitly</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 
 <body>
-  <!-- bootstrap navbar -->
   <nav class="navbar navbar-expand-lg">
     <div class="container">
       <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
@@ -26,7 +24,6 @@
           <li class="nav-item"><a class="nav-link" href="nutrition.html">Nutrition</a></li>
           <li class="nav-item"><a class="nav-link" href="goals.html">Goals</a></li>
           <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
-          <!-- Notification Dropdown -->
           <li class="nav-item dropdown ms-1">
             <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown"
               aria-expanded="false" style="position: relative;">
@@ -65,7 +62,6 @@
 
     <div class="row g-4">
       <div class="col-lg-4">
-        <!-- Profile Summary Card-->
         <div class="card-custom text-center" style="padding:2rem;">
           <div class="avatar mx-auto mb-3" id="profileAvatar">?</div>
           <h4 id="profileName">-</h4>
@@ -113,7 +109,6 @@
       <div class="col-lg-8">
         <div class="card-custom">
           <div class="section-title">Edit Profile</div>
-          <!-- form to update user details-->
           <form id="profileForm">
             <div class="row g-3 mb-3">
               <div class="col-md-6">
@@ -128,8 +123,7 @@
             <div class="mb-3">
               <label class="form-label-custom" for="pPhoto">Profile Picture</label>
               <input type="file" id="pPhoto" class="form-control-custom" accept="image/*" />
-              <div style="font-size:0.75rem; color:#999999; margin-top:4px;">Choose an image file to show on your
-                profile card.</div>
+              <div style="font-size:0.75rem; color:#999999; margin-top:4px;">Choose an image file to show on your profile card.</div>
             </div>
             <div class="row g-3 mb-3">
               <div class="col-md-4">
@@ -210,10 +204,8 @@
 
             <div class="section-title" style="color: #dc3545;">Danger Zone</div>
             <div class="card-custom" style="border: 1px solid #dc3545; background: #fff5f5;">
-              <p style="color: #666666; margin-bottom: 1rem;">Permanently delete your account and all associated data.
-                This action cannot be undone.</p>
-              <button type="button" class="btn-ghost" style="border-color: #dc3545; color: #dc3545;"
-                onclick="deleteAccount()">
+              <p style="color: #666666; margin-bottom: 1rem;">Permanently delete your account and all associated data. This action cannot be undone.</p>
+              <button type="button" class="btn-ghost" style="border-color: #dc3545; color: #dc3545;" onclick="deleteAccount()">
                 <i class="bi bi-trash3 me-1"></i> Delete Account
               </button>
             </div>
@@ -259,12 +251,12 @@
 
       if (profile.name) {
         initials = profile.name.split(' ').map(function (name) {
-          return name[0];
+          return name;
         }).join('').toUpperCase().slice(0, 2);
       }
 
       avatar.innerHTML = '';
-      //upload photo
+      // upload photo
       if (profile.photo) {
         var image = document.createElement('img');
         image.src = profile.photo;
@@ -342,7 +334,7 @@
 
     // FileReader changes the selected image into text so it can be saved locally.
     document.getElementById('pPhoto').addEventListener('change', function () {
-      var file = this.files[0];
+      var file = this.files;
 
       if (!file) {
         return;
@@ -371,7 +363,7 @@
       reader.readAsDataURL(file);
     });
 
-    //change pass function
+    // change pass function
     function changePassword() {
       var currentPassword = document.getElementById('pCurrentPassword').value;
       var newPassword = document.getElementById('pNewPassword').value;
@@ -417,7 +409,7 @@
       }, 1500);
     }
 
-    //delete acc function
+    // delete acc function
     function deleteAccount() {
       var confirmed = confirm('Are you sure you want to delete your account?');
 

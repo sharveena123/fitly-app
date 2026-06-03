@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Goals — Fitly</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-
 <body>
 
-  <!-- navbar -->
   <nav class="navbar navbar-expand-lg">
     <div class="container">
       <a class="navbar-brand" href="../index.html">Fit<span>ly</span></a>
@@ -27,7 +23,6 @@
           <li class="nav-item"><a class="nav-link" href="nutrition.html">Nutrition</a></li>
           <li class="nav-item"><a class="nav-link active" href="goals.html">Goals</a></li>
           <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
-          <!-- Notification Dropdown -->
           <li class="nav-item dropdown ms-1">
             <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown"
               aria-expanded="false" style="position: relative;">
@@ -50,24 +45,20 @@
     </div>
   </nav>
 
-  <!-- goal setting tracking -->
   <div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
 
-    <!-- page header -->
     <div class="page-header">
       <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
         <div>
           <h1 class="page-title">Goal Setting</h1>
           <p class="page-subtitle" id="greetingMsg">Define targets and track your progress</p>
         </div>
-        <!-- Button triggers Bootstrap Modal -->
         <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addGoalModal">
           <i class="bi bi-plus-lg me-1"></i> New Goal
         </button>
       </div>
     </div>
 
-    <!-- Summary Cards -->
     <div class="row g-3 mb-4">
       <div class="col-4">
         <div class="card-stat">
@@ -89,13 +80,11 @@
       </div>
     </div>
 
-    <!-- Goals Grid -->
     <div class="row g-4" id="goalsGrid">
       <div class="col-12">
         <div class="card-custom text-center" style="padding: 3rem;">
           <i class="bi bi-bullseye" style="font-size: 2.5rem; color: var(--text-muted);"></i>
-          <p style="color: var(--text-muted); margin-top: 1rem;">No goals set yet. Set your first goal to get started!
-          </p>
+          <p style="color: var(--text-muted); margin-top: 1rem;">No goals set yet. Set your first goal to get started!</p>
           <button class="btn-primary-custom mt-2" data-bs-toggle="modal" data-bs-target="#addGoalModal">
             <i class="bi bi-plus-lg me-1"></i> Add Your First Goal
           </button>
@@ -105,7 +94,6 @@
 
   </div>
 
-  <!-- add goal modal -->
   <div class="modal fade" id="addGoalModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -115,11 +103,9 @@
         </div>
         <form id="goalForm" onsubmit="saveGoal(event); return false;">
           <div class="modal-body">
-            <!-- form simulates HTTP POST request data capture  -->
             <div class="mb-3">
               <label class="form-label-custom">Goal Title *</label>
-              <input type="text" id="gTitle" class="form-control-custom" placeholder="e.g. Lose 5kg, Run 5km"
-                required />
+              <input type="text" id="gTitle" class="form-control-custom" placeholder="e.g. Lose 5kg, Run 5km" required />
             </div>
             <div class="mb-3">
               <label class="form-label-custom">Category</label>
@@ -154,7 +140,6 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
-            <!-- saveGoal() function handles data persistence  -->
             <button type="submit" class="btn-primary-custom">Save Goal</button>
           </div>
         </form>
@@ -162,7 +147,6 @@
     </div>
   </div>
 
-  <!-- update progress modal -->
   <div class="modal fade" id="updateModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">
@@ -183,7 +167,6 @@
     </div>
   </div>
 
-  <!-- footer partial -->
   <footer class="footer">
     <div class="container">
       <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -191,12 +174,10 @@
         <span style="color: var(--text-muted);">&copy; 2026 Fitly. WIF2003 Group Project.</span>
       </div>
     </div>
-  </footer>
+  </footer >
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
   <script src="../js/main.js"></script>
-
-
   <script>
     // localstorage wrapper
     const GoalStore = {
@@ -387,7 +368,6 @@
       };
       goals.push(newGoal);
       GoalStore.set('goals', goals);
-      // Close modal and reset form
       bootstrap.Modal.getOrCreateInstance(document.getElementById('addGoalModal')).hide();
       document.getElementById('goalForm').reset();
       renderGoals();
@@ -447,7 +427,6 @@
         });
       });
 
-      // clear form modal when opened
       const addModal = document.getElementById('addGoalModal');
       if (addModal) {
         addModal.addEventListener('hidden.bs.modal', () => {
@@ -458,17 +437,13 @@
       console.log('Goals page initialized (Lecture 04,05,06a,07 concepts applied)');
     });
 
-    // Expose global functions for onclick handlers
     window.saveGoal = saveGoal;
     window.openUpdate = openUpdate;
     window.saveUpdate = saveUpdate;
     window.deleteGoal = deleteGoal;
     window.renderGoals = renderGoals;
 
-    // Initial render
     renderGoals();
   </script>
-
 </body>
-
 </html>
