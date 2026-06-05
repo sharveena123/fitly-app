@@ -309,7 +309,7 @@
             <div class="stat-icon ${color}" style="margin-bottom:0;"><i class="bi ${icon}"></i></div>
             <div style="display:flex; gap:6px; align-items:center;">
               ${statusBadge}
-              <button class="btn-ghost" style="padding: 3px 8px; font-size: 0.75rem;" onclick="deleteGoal(${g.id})"><i class="bi bi-trash3"></i></button>
+              <button class="btn-ghost" style="padding: 3px 8px; font-size: 0.75rem;" onclick="deleteGoal(${JSON.stringify(g.id)})"><i class="bi bi-trash3"></i></button>
             </div>
           </div>
           <div style="font-family: 'Poppins', sans-serif; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">${escapeHtml(g.title)}</div>
@@ -321,7 +321,7 @@
             <span>${g.current} ${g.unit || ''}</span>
             <span>Target: ${g.target} ${g.unit || ''}</span>
           </div>
-          ${!done ? `<button class="btn-outline-custom w-100" style="font-size: 0.8rem; padding: 7px 14px;" onclick="openUpdate(${g.id}, '${escapeHtml(g.title)}', ${g.current})">
+          ${!done ? `<button class="btn-outline-custom w-100" style="font-size: 0.8rem; padding: 7px 14px;" onclick='openUpdate(${JSON.stringify(g.id)}, ${JSON.stringify(escapeHtml(g.title))}, ${g.current})'>
             <i class="bi bi-pencil me-1"></i> Update Progress
           </button>` : '<button class="btn-ghost w-100" disabled style="opacity:0.5; cursor:not-allowed;">Achieved ✓</button>'}
         </div>
