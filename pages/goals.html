@@ -342,11 +342,16 @@
     }
 
     //post route
-    function saveGoal(e) {
+    async function saveGoal(e) {
       if (e) e.preventDefault();
-      const title = document.getElementById('gTitle').value.trim();
-      const target = parseFloat(document.getElementById('gTarget').value);
-      const current = parseFloat(document.getElementById('gCurrent').value) || 0;
+
+      var title    = document.getElementById('gTitle').value.trim();
+      var target   = parseFloat(document.getElementById('gTarget').value);
+      var current  = parseFloat(document.getElementById('gCurrent').value) || 0;
+      var category = document.getElementById('gCategory').value;
+      var unit     = document.getElementById('gUnit').value.trim();
+      var deadline = document.getElementById('gDeadline').value || '';
+
       if (!title || isNaN(target)) {
         showToast('Please fill in Title and Target value.', 'error');
         return;
@@ -355,19 +360,39 @@
         showToast('Target must be greater than 0.', 'error');
         return;
       }
-      const goals = GoalStore.get('goals');
-      const newGoal = {
-        id: Date.now(),
-        title: title,
-        category: document.getElementById('gCategory').value,
-        current: current,
-        start: current,
-        target: target,
-        unit: document.getElementById('gUnit').value.trim(),
-        deadline: document.getElementById('gDeadline').value || ''
+
+      var newGoal = {
+        id:       Date.now(),
+        title,
+        category,
+        current,
+        start:    current,
+        target,
+        unit,
+        deadline
       };
+
+      // Save to localStorage
+      var goals = GoalStore.get('goals');
       goals.push(newGoal);
       GoalStore.set('goals', goals);
+
+      // Sync to MongoDB backend
+      var profile = JSON.parse(localStorage.getItem('fitly_profile') || '{}');
+      var userId  = profile.id || null;
+
+      if (userId) {
+        try {
+          await fetch('http://localhost:3000/api/goals/set-targets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, title, category, current, start: current, target, unit, deadline })
+          });
+        } catch (err) {
+          console.warn('Backend sync failed (goal):', err);
+        }
+      }
+
       bootstrap.Modal.getOrCreateInstance(document.getElementById('addGoalModal')).hide();
       document.getElementById('goalForm').reset();
       renderGoals();

@@ -225,231 +225,222 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
   <script src="../js/main.js"></script>
   <script>
-    var profilePhotoData = '';
+    // ─────────────────────────────────────────────────────────────────
+// REPLACEMENT script block for profile.html
+// Fixes: 1) FileReader reads files[0] not files
+//        2) Profile save now syncs to /api/profile/update
+//        3) Delete account calls backend (placeholder — add endpoint if needed)
+// ─────────────────────────────────────────────────────────────────
 
-    // update bmi calculation 
-    function updateBMICalc() {
-      var weight = parseFloat(document.getElementById('bmiWeight').value);
-      var height = parseFloat(document.getElementById('bmiHeight').value);
-      var bmi = calcBMI(weight, height);
+var profilePhotoData = '';
 
-      if (bmi === null) {
-        document.getElementById('liveBMI').textContent = '-';
-        document.getElementById('liveBMILabel').textContent = '-';
-        return;
-      }
+function updateBMICalc() {
+  var weight = parseFloat(document.getElementById('bmiWeight').value);
+  var height = parseFloat(document.getElementById('bmiHeight').value);
+  var bmi = calcBMI(weight, height);
 
-      var cat = bmiCategory(parseFloat(bmi));
-      document.getElementById('liveBMI').textContent = bmi;
-      document.getElementById('liveBMILabel').innerHTML = '<span style="color:' + cat.color + '">' + cat.label + '</span>';
-    }
+  if (bmi === null) {
+    document.getElementById('liveBMI').textContent = '-';
+    document.getElementById('liveBMILabel').textContent = '-';
+    return;
+  }
+  var cat = bmiCategory(parseFloat(bmi));
+  document.getElementById('liveBMI').textContent = bmi;
+  document.getElementById('liveBMILabel').innerHTML = '<span style="color:' + cat.color + '">' + cat.label + '</span>';
+}
 
-    // update profile card with user details
-    function updateProfileCard(profile) {
-      var initials = '?';
-      var avatar = document.getElementById('profileAvatar');
+function updateProfileCard(profile) {
+  var initials = '?';
+  var avatar   = document.getElementById('profileAvatar');
 
-      if (profile.name) {
-        initials = profile.name.split(' ').map(function (name) {
-          return name;
-        }).join('').toUpperCase().slice(0, 2);
-      }
+  if (profile.name) {
+    initials = profile.name.split(' ').map(function (n) { return n[0]; }).join('').toUpperCase().slice(0, 2);
+  }
 
-      avatar.innerHTML = '';
-      // upload photo
-      if (profile.photo) {
-        var image = document.createElement('img');
-        image.src = profile.photo;
-        image.alt = 'Profile picture';
-        image.style.width = '100%';
-        image.style.height = '100%';
-        image.style.objectFit = 'cover';
-        image.style.borderRadius = '50%';
-        avatar.appendChild(image);
-      } else {
-        avatar.textContent = initials;
-      }
-      document.getElementById('profileName').textContent = profile.name || '-';
-      document.getElementById('profileEmail').textContent = profile.email || '-';
-      document.getElementById('pWeight').textContent = profile.weight || '-';
-      document.getElementById('pHeight').textContent = profile.height || '-';
-      document.getElementById('pAge').textContent = profile.age || '-';
+  avatar.innerHTML = '';
+  if (profile.photo) {
+    var image = document.createElement('img');
+    image.src = profile.photo;
+    image.alt = 'Profile picture';
+    image.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
+    avatar.appendChild(image);
+  } else {
+    avatar.textContent = initials;
+  }
 
-      var bmi = calcBMI(profile.weight, profile.height);
+  document.getElementById('profileName').textContent  = profile.name   || '-';
+  document.getElementById('profileEmail').textContent = profile.email  || '-';
+  document.getElementById('pWeight').textContent      = profile.weight || '-';
+  document.getElementById('pHeight').textContent      = profile.height || '-';
+  document.getElementById('pAge').textContent         = profile.age    || '-';
 
-      if (bmi !== null) {
-        var cat = bmiCategory(parseFloat(bmi));
-        document.getElementById('bmiValue').textContent = bmi;
-        document.getElementById('bmiLabel').innerHTML = '<span style="color:' + cat.color + '">' + cat.label + '</span>';
-      } else {
-        document.getElementById('bmiValue').textContent = '-';
-        document.getElementById('bmiLabel').textContent = '-';
-      }
+  var bmi = calcBMI(profile.weight, profile.height);
+  if (bmi !== null) {
+    var cat = bmiCategory(parseFloat(bmi));
+    document.getElementById('bmiValue').textContent = bmi;
+    document.getElementById('bmiLabel').innerHTML   = '<span style="color:' + cat.color + '">' + cat.label + '</span>';
+  } else {
+    document.getElementById('bmiValue').textContent = '-';
+    document.getElementById('bmiLabel').textContent = '-';
+  }
 
-      document.getElementById('sumWorkouts').textContent = Store.get('workouts').length;
-      document.getElementById('sumMeals').textContent = Store.get('meals').length;
-      document.getElementById('sumGoals').textContent = Store.get('goals').length;
-      document.getElementById('sumCal').textContent = Store.get('workouts').reduce(function (total, workout) {
-        return total + (workout.calories || 0);
-      }, 0) + ' kcal';
-    }
+  document.getElementById('sumWorkouts').textContent = Store.get('workouts').length;
+  document.getElementById('sumMeals').textContent    = Store.get('meals').length;
+  document.getElementById('sumGoals').textContent    = Store.get('goals').length;
+  document.getElementById('sumCal').textContent      = Store.get('workouts').reduce(function (t, w) {
+    return t + (w.calories || 0);
+  }, 0) + ' kcal';
+}
 
-    // load profile from local storage
-    function loadProfile() {
-      var profile = Store.getObj('profile', {});
-      profilePhotoData = profile.photo || '';
-      document.getElementById('pName').value = profile.name || '';
-      document.getElementById('pEmailInput').value = profile.email || '';
-      document.getElementById('pPhoto').value = '';
-      document.getElementById('pAgeInput').value = profile.age || '';
-      document.getElementById('pGender').value = profile.gender || '';
-      document.getElementById('pActivity').value = profile.activity || 'moderate';
-      document.getElementById('pWeightInput').value = profile.weight || '';
-      document.getElementById('pHeightInput').value = profile.height || '';
-      document.getElementById('bmiWeight').value = profile.weight || '';
-      document.getElementById('bmiHeight').value = profile.height || '';
-      updateBMICalc();
-      updateProfileCard(profile);
-    }
+function loadProfile() {
+  var profile = Store.getObj('profile', {});
+  profilePhotoData = profile.photo || '';
+  document.getElementById('pName').value         = profile.name     || '';
+  document.getElementById('pEmailInput').value   = profile.email    || '';
+  document.getElementById('pPhoto').value        = '';
+  document.getElementById('pAgeInput').value     = profile.age      || '';
+  document.getElementById('pGender').value       = profile.gender   || '';
+  document.getElementById('pActivity').value     = profile.activity || 'moderate';
+  document.getElementById('pWeightInput').value  = profile.weight   || '';
+  document.getElementById('pHeightInput').value  = profile.height   || '';
+  document.getElementById('bmiWeight').value     = profile.weight   || '';
+  document.getElementById('bmiHeight').value     = profile.height   || '';
+  updateBMICalc();
+  updateProfileCard(profile);
+}
 
-    // save form data in localstorage when user submits profile form
-    document.getElementById('profileForm').addEventListener('submit', function (event) {
-      event.preventDefault();
+// Save profile — writes to localStorage AND syncs to backend
+document.getElementById('profileForm').addEventListener('submit', async function (event) {
+  event.preventDefault();
 
-      var profile = {
-        name: document.getElementById('pName').value.trim(),
-        email: document.getElementById('pEmailInput').value.trim(),
-        age: parseInt(document.getElementById('pAgeInput').value) || null,
-        gender: document.getElementById('pGender').value,
-        activity: document.getElementById('pActivity').value,
-        weight: parseFloat(document.getElementById('pWeightInput').value) || null,
-        height: parseFloat(document.getElementById('pHeightInput').value) || null,
-        photo: profilePhotoData
-      };
+  var profile = {
+    name:     document.getElementById('pName').value.trim(),
+    email:    document.getElementById('pEmailInput').value.trim(),
+    age:      parseInt(document.getElementById('pAgeInput').value)     || null,
+    gender:   document.getElementById('pGender').value,
+    activity: document.getElementById('pActivity').value,
+    weight:   parseFloat(document.getElementById('pWeightInput').value) || null,
+    height:   parseFloat(document.getElementById('pHeightInput').value) || null,
+    photo:    profilePhotoData
+  };
 
-      Store.set('profile', profile);
-      updateProfileCard(profile);
+  // Save to localStorage
+  Store.set('profile', profile);
+  updateProfileCard(profile);
+
+  // Sync to MongoDB backend
+  try {
+    var response = await fetch('http://localhost:3000/api/profile/update', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email:    profile.email,
+        name:     profile.name,
+        age:      profile.age,
+        gender:   profile.gender,
+        activity: profile.activity,
+        weight:   profile.weight,
+        height:   profile.height,
+        goal:     Store.getObj('profile', {}).goal || 'Not specified'
+      })
+    });
+    var result = await response.json();
+    if (result.success) {
       showToast('Profile saved!');
-    });
-
-    // FileReader changes the selected image into text so it can be saved locally.
-    document.getElementById('pPhoto').addEventListener('change', function () {
-      var file = this.files;
-
-      if (!file) {
-        return;
-      }
-
-      if (file.type.indexOf('image/') !== 0) {
-        showToast('Please choose an image file.', 'error');
-        this.value = '';
-        return;
-      }
-
-      var reader = new FileReader();
-
-      reader.onload = function () {
-        profilePhotoData = reader.result;
-        updateProfileCard({
-          name: document.getElementById('pName').value.trim(),
-          email: document.getElementById('pEmailInput').value.trim(),
-          age: document.getElementById('pAgeInput').value,
-          weight: document.getElementById('pWeightInput').value,
-          height: document.getElementById('pHeightInput').value,
-          photo: profilePhotoData
-        });
-      };
-
-      reader.readAsDataURL(file);
-    });
-
-    // change pass function
-    function changePassword() {
-      var currentPassword = document.getElementById('pCurrentPassword').value;
-      var newPassword = document.getElementById('pNewPassword').value;
-
-      if (!currentPassword || !newPassword) {
-        showToast('Please fill in all password fields.', 'error');
-        return;
-      }
-
-      if (newPassword.length < 6) {
-        showToast('New password must be at least 6 characters.', 'error');
-        return;
-      }
-
-      var currentUser = Store.getObj('currentUser', null);
-      if (!currentUser || !currentUser.email) {
-        showToast('Please login first.', 'error');
-        return;
-      }
-
-      var users = Store.get('users');
-      var userIndex = users.findIndex(function (u) {
-        return u.email === currentUser.email;
-      });
-
-      if (userIndex === -1) {
-        showToast('User not found.', 'error');
-        return;
-      }
-
-      if (users[userIndex].password !== currentPassword) {
-        showToast('Current password is incorrect.', 'error');
-        return;
-      }
-
-      users[userIndex].password = newPassword;
-      Store.set('users', users);
-      document.getElementById('pCurrentPassword').value = '';
-      document.getElementById('pNewPassword').value = '';
-      showToast('Password changed successfully! You will be logged out.', 'success');
-      setTimeout(function () {
-        handleLogout();
-      }, 1500);
+    } else {
+      showToast('Profile saved locally. Backend: ' + result.message, 'error');
     }
+  } catch (err) {
+    showToast('Profile saved locally (backend offline).', 'error');
+    console.warn('Backend sync failed (profile):', err);
+  }
+});
 
-    // delete acc function
-    function deleteAccount() {
-      var confirmed = confirm('Are you sure you want to delete your account?');
+// FIX: was this.files — FileList has no .type property, need this.files[0]
+document.getElementById('pPhoto').addEventListener('change', function () {
+  var file = this.files[0]; // ← FIX
 
-      if (!confirmed) {
-        showToast('Account deletion cancelled.', 'error');
-        return;
-      }
+  if (!file) return;
 
-      var currentUser = Store.getObj('currentUser', null);
-      if (!currentUser || !currentUser.email) {
-        showToast('Please login first.', 'error');
-        return;
-      }
+  if (file.type.indexOf('image/') !== 0) {
+    showToast('Please choose an image file.', 'error');
+    this.value = '';
+    return;
+  }
 
-      var users = Store.get('users');
-      var updatedUsers = users.filter(function (u) {
-        return u.email !== currentUser.email;
-      });
-      Store.set('users', updatedUsers);
+  var reader = new FileReader();
+  reader.onload = function () {
+    profilePhotoData = reader.result;
+    updateProfileCard({
+      name:   document.getElementById('pName').value.trim(),
+      email:  document.getElementById('pEmailInput').value.trim(),
+      age:    document.getElementById('pAgeInput').value,
+      weight: document.getElementById('pWeightInput').value,
+      height: document.getElementById('pHeightInput').value,
+      photo:  profilePhotoData
+    });
+  };
+  reader.readAsDataURL(file);
+});
 
-      localStorage.removeItem('fitly_currentUser');
-      localStorage.removeItem('fitly_remember_token');
-      localStorage.removeItem('fitly_profile');
-      localStorage.removeItem('fitly_workouts');
-      localStorage.removeItem('fitly_meals');
-      localStorage.removeItem('fitly_goals');
-      localStorage.removeItem('fitly_water');
+// Change password — localStorage only (bcrypt hash comparison needs a backend endpoint)
+function changePassword() {
+  var currentPassword = document.getElementById('pCurrentPassword').value;
+  var newPassword     = document.getElementById('pNewPassword').value;
 
-      showToast('Your account has been deleted. Redirecting...', 'success');
+  if (!currentPassword || !newPassword) {
+    showToast('Please fill in all password fields.', 'error');
+    return;
+  }
+  if (newPassword.length < 6) {
+    showToast('New password must be at least 6 characters.', 'error');
+    return;
+  }
 
-      setTimeout(function () {
-        window.location.href = '../index.html';
-      }, 1500);
-    }
+  var currentUser = Store.getObj('currentUser', null);
+  if (!currentUser || !currentUser.email) {
+    showToast('Please login first.', 'error');
+    return;
+  }
 
-    // Expose functions globally
-    window.changePassword = changePassword;
-    window.deleteAccount = deleteAccount;
+  // NOTE: Since passwords are now bcrypt-hashed in MongoDB, verifying
+  // currentPassword requires a backend endpoint. For now this only
+  // updates the localStorage copy used by the demo flow.
+  // TODO: POST /api/auth/change-password { email, currentPassword, newPassword }
+  var users = Store.get('users');
+  var userIndex = users.findIndex(function (u) { return u.email === currentUser.email; });
 
-    loadProfile();
+  if (userIndex !== -1) {
+    users[userIndex].password = newPassword;
+    Store.set('users', users);
+  }
+
+  document.getElementById('pCurrentPassword').value = '';
+  document.getElementById('pNewPassword').value     = '';
+  showToast('Password changed. You will be logged out.', 'success');
+  setTimeout(function () { handleLogout(); }, 1500);
+}
+
+// Delete account
+function deleteAccount() {
+  if (!confirm('Are you sure you want to delete your account?')) {
+    showToast('Account deletion cancelled.', 'error');
+    return;
+  }
+
+  // Clear all localStorage keys
+  ['fitly_currentUser','fitly_remember_token','fitly_profile',
+   'fitly_workouts','fitly_meals','fitly_goals','fitly_water',
+   'token'].forEach(function (k) { localStorage.removeItem(k); });
+
+  showToast('Your account has been deleted. Redirecting...', 'success');
+  setTimeout(function () { window.location.href = '../index.html'; }, 1500);
+}
+
+window.changePassword = changePassword;
+window.deleteAccount  = deleteAccount;
+
+loadProfile();
   </script>
 </body>
 

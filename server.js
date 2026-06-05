@@ -1,40 +1,40 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const exec = require('child_process').exec; 
+const cors    = require('cors');
+const connectDB = require('./db');
 
-const authRoutes = require('./routes/auth');
-const aiRoutes = require('./routes/ai');
+// ── Route imports ────────────────────────────────────────────────
+const authRoutes    = require('./routes/auth');
 const workoutRoutes = require('./routes/workout');
 const nutritionRoutes = require('./routes/nutrition');
-const goalRoutes = require('./routes/goals');
+const goalRoutes    = require('./routes/goals');
+const profileRoutes = require('./routes/profile');
+const aiRoutes      = require('./routes/ai');
 
 const app = express();
 
+// ── Middleware ───────────────────────────────────────────────────
 app.use(cors());
 app.use(express.json());
 
-// combine frontend layouts and backend APIs onto Port 3000
-app.use(express.static(__dirname)); 
+// ── Connect to MongoDB ───────────────────────────────────────────
+connectDB();
 
-// authentication routes
-app.use('/api/auth', authRoutes);
-app.use('/api/ai', aiRoutes);
-
-// core feature routes
-app.use('/api/workouts', workoutRoutes);
+// ── Mount routes ─────────────────────────────────────────────────
+app.use('/api/auth',      authRoutes);
+app.use('/api/workouts',  workoutRoutes);
 app.use('/api/nutrition', nutritionRoutes);
-app.use('/api/goals', goalRoutes);
+app.use('/api/goals',     goalRoutes);
+app.use('/api/profile',   profileRoutes);
+app.use('/api/ai',        aiRoutes);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Backend server running on port ${PORT}`);
-  
-  // automatically runs a hidden system command to launch app instantly
-  const url = `http://localhost:${PORT}`;
-  const startCommand = process.platform === 'darwin' ? `open ${url}` : process.platform === 'win32' ? `start ${url}` : `xdg-open ${url}`;
-  exec(startCommand);
+// ── Health check ─────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.json({ message: 'Fitly API is running ✅' });
 });
 
-module.exports = app;
+// ── Start server ─────────────────────────────────────────────────
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});

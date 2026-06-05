@@ -1,34 +1,62 @@
-const userGoals = {};
+const Goal = require('../models/Goal');
 
-exports.setTargets = (req, res) => {
-  const { userId } = req.body;
+// ── CREATE / SET GOAL ────────────────────────────────────────────
+exports.setTargets = async (req, res) => {
+  try {
+    const { userId, title, category, current, target, unit, deadline } = req.body;
 
-  userGoals[userId] = req.body;
+    if (!userId || !title || target === undefined || current === undefined) {
+      return res.status(400).json({ success: false, message: 'Missing required fields.' });
+    }
 
-  res.json(userGoals[userId]);
+    const goal = await Goal.create({
+      userId,
+      title,
+      category: category || 'Custom',
+      current,
+      start: current,   // capture starting value for progress %
+      target,
+      unit:     unit     || '',
+      deadline: deadline || '',
+    });
+
+    res.status(201).json({ success: true, goal });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };
 
-exports.getDashboardMetrics = (req, res) => {
-  const { userId } = req.query;
+// ── GET ALL GOALS FOR USER ───────────────────────────────────────
+exports.getDashboardMetrics = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (!userId) return res.status(400).json({ success: false, message: 'userId is required.' });
 
-  const goals = userGoals[userId];
+    const goals = await Goal.find({ userId }).sort({ createdAt: -1 });
+    res.json({ success: true, goals });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 
-  if (!goals)
-    return res.status(404).json({ message: "No goals found" });
+// ── UPDATE GOAL PROGRESS ─────────────────────────────────────────
+exports.updateGoal = async (req, res) => {
+  try {
+    const goal = await Goal.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!goal) return res.status(404).json({ success: false, message: 'Goal not found.' });
+    res.json({ success: true, goal });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 
-  const activeMinutes = 45;
-  const caloriesConsumed = 1800;
-
-  const minuteProgress =
-    (activeMinutes / goals.targetDailyMinutes) * 100;
-
-  const calorieProgress =
-    (caloriesConsumed / goals.targetCalories) * 100;
-
-  res.json({
-    activeMinutes,
-    caloriesConsumed,
-    minuteProgress: minuteProgress.toFixed(1) + "%",
-    calorieProgress: calorieProgress.toFixed(1) + "%"
-  });
+// ── DELETE GOAL ──────────────────────────────────────────────────
+exports.deleteGoal = async (req, res) => {
+  try {
+    const goal = await Goal.findByIdAndDelete(req.params.id);
+    if (!goal) return res.status(404).json({ success: false, message: 'Goal not found.' });
+    res.json({ success: true, message: 'Goal deleted.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };

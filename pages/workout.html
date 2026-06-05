@@ -264,38 +264,46 @@
     var intensityCalMap = { low: 4, moderate: 7, high: 10 };
 
     //save workout data in local storage when user submits quick workout form
-    document.getElementById('quickWorkoutForm').addEventListener('submit', function (event) {
+    document.getElementById('quickWorkoutForm').addEventListener('submit', async function (event) {
       event.preventDefault();
 
-      var exercise = document.getElementById('qExercise').value.trim();
-      var type = document.getElementById('qType').value;
-      var duration = parseInt(document.getElementById('qDuration').value);
+      var exercise  = document.getElementById('qExercise').value.trim();
+      var type      = document.getElementById('qType').value;
+      var duration  = parseInt(document.getElementById('qDuration').value);
       var intensity = document.getElementById('qIntensity').value;
-      var calories = parseInt(document.getElementById('qCalories').value);
-      var date = document.getElementById('qDate').value;
+      var calories  = parseInt(document.getElementById('qCalories').value);
+      var date      = document.getElementById('qDate').value;
 
-      if (exercise === '' || type === '' || !duration || date === '') {
+      if (!exercise || !type || !duration || !date) {
         showToast('Please fill in all required fields.', 'error');
         return;
       }
 
       if (!calories) {
-        calories = Math.round(duration * intensityCalMap[intensity]);
+        calories = Math.round(duration * (intensity === 'high' ? 10 : intensity === 'low' ? 4 : 7));
       }
 
-      // read old records from localStorage before adding this workout
+      // Save to localStorage
       var workouts = Store.get('workouts');
-      workouts.push({
-        id: Date.now(),
-        exercise: exercise,
-        type: type,
-        duration: duration,
-        intensity: intensity,
-        calories: calories,
-        date: date
-      });
-
+      workouts.push({ id: Date.now(), exercise, type, duration, intensity, calories, date });
       Store.set('workouts', workouts);
+
+      // Sync to MongoDB backend (non-blocking — localStorage is source of truth for UI)
+      var profile = JSON.parse(localStorage.getItem('fitly_profile') || '{}');
+      var userId  = profile.id || null;
+
+      if (userId) {
+        try {
+          await fetch('http://localhost:3000/api/workouts/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, exercise, type, duration, intensity, calories, date })
+          });
+        } catch (err) {
+          console.warn('Backend sync failed (workout):', err);
+        }
+      }
+
       showToast('Workout logged successfully!');
       this.reset();
       document.getElementById('qDate').value = todayStr();

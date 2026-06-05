@@ -1,57 +1,53 @@
-const mockWorkouts = [];
+const Workout = require('../models/Workout');
 
-function calculateBurnedCalories(duration, intensity) {
-  let factor = intensity === "high" ? 10 : 5;
-  return duration * factor;
-}
-
-exports.getWorkouts = (req, res) => {
-  const { userId } = req.query;
-
-  let filtered = mockWorkouts;
-
-  if (userId) {
-    filtered = filtered.filter(w => w.userId === userId);
+// ── GET ALL WORKOUTS ─────────────────────────────────────────────
+exports.getWorkouts = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const filter = userId ? { userId } : {};
+    const workouts = await Workout.find(filter).sort({ createdAt: -1 });
+    res.json({ success: true, workouts });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
-
-  res.json(filtered);
 };
 
-exports.createWorkout = (req, res) => {
-  const { userId, activityType, duration, intensity, calories } = req.body;
+// ── CREATE WORKOUT ───────────────────────────────────────────────
+exports.createWorkout = async (req, res) => {
+  try {
+    const { userId, exercise, type, duration, intensity, calories, date } = req.body;
 
-  const newWorkout = {
-    id: Date.now().toString(),
-    userId,
-    activityType,
-    duration,
-    intensity,
-    calories: calories || calculateBurnedCalories(duration, intensity),
-    date: new Date().toISOString().split("T")[0]
-  };
+    if (!userId || !exercise || !type || !duration || !date) {
+      return res.status(400).json({ success: false, message: 'Missing required fields.' });
+    }
 
-  mockWorkouts.push(newWorkout);
+    const calBurned = calories || Math.round(duration * (intensity === 'high' ? 10 : intensity === 'low' ? 4 : 7));
 
-  res.status(201).json(newWorkout);
+    const workout = await Workout.create({ userId, exercise, type, duration, intensity, calories: calBurned, date });
+    res.status(201).json({ success: true, workout });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };
 
-exports.updateWorkout = (req, res) => {
-  const workout = mockWorkouts.find(w => w.id === req.params.id);
-
-  if (!workout) return res.status(404).json({ message: "Not found" });
-
-  Object.assign(workout, req.body);
-
-  res.json(workout);
+// ── UPDATE WORKOUT ───────────────────────────────────────────────
+exports.updateWorkout = async (req, res) => {
+  try {
+    const workout = await Workout.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!workout) return res.status(404).json({ success: false, message: 'Workout not found.' });
+    res.json({ success: true, workout });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };
 
-exports.deleteWorkout = (req, res) => {
-  const index = mockWorkouts.findIndex(w => w.id === req.params.id);
-
-  if (index === -1)
-    return res.status(404).json({ message: "Not found" });
-
-  mockWorkouts.splice(index, 1);
-
-  res.json({ message: "Deleted" });
+// ── DELETE WORKOUT ───────────────────────────────────────────────
+exports.deleteWorkout = async (req, res) => {
+  try {
+    const workout = await Workout.findByIdAndDelete(req.params.id);
+    if (!workout) return res.status(404).json({ success: false, message: 'Workout not found.' });
+    res.json({ success: true, message: 'Workout deleted.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };

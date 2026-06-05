@@ -285,33 +285,43 @@
     document.getElementById('filterMealDate').addEventListener('change', renderMeals);
 
     // handle meal form submission
-    document.getElementById('mealForm').addEventListener('submit', function (event) {
+    document.getElementById('mealForm').addEventListener('submit', async function (event) {
       event.preventDefault();
 
-      var food = document.getElementById('mFoodName').value.trim();
-      var type = document.getElementById('mMealType').value;
+      var food     = document.getElementById('mFoodName').value.trim();
+      var type     = document.getElementById('mMealType').value;
       var calories = parseInt(document.getElementById('mCalories').value);
-      var date = document.getElementById('mDate').value;
+      var date     = document.getElementById('mDate').value;
+      var carbs    = parseInt(document.getElementById('mCarbs').value)   || 0;
+      var protein  = parseInt(document.getElementById('mProtein').value) || 0;
+      var fat      = parseInt(document.getElementById('mFat').value)     || 0;
 
-      if (food === '' || type === '' || !calories || date === '') {
+      if (!food || !type || !calories || !date) {
         showToast('Fill in required fields.', 'error');
         return;
       }
 
-      // get meals from local storage
+      // Save to localStorage
       var meals = Store.get('meals');
-      meals.push({
-        id: Date.now(),
-        food: food,
-        type: type,
-        calories: calories,
-        date: date,
-        carbs: parseInt(document.getElementById('mCarbs').value) || 0,
-        protein: parseInt(document.getElementById('mProtein').value) || 0,
-        fat: parseInt(document.getElementById('mFat').value) || 0
-      });
-
+      meals.push({ id: Date.now(), food, type, calories, date, carbs, protein, fat });
       Store.set('meals', meals);
+
+      // Sync to MongoDB backend
+      var profile = JSON.parse(localStorage.getItem('fitly_profile') || '{}');
+      var userId  = profile.id || null;
+
+      if (userId) {
+        try {
+          await fetch('http://localhost:3000/api/nutrition/log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, food, type, calories, carbs, protein, fat, date })
+          });
+        } catch (err) {
+          console.warn('Backend sync failed (meal):', err);
+        }
+      }
+
       showToast('Meal logged!');
       this.reset();
       document.getElementById('mDate').value = todayStr();
@@ -471,15 +481,14 @@
       var meals = Store.get('meals');
 
       for (var i = 6; i >= 0; i--) {
-        var date = new Date();
-        date.setDate(date.getDate() - i);
-        var dateString = date.toISOString().split('T');
-        days.push(date.toLocaleDateString('en-MY', { weekday: 'short' }));
-        calData.push(meals.filter(function (meal) {
-          return meal.date === dateString;
-        }).reduce(function (total, meal) {
-          return total + meal.calories;
-        }, 0));
+        var d = new Date();
+        d.setDate(d.getDate() - i);
+        var dateString = d.toISOString().split('T')[0]; // ← FIX: use [0]
+        days.push(d.toLocaleDateString('en-MY', { weekday: 'short' }));
+        calData.push(
+          meals.filter(function (meal) { return meal.date === dateString; })
+               .reduce(function (total, meal) { return total + meal.calories; }, 0)
+        );
       }
 
       if (nutritionChart !== null) {

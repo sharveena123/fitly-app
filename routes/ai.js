@@ -1,8 +1,8 @@
 const express = require('express');
-const router = express.Router();
-const aiController = require('../controllers/aiController');
+const router  = express.Router();
+const { getWorkoutRecommendation } = require('../controllers/aiController');
 
-// Map GET/POST to your smart calculation logic
-router.post('/recommend', aiController.getWorkoutRecommendation);
+// POST /api/ai/recommend
+router.post('/recommend', getWorkoutRecommendation);
 
 module.exports = router;

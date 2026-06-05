@@ -1,16 +1,22 @@
-const express = require("express");
-const router = express.Router();
-
+const express = require('express');
+const router  = express.Router();
 const {
   getWorkouts,
   createWorkout,
   updateWorkout,
   deleteWorkout
-} = require("../controllers/workoutController");
+} = require('../controllers/workoutController');
 
-router.get("/", getWorkouts);
-router.post("/", createWorkout);
-router.put("/:id", updateWorkout);
-router.delete("/:id", deleteWorkout);
+// GET  /api/workouts?userId=xxx
+router.get('/',    getWorkouts);
+
+// POST /api/workouts/
+router.post('/',   createWorkout);
+
+// PUT  /api/workouts/:id
+router.put('/:id', updateWorkout);
+
+// DELETE /api/workouts/:id
+router.delete('/:id', deleteWorkout);
 
 module.exports = router;

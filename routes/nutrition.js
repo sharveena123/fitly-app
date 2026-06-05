@@ -1,12 +1,14 @@
-const express = require("express");
-const router = express.Router();
+const express = require('express');
+const router  = express.Router();
+const { logMeal, getSummary, deleteMeal } = require('../controllers/foodController');
 
-const {
-  logMeal,
-  getSummary
-} = require("../controllers/foodController");
+// POST /api/nutrition/log
+router.post('/log', logMeal);
 
-router.post("/log", logMeal);
-router.get("/summary", getSummary);
+// GET  /api/nutrition/summary?userId=xxx
+router.get('/summary', getSummary);
+
+// DELETE /api/nutrition/:id
+router.delete('/:id', deleteMeal);
 
 module.exports = router;

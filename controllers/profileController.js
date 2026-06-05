@@ -1,106 +1,70 @@
+const User = require('../models/User');
 
-const authModule = require('./authController');
-
+// ── GET PROFILE ──────────────────────────────────────────────────
 exports.getUserProfile = async (req, res) => {
   try {
     const { email } = req.params;
-
     if (!email) {
-      return res.status(400).json({ success: false, message: "User email parameter is required." });
+      return res.status(400).json({ success: false, message: 'Email parameter is required.' });
     }
 
-    // lookup user in active system collection memory
-    const users = authModule.usersCollection || [];
-    const user = users.find(u => u.email === email.toLowerCase());
-
+    const user = await User.findOne({ email: email.toLowerCase() }).select('-password');
     if (!user) {
-      return res.status(404).json({ success: false, message: "Profile account records not found." });
+      return res.status(404).json({ success: false, message: 'User not found.' });
     }
 
-    // return profile fields without revealing encrypted password hash blocks
-    return res.status(200).json({
-      success: true,
-      profile: {
-        name: user.name,
-        email: user.email,
-        age: user.age,
-        weight: user.weight,
-        height: user.height,
-        goal: user.goal,
-        gender: user.gender || "",
-        activity: user.activity || "moderate",
-        bmi: user.bmi || null,
-        bmiLabel: user.bmiLabel || "-"
-      }
-    });
+    return res.status(200).json({ success: true, profile: user });
 
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Profile retrieval fault: " + error.message });
+    return res.status(500).json({ success: false, message: 'Profile retrieval error: ' + error.message });
   }
 };
 
+// ── UPDATE PROFILE ───────────────────────────────────────────────
 exports.updateUserProfile = async (req, res) => {
   try {
     const { email, name, age, gender, activity, weight, height, goal } = req.body;
 
     if (!email) {
-      return res.status(400).json({ success: false, message: "Authentication context missing email key." });
+      return res.status(400).json({ success: false, message: 'Email is required.' });
     }
 
-    const users = authModule.usersCollection || [];
-    const userIndex = users.findIndex(u => u.email === email.toLowerCase());
-
-    if (userIndex === -1) {
-      return res.status(404).json({ success: false, message: "User profile record target not found." });
-    }
-
-    // bmi calculation logic 
-    let calculatedBmi = null;
-    let computedLabel = "-";
-    let labelColor = "#999999";
-
+    // calculate BMI
+    let bmi = null;
+    let bmiLabel = '-';
     if (weight > 0 && height > 0) {
-      const heightInMeters = height / 100;
-      calculatedBmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
-      const bmiNum = parseFloat(calculatedBmi);
-
-      // logic evaluation rules matching medical standards
-      if (bmiNum < 18.5) {
-        computedLabel = "Underweight";
-        labelColor = "#38bdf8";
-      } else if (bmiNum >= 18.5 && bmiNum < 25) {
-        computedLabel = "Normal Weight";
-        labelColor = "#00aa55"; 
-      } else if (bmiNum >= 25 && bmiNum < 30) {
-        computedLabel = "Overweight";
-        labelColor = "#ff9900"; 
-      } else {
-        computedLabel = "Obese";
-        labelColor = "#cc0000"; 
-      }
+      const h = height / 100;
+      bmi = (weight / (h * h)).toFixed(1);
+      const n = parseFloat(bmi);
+      if (n < 18.5)      bmiLabel = 'Underweight';
+      else if (n < 25)   bmiLabel = 'Normal Weight';
+      else if (n < 30)   bmiLabel = 'Overweight';
+      else               bmiLabel = 'Obese';
     }
 
-    // merge modified data blocks directly into server runtime repository memory
-    users[userIndex] = {
-      ...users[userIndex],
-      name: name || users[userIndex].name,
-      age: parseInt(age) || users[userIndex].age,
-      gender: gender || users[userIndex].gender || "",
-      activity: activity || users[userIndex].activity || "moderate",
-      weight: parseFloat(weight) || users[userIndex].weight,
-      height: parseFloat(height) || users[userIndex].height,
-      goal: goal || users[userIndex].goal,
-      bmi: calculatedBmi,
-      bmiLabel: `<span style="color:${labelColor}">${computedLabel}</span>`
-    };
+    const updated = await User.findOneAndUpdate(
+      { email: email.toLowerCase() },
+      {
+        name:     name,
+        age:      parseInt(age)      || 0,
+        gender:   gender   || '',
+        activity: activity || 'moderate',
+        weight:   parseFloat(weight) || 0,
+        height:   parseFloat(height) || 0,
+        goal:     goal || 'Not specified',
+        bmi,
+        bmiLabel,
+      },
+      { new: true, select: '-password' }
+    );
 
-    return res.status(200).json({
-      success: true,
-      message: "Profile metrics calculated and updated successfully on backend server!",
-      user: users[userIndex]
-    });
+    if (!updated) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    return res.status(200).json({ success: true, message: 'Profile updated successfully!', user: updated });
 
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Profile modification engine fault: " + error.message });
+    return res.status(500).json({ success: false, message: 'Profile update error: ' + error.message });
   }
 };
