@@ -114,29 +114,48 @@
     // simple check for password strength
     function checkStrength() {
       var password = document.getElementById('rPassword').value;
-      var score = 0;
 
-      if (password.length >= 6) { score++; }
-      if (password.length >= 10) { score++; }
-      if (/[A-Z]/.test(password)) { score++; }
-      if (/[0-9]/.test(password)) { score++; }
+      var hasLower = /[a-z]/.test(password);
+      var hasUpper = /[A-Z]/.test(password);
+      var hasDigit = /[0-9]/.test(password);
+      var hasSpecial = /[^A-Za-z0-9]/.test(password);
 
-      var width = score * 25;
+      var length = password.length;
+
+      var types = 0;
+      if (hasLower) types++;
+      if (hasUpper) types++;
+      if (hasDigit) types++;
+      if (hasSpecial) types++;
+
       var label = 'Weak';
       var color = '#cc0000';
+      var width = 25;
 
-      if (score >= 3) {
-        label = 'Strong';
-        color = '#00aa55';
-      } else if (score === 2) {
-        label = 'Fair';
-        color = '#ff9900';
+      // ❌ Weak: too short OR too few types
+      if (length < 8 || types <= 2) {
+        label = 'Weak';
+        color = '#cc0000';
+        width = 25;
       }
 
+      // 🟠 Fair: 3 types but missing full strength (no special char OR not all 4 types)
+      else if (types === 3) {
+        label = 'Fair';
+        color = '#ff9900';
+        width = 50;
+      }
+
+      // 🟢 Strong: all requirements met
+      else if (types === 4) {
+        label = 'Strong';
+        color = '#00aa55';
+        width = 100;
+      }
+
+      document.getElementById('strengthLabel').innerText = label;
       document.getElementById('strengthBar').style.width = width + '%';
       document.getElementById('strengthBar').style.backgroundColor = color;
-      document.getElementById('strengthLabel').textContent = label;
-      document.getElementById('strengthLabel').style.color = color;
     }
 
     // validate form data fields and submit to Express endpoint pipeline
