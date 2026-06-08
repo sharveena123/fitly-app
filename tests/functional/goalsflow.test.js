@@ -1,7 +1,3 @@
-/**
- * UNIT TESTS — Goals Controller
- */
-
 jest.mock('../../models/Goal');
 
 const Goal = require('../../models/Goal');

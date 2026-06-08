@@ -10,7 +10,6 @@ const UserSchema = new mongoose.Schema({
   goal:     { type: String, default: 'Not specified' },
   gender:   { type: String, default: '' },
   activity: { type: String, default: 'moderate' },
-  // ── Added: calculated by profileController ──────────────────
   bmi:      { type: Number, default: null },
   bmiLabel: { type: String, default: '-' },
 }, { timestamps: true });

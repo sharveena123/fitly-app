@@ -1,7 +1,3 @@
-/**
- * UNIT TESTS — Profile Controller
- */
-
 jest.mock('../../models/User');
 
 const User = require('../../models/User');

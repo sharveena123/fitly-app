@@ -1,12 +1,3 @@
-/**
- * tests/unit/profileController.test.js
- *
- * Unit tests for getUserProfile and updateUserProfile.
- * Focuses on BMI calculation logic and validation paths.
- *
- * Run: npx jest tests/unit/profileController.test.js
- */
-
 jest.mock('../../models/User');
 const User = require('../../models/User');
 
@@ -19,7 +10,6 @@ function mockRes() {
   return res;
 }
 
-// ─────────────────────────────────────────────────────────────────
 describe('profileController — getUserProfile (Unit)', () => {
 
   beforeEach(() => jest.clearAllMocks());
@@ -64,13 +54,11 @@ describe('profileController — getUserProfile (Unit)', () => {
   });
 });
 
-
-// ─────────────────────────────────────────────────────────────────
 describe('profileController — updateUserProfile (Unit)', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  // ── 1. Validation ─────────────────────────────────────────────
+  // Validation 
   test('returns 400 when email is missing from body', async () => {
     const req = { body: { name: 'Alice', weight: 70, height: 175 } };
     const res = mockRes();
@@ -89,7 +77,7 @@ describe('profileController — updateUserProfile (Unit)', () => {
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
-  // ── 2. BMI calculation ────────────────────────────────────────
+  // BMI calculation 
   test('BMI calculated correctly: weight=70, height=175 → 22.9 (Normal Weight)', async () => {
     User.findOneAndUpdate.mockResolvedValue({ name: 'Alice' });
 
@@ -148,7 +136,7 @@ describe('profileController — updateUserProfile (Unit)', () => {
     expect(payload.bmi).toBeNull();
   });
 
-  // ── 3. Successful update ──────────────────────────────────────
+  // Successful profile update 
   test('returns 200 with updated user on success', async () => {
     const updated = { name: 'Alice', email: 'alice@test.com', bmi: '22.9' };
     User.findOneAndUpdate.mockResolvedValue(updated);
@@ -161,7 +149,7 @@ describe('profileController — updateUserProfile (Unit)', () => {
     );
   });
 
-  // ── 4. Default values ─────────────────────────────────────────
+  // Default values 
   test('activity defaults to "moderate" when not provided', async () => {
     User.findOneAndUpdate.mockResolvedValue({ name: 'Alice' });
     const req = { body: { email: 'alice@test.com', weight: 70, height: 175 } };

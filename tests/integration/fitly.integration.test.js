@@ -1,59 +1,3 @@
-/**
- * INTEGRATION TESTS — Full Frontend-to-Backend Flow
- * Mocks the DB layer but tests the full Express route → Controller pipeline.
- *
- * What this file adds on top of the original:
- *
- *  Auth flow
- *    + Profile GET returns no password field
- *    + Profile GET for unknown user → 404
- *    + Profile UPDATE → 200 with BMI calculated
- *    + Profile UPDATE missing email → 400
- *    + Profile UPDATE for unknown user → 404
- *
- *  Demo user
- *    + Workout response shape has required keys
- *    + Nutrition summary response shape has all macro keys
- *    + Goals response shape has required keys
- *
- *  Workout flow
- *    + Auto-calculated calories travel through the full route
- *    + UPDATE workout via PATCH/PUT → 200 with new values
- *    + UPDATE non-existent workout → 404
- *    + DELETE workout → 200
- *    + DELETE non-existent workout → 404
- *
- *  Nutrition flow
- *    + Multiple meals → summary aggregates all of them
- *    + Summary with no meals → all zeros
- *    + DELETE meal → 200
- *    + DELETE non-existent meal → 404
- *    + Missing required nutrition fields → 400 (each field)
- *
- *  Goals flow
- *    + start field equals current in the persisted response
- *    + category defaults to "Custom" when omitted
- *    + UPDATE goal progress → 200 with new current
- *    + UPDATE non-existent goal → 404
- *    + DELETE goal → 200
- *    + DELETE non-existent goal → 404
- *
- *  AI recommendation
- *    + POST with valid body → 200 with recommendation shape
- *    + POST missing targetedGoalHours → 400
- *    + POST missing currentWeeklyHours → 400
- *    + currentWeeklyHours = 0 is valid (not undefined)
- *    + Gemini failure → 500
- *    + Recommendation updates when hours change (called twice)
- *
- *  Cross-flow (end-to-end sequences)
- *    + Register → Login → GET profile (full auth sequence)
- *    + Log workout → GET workouts → workout appears in list
- *    + Log meal → GET summary → calories reflected
- *    + Create goal → UPDATE progress → new current persisted
- *    + Log workout → call AI recommendation → recommendation returned
- */
-
 jest.mock('../../models/User');
 jest.mock('../../models/Workout');
 jest.mock('../../models/Meal');
@@ -61,7 +5,7 @@ jest.mock('../../models/Goal');
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
 
-// Mock GoogleGenAI so integration tests never hit the real Gemini API
+// Mock GoogleGenAI 
 const mockGenerateContent = jest.fn();
 jest.mock('@google/genai', () => ({
   GoogleGenAI: jest.fn().mockImplementation(() => ({
@@ -70,7 +14,7 @@ jest.mock('@google/genai', () => ({
 }));
 
 const request = require('supertest');
-const app     = require('../../server');
+const app     = require('../../app');
 const User    = require('../../models/User');
 const Workout = require('../../models/Workout');
 const Meal    = require('../../models/Meal');
@@ -85,7 +29,7 @@ beforeEach(() => {
 
 const today = new Date().toISOString().split('T')[0];
 
-// ── shared fake AI response ───────────────────────────────────────
+// Fake AI responses
 const fakeAiRec = {
   strategy:                   'Streak Maintenance',
   suggestedActivity:          '30-minute jog',
@@ -94,9 +38,7 @@ const fakeAiRec = {
   personalizedAdvice:         'You are almost there. One more session will hit your goal.',
 };
 
-// ─────────────────────────────────────────────────────────────────
-// AUTH FLOW
-// ─────────────────────────────────────────────────────────────────
+// Authentication Flow
 describe('Integration — Full Auth Flow', () => {
   it('Register → returns 201 success', async () => {
     User.findOne.mockResolvedValue(null);
@@ -180,7 +122,7 @@ describe('Integration — Full Auth Flow', () => {
   it('PUT /api/profile — update profile → 200 with BMI calculated', async () => {
     const updated = { name: 'Dave', email: 'dave@fitly.io', weight: 70, height: 175, bmi: '22.9', bmiLabel: 'Normal Weight' };
     User.findOneAndUpdate.mockResolvedValue(updated);
-    const res = await request(app).put('/api/profile').send({
+    const res = await request(app).put('/api/profile/update').send({
       email: 'dave@fitly.io', name: 'Dave', age: 25, gender: 'male',
       activity: 'active', weight: 70, height: 175, goal: 'Build Muscle'
     });
@@ -190,24 +132,27 @@ describe('Integration — Full Auth Flow', () => {
   });
 
   it('PUT /api/profile — missing email → 400', async () => {
-    const res = await request(app).put('/api/profile').send({
-      name: 'Dave', weight: 70, height: 175
+  const res = await request(app)
+    .put('/api/profile/update')
+    .send({
+      name: 'Dave',
+      weight: 70,
+      height: 175
     });
-    expect(res.status).toBe(400);
-  });
+
+  expect(res.status).toBe(400);
+});
 
   it('PUT /api/profile — unknown user → 404', async () => {
     User.findOneAndUpdate.mockResolvedValue(null);
-    const res = await request(app).put('/api/profile').send({
+    const res = await request(app).put('/api/profile/update').send({
       email: 'ghost@fitly.io', name: 'Ghost', weight: 60, height: 170
     });
     expect(res.status).toBe(404);
   });
 });
 
-// ─────────────────────────────────────────────────────────────────
-// DEMO USER — response shape assertions
-// ─────────────────────────────────────────────────────────────────
+// Demo user access without registration
 describe('Integration — Demo User Access (no registration)', () => {
   it('can GET workouts without auth token → 200', async () => {
     const sortMock = jest.fn().mockResolvedValue([]);
@@ -264,9 +209,7 @@ describe('Integration — Demo User Access (no registration)', () => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────
-// WORKOUT FLOW
-// ─────────────────────────────────────────────────────────────────
+// Workout flow
 describe('Integration — Log Workout → saved in DB', () => {
   it('POST /api/workouts → 201 with workout data', async () => {
     const saved = { _id: 'w1', userId: 'u1', exercise: 'Bench Press', type: 'Strength', duration: 45, calories: 450, date: today };
@@ -316,7 +259,7 @@ describe('Integration — Log Workout → saved in DB', () => {
 
   it('PATCH /api/workouts/:id — updates workout → 200 with updated fields', async () => {
     Workout.findByIdAndUpdate.mockResolvedValue({ _id: 'w1', exercise: 'Cycling', duration: 60, type: 'Cardio' });
-    const res = await request(app).patch('/api/workouts/w1').send({ exercise: 'Cycling', duration: 60 });
+    const res = await request(app).put('/api/workouts/w1').send({ exercise: 'Cycling', duration: 60 });
     expect(res.status).toBe(200);
     expect(res.body.workout.exercise).toBe('Cycling');
     expect(res.body.workout.duration).toBe(60);
@@ -324,7 +267,7 @@ describe('Integration — Log Workout → saved in DB', () => {
 
   it('PATCH /api/workouts/:id — non-existent workout → 404', async () => {
     Workout.findByIdAndUpdate.mockResolvedValue(null);
-    const res = await request(app).patch('/api/workouts/nonexistent').send({ exercise: 'Yoga' });
+    const res = await request(app).put('/api/workouts/nonexistent').send({ exercise: 'Yoga' });
     expect(res.status).toBe(404);
     expect(res.body.success).toBe(false);
   });
@@ -344,9 +287,7 @@ describe('Integration — Log Workout → saved in DB', () => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────
-// NUTRITION FLOW
-// ─────────────────────────────────────────────────────────────────
+// Nutrition Flow
 describe('Integration — Log Meal → saved in DB', () => {
   it('POST /api/nutrition/log → 201 with meal data', async () => {
     const saved = { _id: 'm1', userId: 'u1', food: 'Nasi Lemak', calories: 450, date: today };
@@ -423,9 +364,7 @@ describe('Integration — Log Meal → saved in DB', () => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────
-// GOALS FLOW
-// ─────────────────────────────────────────────────────────────────
+// Goals Flow
 describe('Integration — Create Goal → saved in DB', () => {
   it('POST /api/goals/set-targets → 201 with goal data', async () => {
     const saved = { _id: 'g1', userId: 'u1', title: 'Run 5K', current: 0, start: 0, target: 5 };
@@ -465,14 +404,14 @@ describe('Integration — Create Goal → saved in DB', () => {
 
   it('PATCH /api/goals/:id — updates goal progress → 200 with new current', async () => {
     Goal.findByIdAndUpdate.mockResolvedValue({ _id: 'g1', title: 'Run 5K', current: 3, target: 5 });
-    const res = await request(app).patch('/api/goals/g1').send({ current: 3 });
+    const res = await request(app).put('/api/goals/g1').send({ current: 3 });
     expect(res.status).toBe(200);
     expect(res.body.goal.current).toBe(3);
   });
 
   it('PATCH /api/goals/:id — non-existent goal → 404', async () => {
     Goal.findByIdAndUpdate.mockResolvedValue(null);
-    const res = await request(app).patch('/api/goals/nonexistent').send({ current: 5 });
+    const res = await request(app).put('/api/goals/nonexistent').send({ current: 5 });
     expect(res.status).toBe(404);
     expect(res.body.success).toBe(false);
   });
@@ -492,9 +431,7 @@ describe('Integration — Create Goal → saved in DB', () => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────
-// AI RECOMMENDATION FLOW
-// ─────────────────────────────────────────────────────────────────
+// AI Recommendation Flow
 describe('Integration — AI Recommendation via /api/ai/recommend', () => {
   const validBody = { currentWeeklyHours: 3, targetedGoalHours: 5, preferredActivityType: 'Cardio' };
 
@@ -564,9 +501,7 @@ describe('Integration — AI Recommendation via /api/ai/recommend', () => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────
-// API ROUTE CHECKLIST
-// ─────────────────────────────────────────────────────────────────
+// API routes checklist
 describe('Integration — API Routes / Postman Checklist', () => {
   it('POST /api/auth/register  → 400 on missing fields', async () => {
     const res = await request(app).post('/api/auth/register').send({});
@@ -612,12 +547,11 @@ describe('Integration — API Routes / Postman Checklist', () => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────────
 // CROSS-FLOW — end-to-end sequences
-// ─────────────────────────────────────────────────────────────────
 describe('Integration — Cross-flow end-to-end sequences', () => {
 
   it('Register → Login → GET profile (full auth sequence)', async () => {
+
     // Step 1: Register
     User.findOne.mockResolvedValueOnce(null);
     bcrypt.genSalt.mockResolvedValue('salt');
@@ -647,6 +581,7 @@ describe('Integration — Cross-flow end-to-end sequences', () => {
   });
 
   it('Log workout → GET workouts → workout appears in the returned list', async () => {
+
     // Step 1: log
     const saved = { _id: 'w10', userId: 'u1', exercise: 'Deadlift', type: 'Strength', duration: 50, calories: 500, date: today };
     Workout.create.mockResolvedValue(saved);
@@ -663,6 +598,7 @@ describe('Integration — Cross-flow end-to-end sequences', () => {
   });
 
   it('Log meal → GET summary → calories reflected in totals', async () => {
+
     // Step 1: log
     Meal.create.mockResolvedValue({ _id: 'm10', userId: 'u1', food: 'Chicken Rice', calories: 487, date: today });
     const postRes = await request(app).post('/api/nutrition/log').send({
@@ -678,6 +614,7 @@ describe('Integration — Cross-flow end-to-end sequences', () => {
   });
 
   it('Create goal → UPDATE progress → new current value is persisted', async () => {
+
     // Step 1: create
     Goal.create.mockResolvedValue({ _id: 'g10', userId: 'u1', title: 'Steps Goal', current: 0, start: 0, target: 10000 });
     const createRes = await request(app).post('/api/goals/set-targets').send({
@@ -688,12 +625,13 @@ describe('Integration — Cross-flow end-to-end sequences', () => {
 
     // Step 2: update progress
     Goal.findByIdAndUpdate.mockResolvedValue({ _id: goalId, title: 'Steps Goal', current: 4500, target: 10000 });
-    const updateRes = await request(app).patch(`/api/goals/${goalId}`).send({ current: 4500 });
+    const updateRes = await request(app).put(`/api/goals/${goalId}`).send({ current: 4500 });
     expect(updateRes.status).toBe(200);
     expect(updateRes.body.goal.current).toBe(4500);
   });
 
   it('Log workout → call AI recommendation → recommendation is returned', async () => {
+    
     // Step 1: log workout
     Workout.create.mockResolvedValue({ _id: 'w20', userId: 'u1', exercise: 'Running', duration: 60, date: today, calories: 420 });
     const workoutRes = await request(app).post('/api/workouts').send({

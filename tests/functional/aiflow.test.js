@@ -1,20 +1,3 @@
-/**
- * UNIT TESTS — AI Controller (Gemini / getWorkoutRecommendation)
- *
- * Covers:
- *  ✓ Missing required parameters → 400
- *  ✓ currentWeeklyHours = 0 is valid (falsy but defined)
- *  ✓ Successful Gemini response → 200 with parsed recommendation object
- *  ✓ Recommendation shape: all 5 required keys present
- *  ✓ intensityLevel is one of Low / Moderate / High
- *  ✓ recommendedDurationMinutes is a positive number
- *  ✓ Gemini API failure → 500 (not crash)
- *  ✓ Malformed JSON from model → 500 (not crash)
- *  ✓ AI insight card: recommendation updates after a new workout is logged
- *  ✓ preferredActivityType is forwarded into the prompt
- */
-
-// ── Mock the GoogleGenAI SDK before any require of the controller ──
 const mockGenerateContent = jest.fn();
 
 jest.mock('@google/genai', () => ({
@@ -27,7 +10,7 @@ jest.mock('@google/genai', () => ({
 
 const { getWorkoutRecommendation } = require('../../controllers/aiController');
 
-// ── helper ────────────────────────────────────────────────────────
+// Helper function
 const mockRes = () => {
   const res = {};
   res.status = jest.fn().mockReturnValue(res);
@@ -35,7 +18,7 @@ const mockRes = () => {
   return res;
 };
 
-// A valid Gemini response payload matching the controller's expected schema
+// Gemini response payload 
 const fakeRecommendation = {
   strategy:                   'Streak Maintenance',
   suggestedActivity:          '45-minute moderate-paced jog',
@@ -52,7 +35,7 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-// ─── VALIDATION ───────────────────────────────────────────────────
+// AI input validation
 describe('AI — Input Validation', () => {
   it('returns 400 when both currentWeeklyHours and targetedGoalHours are missing', async () => {
     const res = mockRes();
@@ -75,7 +58,7 @@ describe('AI — Input Validation', () => {
   });
 
   it('currentWeeklyHours = 0 is valid (user has not exercised yet this week)', async () => {
-    // 0 is falsy but the controller uses === undefined, so 0 should pass validation
+    
     mockGenerateContent.mockResolvedValue(validGeminiResponse());
     const res = mockRes();
     await getWorkoutRecommendation({
@@ -91,7 +74,7 @@ describe('AI — Input Validation', () => {
   });
 });
 
-// ─── SUCCESSFUL RECOMMENDATION ────────────────────────────────────
+//AI - Successful recommendation
 describe('AI — Successful Recommendation', () => {
   const validBody = {
     currentWeeklyHours:   2,
@@ -183,9 +166,10 @@ describe('AI — Successful Recommendation', () => {
   });
 });
 
-// ─── AI INSIGHT CARD UPDATE AFTER WORKOUT LOG ─────────────────────
+//AI insights update after a new workout
 describe('AI — Insight card updates after a new workout is logged', () => {
   it('calling getWorkoutRecommendation again returns a fresh recommendation', async () => {
+    
     // First call — user has 2 hours logged
     const firstRec = {
       ...fakeRecommendation,
@@ -215,7 +199,7 @@ describe('AI — Insight card updates after a new workout is logged', () => {
     const rec1 = res1.json.mock.calls[0][0].recommendation;
     const rec2 = res2.json.mock.calls[0][0].recommendation;
 
-    // The card content must change to reflect updated hours
+    // The card content must update to respective hours
     expect(rec2.strategy).not.toBe(rec1.strategy);
     expect(rec2.recommendedDurationMinutes).toBeLessThan(rec1.recommendedDurationMinutes);
     expect(mockGenerateContent).toHaveBeenCalledTimes(2);
@@ -240,7 +224,7 @@ describe('AI — Insight card updates after a new workout is logged', () => {
   });
 });
 
-// ─── ERROR HANDLING ───────────────────────────────────────────────
+//AI - Error handling
 describe('AI — Error Handling', () => {
   const validBody = {
     currentWeeklyHours:   3,
@@ -282,6 +266,7 @@ describe('AI — Error Handling', () => {
   it('process does not crash — error is caught and a clean JSON response is returned', async () => {
     mockGenerateContent.mockRejectedValue(new Error('Network timeout'));
     const res = mockRes();
+    
     // If the controller crashes instead of catching, this test will throw
     await expect(
       getWorkoutRecommendation({ body: validBody }, res)

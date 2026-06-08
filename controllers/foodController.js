@@ -1,6 +1,6 @@
 const Meal = require('../models/Meal');
 
-// ── LOG MEAL ─────────────────────────────────────────────────────
+// Enter a new meal 
 exports.logMeal = async (req, res) => {
   try {
     const { userId, food, type, calories, carbs, protein, fat, date } = req.body;
@@ -16,7 +16,7 @@ exports.logMeal = async (req, res) => {
   }
 };
 
-// ── GET TODAY SUMMARY ────────────────────────────────────────────
+// Getting today's meals summary
 exports.getSummary = async (req, res) => {
   try {
     const { userId } = req.query;
@@ -41,7 +41,7 @@ exports.getSummary = async (req, res) => {
   }
 };
 
-// ── DELETE MEAL ──────────────────────────────────────────────────
+// Deleting a meal 
 exports.deleteMeal = async (req, res) => {
   try {
     const meal = await Meal.findByIdAndDelete(req.params.id);

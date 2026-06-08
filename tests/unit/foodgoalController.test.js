@@ -1,12 +1,3 @@
-/**
- * tests/unit/foodGoalController.test.js
- *
- * Unit tests for foodController (logMeal, getSummary, deleteMeal)
- * and goalController (setTargets, getDashboardMetrics, updateGoal, deleteGoal).
- *
- * Run: npx jest tests/unit/foodGoalController.test.js
- */
-
 jest.mock('../../models/Meal');
 jest.mock('../../models/Goal');
 const Meal = require('../../models/Meal');
@@ -22,15 +13,13 @@ function mockRes() {
   return res;
 }
 
-// ═════════════════════════════════════════════════════════════════
-//  FOOD CONTROLLER
-// ═════════════════════════════════════════════════════════════════
 
+// Food controller
 describe('foodController — logMeal (Unit)', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  // ── 1. Validation ─────────────────────────────────────────────
+  // Validation
   test('returns 400 when userId is missing', async () => {
     const req = { body: { food: 'Rice', type: 'Lunch', calories: 400, date: '2026-06-07' } };
     const res = mockRes();
@@ -67,7 +56,7 @@ describe('foodController — logMeal (Unit)', () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  // ── 2. Default macro values ───────────────────────────────────
+  // Default macro values 
   test('carbs, protein, fat default to 0 when not provided', async () => {
     const fakeMeal = { _id: 'm1', food: 'Rice', carbs: 0, protein: 0, fat: 0 };
     Meal.create.mockResolvedValue(fakeMeal);
@@ -81,7 +70,7 @@ describe('foodController — logMeal (Unit)', () => {
     );
   });
 
-  // ── 3. Successful creation ────────────────────────────────────
+  // Successful creation 
   test('returns 201 with created meal on success', async () => {
     const fakeMeal = { _id: 'm1', food: 'Nasi Lemak', calories: 650 };
     Meal.create.mockResolvedValue(fakeMeal);
@@ -96,7 +85,7 @@ describe('foodController — logMeal (Unit)', () => {
     );
   });
 
-  // ── 4. DB error ───────────────────────────────────────────────
+  // DB error 
   test('returns 500 on DB error', async () => {
     Meal.create.mockRejectedValue(new Error('fail'));
     const req = { body: { userId: 'u1', food: 'Rice', type: 'Lunch', calories: 400, date: '2026-06-07' } };
@@ -179,16 +168,12 @@ describe('foodController — deleteMeal (Unit)', () => {
   });
 });
 
-
-// ═════════════════════════════════════════════════════════════════
-//  GOAL CONTROLLER
-// ═════════════════════════════════════════════════════════════════
-
+// Goal controller
 describe('goalController — setTargets (Unit)', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  // ── 1. Validation ─────────────────────────────────────────────
+  // Validation 
   test('returns 400 when userId is missing', async () => {
     const req = { body: { title: 'Lose 5kg', current: 75, target: 70 } };
     const res = mockRes();
@@ -217,7 +202,7 @@ describe('goalController — setTargets (Unit)', () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  // ── 2. start = current on creation ───────────────────────────
+  // Start = current on creation 
   test('start field equals current value on creation', async () => {
     const fakeGoal = { _id: 'g1', start: 75, current: 75, target: 70 };
     Goal.create.mockResolvedValue(fakeGoal);
@@ -231,7 +216,7 @@ describe('goalController — setTargets (Unit)', () => {
     );
   });
 
-  // ── 3. Category defaults ──────────────────────────────────────
+  // Category defaults 
   test('category defaults to "Custom" when not provided', async () => {
     Goal.create.mockResolvedValue({ _id: 'g1' });
     const req = { body: { userId: 'u1', title: 'Run 5km', current: 0, target: 5 } };
@@ -242,7 +227,7 @@ describe('goalController — setTargets (Unit)', () => {
     );
   });
 
-  // ── 4. Successful creation ────────────────────────────────────
+  // Successful goal creation 
   test('returns 201 with created goal on success', async () => {
     const fakeGoal = { _id: 'g1', title: 'Lose 5kg', target: 70 };
     Goal.create.mockResolvedValue(fakeGoal);

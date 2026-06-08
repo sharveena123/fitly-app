@@ -4,36 +4,40 @@ var Store = {
       return JSON.parse(localStorage.getItem('fitly_' + key)) || [];
     } catch (e) { return []; }
   },
+
   set: function (key, val) {
     try {
       localStorage.setItem('fitly_' + key, JSON.stringify(val));
     } catch (e) { console.warn('Storage error', e); }
   },
+
   getObj: function (key, def) {
     try {
       var result = JSON.parse(localStorage.getItem('fitly_' + key));
       return result !== null ? result : (def !== undefined ? def : {});
     } catch (e) { return def !== undefined ? def : {}; }
   },
+
   setObj: function (key, val) {
     try {
       localStorage.setItem('fitly_' + key, JSON.stringify(val));
     } catch (e) { console.warn('Storage error', e); }
   }
+
 };
 
-// ── Helper: get logged-in userId from stored profile ─────────────
+//Get current user ID 
 function getCurrentUserId() {
   var profile = Store.getObj('profile', {});
   return profile.id || null;
 }
 
-// ── Helper: get auth token ────────────────────────────────────────
+// Get Authentication token
 function getToken() {
   return localStorage.getItem('token') || null;
 }
 
-// ── Navbar active state ───────────────────────────────────────────
+// Navbar active state 
 document.addEventListener('DOMContentLoaded', function () {
   var currentPage = window.location.pathname.split('/').pop() || 'index.html';
   var navLinks    = document.querySelectorAll('.nav-link');
@@ -49,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
   updateNavbarAuthState();
 });
 
-// ── Navbar auth state ─────────────────────────────────────────────
+// Navbar auth state
 function updateNavbarAuthState() {
   var token       = localStorage.getItem('token');
   var currentUser = Store.getObj('currentUser', null);
@@ -78,7 +82,7 @@ function updateNavbarAuthState() {
   }
 }
 
-// ── Demo login ────────────────────────────────────────────────────
+// Demo login for Fitly
 function loginDemoUser() {
   localStorage.setItem('token', 'mock-demo-token-xyz-12345');
 
@@ -100,7 +104,7 @@ function loginDemoUser() {
   }, 800);
 }
 
-// ── Logout ────────────────────────────────────────────────────────
+// Logout 
 function handleLogout() {
   if (!confirm('Are you sure you want to logout?')) return;
 
@@ -117,7 +121,7 @@ function handleLogout() {
   }, 800);
 }
 
-// ── Form validation ───────────────────────────────────────────────
+// Validating the form
 function validateForm(formId) {
   var form = document.getElementById(formId);
   if (!form) return true;
@@ -140,7 +144,7 @@ function validateForm(formId) {
   return isValid;
 }
 
-// ── Toast notification ────────────────────────────────────────────
+// Notifications
 function showToast(message, type) {
   type = type || 'success';
   var existing = document.getElementById('fitly-toast');
@@ -155,19 +159,18 @@ function showToast(message, type) {
   setTimeout(function () { if (toast.parentNode) toast.remove(); }, 3500);
 }
 
-// ── Date helpers ──────────────────────────────────────────────────
+// Date helpers 
 function formatDate(dateStr) {
   if (!dateStr) return '—';
   var d = new Date(dateStr);
   return d.toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-// ✅ FIXED — was returning an array before, now returns "YYYY-MM-DD" string
 function todayStr() {
   return new Date().toISOString().split('T')[0];
 }
 
-// ── BMI ───────────────────────────────────────────────────────────
+// BMI Calculation
 function calcBMI(weightKg, heightCm) {
   if (!weightKg || !heightCm) return null;
   var h = heightCm / 100;

@@ -1,6 +1,6 @@
 const Goal = require('../models/Goal');
 
-// ── CREATE / SET GOAL ────────────────────────────────────────────
+// Setting a new goal
 exports.setTargets = async (req, res) => {
   try {
     const { userId, title, category, current, target, unit, deadline } = req.body;
@@ -14,7 +14,7 @@ exports.setTargets = async (req, res) => {
       title,
       category: category || 'Custom',
       current,
-      start: current,   // capture starting value for progress %
+      start: current,   
       target,
       unit:     unit     || '',
       deadline: deadline || '',
@@ -26,7 +26,7 @@ exports.setTargets = async (req, res) => {
   }
 };
 
-// ── GET ALL GOALS FOR USER ───────────────────────────────────────
+// Getting the goals details
 exports.getDashboardMetrics = async (req, res) => {
   try {
     const { userId } = req.query;
@@ -39,7 +39,7 @@ exports.getDashboardMetrics = async (req, res) => {
   }
 };
 
-// ── UPDATE GOAL PROGRESS ─────────────────────────────────────────
+// Updating the goals
 exports.updateGoal = async (req, res) => {
   try {
     const goal = await Goal.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -50,7 +50,7 @@ exports.updateGoal = async (req, res) => {
   }
 };
 
-// ── DELETE GOAL ──────────────────────────────────────────────────
+// Deleting the goals
 exports.deleteGoal = async (req, res) => {
   try {
     const goal = await Goal.findByIdAndDelete(req.params.id);

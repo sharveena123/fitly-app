@@ -1,12 +1,3 @@
-/**
- * tests/unit/workoutController.test.js
- *
- * Unit tests for all four workout CRUD operations.
- * All Mongoose calls are mocked — no DB required.
- *
- * Run: npx jest tests/unit/workoutController.test.js
- */
-
 jest.mock('../../models/Workout');
 const Workout = require('../../models/Workout');
 
@@ -24,12 +15,11 @@ function mockRes() {
   return res;
 }
 
-// ─────────────────────────────────────────────────────────────────
 describe('workoutController — createWorkout (Unit)', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  // ── 1. Validation ─────────────────────────────────────────────
+  // Validation
   test('returns 400 when userId is missing', async () => {
     const req = { body: { exercise: 'Run', type: 'Cardio', duration: 30, date: '2026-06-07' } };
     const res = mockRes();
@@ -68,7 +58,7 @@ describe('workoutController — createWorkout (Unit)', () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  // ── 2. Calorie auto-calculation ───────────────────────────────
+  // Calorie auto-calculation 
   test('auto-calculates calories for moderate intensity: 30min × 7 = 210', async () => {
     Workout.create.mockResolvedValue({ calories: 210 });
     const req = { body: { userId: 'u1', exercise: 'Run', type: 'Cardio', duration: 30, intensity: 'moderate', date: '2026-06-07' } };
@@ -109,7 +99,7 @@ describe('workoutController — createWorkout (Unit)', () => {
     );
   });
 
-  // ── 3. Successful creation ────────────────────────────────────
+  // Successful workout creation 
   test('returns 201 with the created workout on success', async () => {
     const fakeWorkout = { _id: 'w1', exercise: 'Run', calories: 210 };
     Workout.create.mockResolvedValue(fakeWorkout);
@@ -124,7 +114,7 @@ describe('workoutController — createWorkout (Unit)', () => {
     );
   });
 
-  // ── 4. DB error ───────────────────────────────────────────────
+  // DB error 
   test('returns 500 when Workout.create throws', async () => {
     Workout.create.mockRejectedValue(new Error('DB error'));
     const req = { body: { userId: 'u1', exercise: 'Run', type: 'Cardio', duration: 30, date: '2026-06-07' } };
@@ -134,8 +124,6 @@ describe('workoutController — createWorkout (Unit)', () => {
   });
 });
 
-
-// ─────────────────────────────────────────────────────────────────
 describe('workoutController — getWorkouts (Unit)', () => {
 
   beforeEach(() => jest.clearAllMocks());
@@ -174,8 +162,6 @@ describe('workoutController — getWorkouts (Unit)', () => {
   });
 });
 
-
-// ─────────────────────────────────────────────────────────────────
 describe('workoutController — updateWorkout (Unit)', () => {
 
   beforeEach(() => jest.clearAllMocks());
@@ -213,8 +199,6 @@ describe('workoutController — updateWorkout (Unit)', () => {
   });
 });
 
-
-// ─────────────────────────────────────────────────────────────────
 describe('workoutController — deleteWorkout (Unit)', () => {
 
   beforeEach(() => jest.clearAllMocks());

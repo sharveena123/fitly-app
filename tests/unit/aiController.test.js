@@ -1,13 +1,3 @@
-/**
- * tests/unit/aiController.test.js
- *
- * Unit tests for getWorkoutRecommendation.
- * The @google/genai SDK is fully mocked — no real API calls made.
- *
- * Run: npx jest tests/unit/aiController.test.js
- */
-
-// ── Mock the entire @google/genai module ──────────────────────────
 const mockGenerateContent = jest.fn();
 
 jest.mock('@google/genai', () => ({
@@ -34,12 +24,12 @@ const validAIResponse = {
   personalizedAdvice:         'You are 2 hours behind your weekly target. A 45-minute run today will get you back on track.',
 };
 
-// ─────────────────────────────────────────────────────────────────
+
 describe('aiController — getWorkoutRecommendation (Unit)', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  // ── 1. Validation ─────────────────────────────────────────────
+  // Validation
   test('returns 400 when currentWeeklyHours is undefined', async () => {
     const req = { body: { targetedGoalHours: 3.5, preferredActivityType: 'Cardio' } };
     const res = mockRes();
@@ -67,7 +57,7 @@ describe('aiController — getWorkoutRecommendation (Unit)', () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  // ── 2. Successful AI response ─────────────────────────────────
+  // Successful AI response 
   test('returns 200 with all required recommendation fields', async () => {
     mockGenerateContent.mockResolvedValue({
       text: JSON.stringify(validAIResponse),
@@ -100,7 +90,7 @@ describe('aiController — getWorkoutRecommendation (Unit)', () => {
     expect(body.recommendation.recommendedDurationMinutes).toBe(45);
   });
 
-  // ── 3. Gemini call parameters ─────────────────────────────────
+  // Gemini call parameters 
   test('calls Gemini with gemini-2.5-flash model', async () => {
     mockGenerateContent.mockResolvedValue({ text: JSON.stringify(validAIResponse) });
 
@@ -127,7 +117,7 @@ describe('aiController — getWorkoutRecommendation (Unit)', () => {
     );
   });
 
-  // ── 4. Error handling ─────────────────────────────────────────
+  // Error handling
   test('returns 500 when Gemini API call fails', async () => {
     mockGenerateContent.mockRejectedValue(new Error('API quota exceeded'));
 

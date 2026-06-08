@@ -1,13 +1,5 @@
-/**
- * DB TESTS — MongoDB Schema & Integrity (REFACTORED)
- *
- * Uses mongodb-memory-server for isolated in-memory MongoDB testing.
- * Ensures full schema validation without mocking.
- */
-
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-
 const User = require('../../models/User');
 const Workout = require('../../models/Workout');
 const Meal = require('../../models/Meal');
@@ -15,22 +7,18 @@ const Goal = require('../../models/Goal');
 
 let mongod;
 
-// ─────────────────────────────────────────────
-// DB LIFECYCLE (FIXED: no duplicate connections)
-// ─────────────────────────────────────────────
-
 beforeAll(async () => {
   mongod = await MongoMemoryServer.create();
 
   const uri = mongod.getUri();
 
-  // ensure clean connection state
+  // Connection state
   if (mongoose.connection.readyState !== 0) {
     await mongoose.disconnect();
   }
 
   await mongoose.connect(uri);
-  await User.init(); // ensures indexes (VERY IMPORTANT for unique tests)
+  await User.init(); // 
 });
 
 afterEach(async () => {
@@ -47,10 +35,8 @@ afterAll(async () => {
   if (mongod) await mongod.stop();
 });
 
-// ─────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────
 
+// Helpers
 async function createUser(overrides = {}) {
   return User.create({
     name: 'Test User',
@@ -62,10 +48,7 @@ async function createUser(overrides = {}) {
 
 const today = new Date().toISOString().split('T')[0];
 
-// ─────────────────────────────────────────────
-// USER EMAIL UNIQUENESS
-// ─────────────────────────────────────────────
-
+// User email uniques
 describe('DB — User email uniqueness', () => {
   it('throws duplicate-key error on same email', async () => {
     await createUser({ email: 'dave@fitly.io' });
@@ -91,10 +74,7 @@ describe('DB — User email uniqueness', () => {
   });
 });
 
-// ─────────────────────────────────────────────
-// EMAIL LOWERCASE
-// ─────────────────────────────────────────────
-
+// email in lowercase
 describe('DB — User email stored lowercase', () => {
   it('normalizes email to lowercase', async () => {
     const user = await createUser({ email: 'UPPER@FITLY.IO' });
@@ -111,10 +91,7 @@ describe('DB — User email stored lowercase', () => {
   });
 });
 
-// ─────────────────────────────────────────────
-// WORKOUT RELATIONSHIP
-// ─────────────────────────────────────────────
-
+// Workout
 describe('DB — Workout userId references valid User', () => {
   it('stores valid ObjectId reference', async () => {
     const user = await createUser();
@@ -161,10 +138,7 @@ describe('DB — Workout userId references valid User', () => {
   });
 });
 
-// ─────────────────────────────────────────────
-// MEAL RELATIONSHIP
-// ─────────────────────────────────────────────
-
+// Meals
 describe('DB — Meal userId references valid User', () => {
   it('stores valid ObjectId reference', async () => {
     const user = await createUser();
@@ -196,10 +170,7 @@ describe('DB — Meal userId references valid User', () => {
   });
 });
 
-// ─────────────────────────────────────────────
-// GOAL LOGIC
-// ─────────────────────────────────────────────
-
+// Goals
 describe('DB — Goal start equals current on creation', () => {
   it('start is preserved', async () => {
     const user = await createUser();
@@ -235,10 +206,7 @@ describe('DB — Goal start equals current on creation', () => {
   });
 });
 
-// ─────────────────────────────────────────────
-// DELETE SAFETY
-// ─────────────────────────────────────────────
-
+// Delete function
 describe('DB — Deleted documents removed', () => {
   it('workout deletion', async () => {
     const user = await createUser();
@@ -258,10 +226,7 @@ describe('DB — Deleted documents removed', () => {
   });
 });
 
-// ─────────────────────────────────────────────
-// INVALID ID SAFETY
-// ─────────────────────────────────────────────
-
+// Invalid ID 
 describe('DB — Invalid ObjectId handling', () => {
   it('rejects invalid ObjectId', async () => {
     await expect(

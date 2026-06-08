@@ -1,8 +1,3 @@
-/**
- * UNIT TESTS — Workout Controller
- * Uses Jest mocks for Workout model
- */
-
 jest.mock('../../models/Workout');
 
 const Workout = require('../../models/Workout');
@@ -29,7 +24,7 @@ const localStorageMock = (() => {
  
 beforeEach(() => localStorageMock.clear());
 
-// ─── CREATE ───────────────────────────────────────────────────────
+// Create workout
 describe('Workout — Create', () => {
   const base = { userId: 'u1', exercise: 'Running', type: 'Cardio', duration: 30, intensity: 'moderate', date: '2024-06-01' };
 
@@ -102,8 +97,8 @@ describe('Workout — Create', () => {
   });
 });
 
-// ─── READ ─────────────────────────────────────────────────────────
-describe('Workout — Read & Filter', () => {
+// Read and filter workout details
+describe('Workout — Read and Filter', () => {
   const workouts = [
     { _id: 'w1', exercise: 'Running', type: 'Cardio', date: '2024-06-01', calories: 200 },
     { _id: 'w2', exercise: 'Squats',  type: 'Strength', date: '2024-06-02', calories: 150 },
@@ -134,7 +129,7 @@ describe('Workout — Read & Filter', () => {
   it('clear filters restores full list', () => {
     let filtered = workouts.filter(w => w.type === 'Strength');
     expect(filtered).toHaveLength(1);
-    filtered = workouts; // clear
+    filtered = workouts; 
     expect(filtered).toHaveLength(3);
   });
 
@@ -144,7 +139,7 @@ describe('Workout — Read & Filter', () => {
   });
 });
 
-// ─── UPDATE ───────────────────────────────────────────────────────
+// Update workout details
 describe('Workout — Update', () => {
   it('returns 200 with updated workout', async () => {
     Workout.findByIdAndUpdate.mockResolvedValue({ _id: 'w1', exercise: 'Cycling' });
@@ -171,7 +166,7 @@ describe('Workout — Update', () => {
   });
 });
 
-// ─── DELETE ───────────────────────────────────────────────────────
+// Delete workout details
 describe('Workout — Delete', () => {
   it('returns 200 on successful delete', async () => {
     Workout.findByIdAndDelete.mockResolvedValue({ _id: 'w1' });

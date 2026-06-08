@@ -1,14 +1,3 @@
-/**
- * UNIT TESTS — Auth Controller + Password Strength Meter
- *
- * Covers:
- *  - registerUser: happy path, duplicate email, missing fields
- *  - loginUser: happy path, wrong password, missing fields, token shape
- *  - Password strength meter logic (Weak / Fair / Strong)
- *    The meter lives in the frontend, so we test the pure scoring
- *    function in isolation — import it or inline it here.
- */
-
 jest.mock('../../models/User');
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
@@ -18,7 +7,7 @@ const bcrypt = require('bcryptjs');
 const jwt    = require('jsonwebtoken');
 const { registerUser, loginUser } = require('../../controllers/authController');
 
-// ── helper: mock req/res ──────────────────────────────────────────
+// Helper functions
 const mockRes = () => {
   const res = {};
   res.status = jest.fn().mockReturnValue(res);
@@ -28,7 +17,7 @@ const mockRes = () => {
 
 beforeEach(() => jest.clearAllMocks());
 
-// ─── REGISTER ────────────────────────────────────────────────────
+// Register
 describe('Auth — Register', () => {
   const base = { name: 'Dave', email: 'dave@fitly.io', password: 'Pass123!' };
 
@@ -84,7 +73,8 @@ describe('Auth — Register', () => {
     expect(User.create).toHaveBeenCalledWith(
       expect.objectContaining({ password: 'hashed_password' })
     );
-    // raw password must NOT appear in the create call
+
+    // Raw password must NOT appear in the create call
     const created = User.create.mock.calls[0][0];
     expect(created.password).not.toBe('Pass123!');
   });
@@ -111,7 +101,7 @@ describe('Auth — Register', () => {
   });
 });
 
-// ─── LOGIN ───────────────────────────────────────────────────────
+// Login
 describe('Auth — Login', () => {
   const base    = { email: 'dave@fitly.io', password: 'Pass123!' };
   const fakeUser = {
@@ -183,14 +173,15 @@ describe('Auth — Login', () => {
   });
 
   it('localStorage simulation: token + profile.id available after login', async () => {
-    // Simulates what the frontend does: localStorage.setItem('token', token)
-    // and localStorage.setItem('userId', user.id)
+
+    // Simulates the frontend storing token and user id in localStorage after login
     User.findOne.mockResolvedValue(fakeUser);
     bcrypt.compare.mockResolvedValue(true);
     jwt.sign.mockReturnValue('jwt.token.here');
     const res = mockRes();
     await loginUser({ body: base }, res);
     const body = res.json.mock.calls[0][0];
+
     // These are the two values the frontend stores in localStorage
     const tokenToStore  = body.token;
     const userIdToStore = body.user.id;
@@ -199,7 +190,7 @@ describe('Auth — Login', () => {
   });
 });
 
-// ─── PASSWORD STRENGTH METER ─────────────────────────────────────
+// Password Strength Check
 function passwordStrength(password) {
   let score = 0;
   if (password.length >= 8)              score++;
@@ -251,14 +242,15 @@ describe('Password Strength Meter', () => {
   });
 
   it('strength upgrades as characters are added — simulates live typing', () => {
+
     // Simulates the user typing one character at a time into the field
     const stages = [
       { input: 'p',         expected: 'Weak'   },
       { input: 'passw',     expected: 'Weak'   },
-      { input: 'password',  expected: 'Weak'   },  // long but all lower
-      { input: 'Password',  expected: 'Fair'   },  // added upper
-      { input: 'Passwor1!', expected: 'Strong' },  // added digit → score=4 → Strong
-      { input: 'Password1!!',expected: 'Strong' },  // added special → score=5
+      { input: 'passwrd',  expected: 'Weak'   },  
+      { input: 'Password',  expected: 'Fair'   },  
+      { input: 'Passwor1!', expected: 'Strong' },  
+      { input: 'Password1!!',expected: 'Strong' },  
     ];
     stages.forEach(({ input, expected }) => {
       expect(passwordStrength(input)).toBe(expected);

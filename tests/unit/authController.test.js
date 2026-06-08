@@ -1,22 +1,12 @@
-/**
- * tests/unit/authController.test.js
- *
- * Unit tests for registerUser and loginUser.
- * All Mongoose calls are mocked — no real DB needed.
- *
- * Run: npx jest tests/unit/authController.test.js
- */
-
 const bcrypt = require('bcryptjs');
 const jwt    = require('jsonwebtoken');
 
-// ── Mock Mongoose User model before requiring the controller ──────
 jest.mock('../../models/User');
 const User = require('../../models/User');
 
 const { registerUser, loginUser } = require('../../controllers/authController');
 
-// ── Helper: build a mock res object ──────────────────────────────
+// Helper function
 function mockRes() {
   const res = {};
   res.status = jest.fn().mockReturnValue(res);
@@ -24,12 +14,11 @@ function mockRes() {
   return res;
 }
 
-// ─────────────────────────────────────────────────────────────────
 describe('authController — registerUser (Unit)', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  // ── 1. Missing required fields ────────────────────────────────
+  // Missing required fields 
   test('returns 400 when name is missing', async () => {
     const req = { body: { email: 'a@b.com', password: 'pass123' } };
     const res = mockRes();
@@ -63,7 +52,7 @@ describe('authController — registerUser (Unit)', () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  // ── 2. Duplicate email ────────────────────────────────────────
+  // Duplicate email 
   test('returns 400 when email already exists', async () => {
     User.findOne.mockResolvedValue({ email: 'existing@test.com' }); // simulate existing user
 
@@ -78,10 +67,10 @@ describe('authController — registerUser (Unit)', () => {
     );
   });
 
-  // ── 3. Successful registration ────────────────────────────────
+  // Successful registration 
   test('returns 201 and success message on valid input', async () => {
-    User.findOne.mockResolvedValue(null);   // no duplicate
-    User.create.mockResolvedValue({});      // pretend creation succeeded
+    User.findOne.mockResolvedValue(null);   
+    User.create.mockResolvedValue({});      
 
     const req = {
       body: { name: 'Alice', email: 'alice@test.com', password: 'pass123', age: 25, weight: 60, height: 165 }
@@ -96,7 +85,7 @@ describe('authController — registerUser (Unit)', () => {
     );
   });
 
-  // ── 4. Email stored lowercase ─────────────────────────────────
+  // Email stored lowercase 
   test('stores email in lowercase', async () => {
     User.findOne.mockResolvedValue(null);
     User.create.mockResolvedValue({});
@@ -108,13 +97,13 @@ describe('authController — registerUser (Unit)', () => {
 
     await registerUser(req, res);
 
-    // The first argument to User.create should have a lowercase email
+    // Should have a lowercase email
     expect(User.create).toHaveBeenCalledWith(
       expect.objectContaining({ email: 'alice@test.com' })
     );
   });
 
-  // ── 5. Password is hashed ─────────────────────────────────────
+  // Password is hashed 
   test('stores a bcrypt hash, not the raw password', async () => {
     User.findOne.mockResolvedValue(null);
     User.create.mockResolvedValue({});
@@ -133,7 +122,7 @@ describe('authController — registerUser (Unit)', () => {
     expect(isHashed).toBe(true);
   });
 
-  // ── 6. Default values for optional fields ─────────────────────
+  // Default values for optional fields 
   test('defaults goal to "Not specified" when omitted', async () => {
     User.findOne.mockResolvedValue(null);
     User.create.mockResolvedValue({});
@@ -148,7 +137,7 @@ describe('authController — registerUser (Unit)', () => {
     );
   });
 
-  // ── 7. DB error returns 500 ───────────────────────────────────
+  // DB error returns 500 
   test('returns 500 when User.create throws', async () => {
     User.findOne.mockResolvedValue(null);
     User.create.mockRejectedValue(new Error('DB connection failed'));
@@ -166,12 +155,11 @@ describe('authController — registerUser (Unit)', () => {
 });
 
 
-// ─────────────────────────────────────────────────────────────────
 describe('authController — loginUser (Unit)', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  // ── 1. Missing fields ─────────────────────────────────────────
+  // Missing fields 
   test('returns 400 when email is missing', async () => {
     const req = { body: { password: 'pass123' } };
     const res = mockRes();
@@ -193,7 +181,7 @@ describe('authController — loginUser (Unit)', () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  // ── 2. Unknown email ──────────────────────────────────────────
+  // Unknown email 
   test('returns 401 when email not found in DB', async () => {
     User.findOne.mockResolvedValue(null);
 
@@ -208,7 +196,7 @@ describe('authController — loginUser (Unit)', () => {
     );
   });
 
-  // ── 3. Wrong password ─────────────────────────────────────────
+  // Wrong password 
   test('returns 401 when password does not match', async () => {
     const hashed = await bcrypt.hash('correctPassword', 10);
     User.findOne.mockResolvedValue({ email: 'alice@test.com', password: hashed });
@@ -224,7 +212,7 @@ describe('authController — loginUser (Unit)', () => {
     );
   });
 
-  // ── 4. Successful login ───────────────────────────────────────
+  // Successful login 
   test('returns 200 with JWT token on valid credentials', async () => {
     const hashed = await bcrypt.hash('password123', 10);
     User.findOne.mockResolvedValue({
@@ -244,7 +232,7 @@ describe('authController — loginUser (Unit)', () => {
     expect(typeof body.token).toBe('string');
   });
 
-  // ── 5. Returned user has no password field ────────────────────
+  // Returned user has no password field 
   test('login response does not expose the password', async () => {
     const hashed = await bcrypt.hash('password123', 10);
     User.findOne.mockResolvedValue({
@@ -261,7 +249,7 @@ describe('authController — loginUser (Unit)', () => {
     expect(body.user).not.toHaveProperty('password');
   });
 
-  // ── 6. JWT payload contains id and email ─────────────────────
+  // JWT payload contains id and email 
   test('JWT token encodes user id and email', async () => {
     const hashed = await bcrypt.hash('password123', 10);
     User.findOne.mockResolvedValue({
@@ -280,7 +268,7 @@ describe('authController — loginUser (Unit)', () => {
     expect(decoded.id).toBe('user_abc');
   });
 
-  // ── 7. DB error returns 500 ───────────────────────────────────
+  // DB error returns 500 
   test('returns 500 on unexpected DB error', async () => {
     User.findOne.mockRejectedValue(new Error('Timeout'));
 

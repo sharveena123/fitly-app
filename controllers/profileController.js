@@ -1,6 +1,6 @@
 const User = require('../models/User');
 
-// ── GET PROFILE ──────────────────────────────────────────────────
+// Getting a user profie
 exports.getUserProfile = async (req, res) => {
   try {
     const { email } = req.params;
@@ -20,7 +20,7 @@ exports.getUserProfile = async (req, res) => {
   }
 };
 
-// ── UPDATE PROFILE ───────────────────────────────────────────────
+// Updating a user profile
 exports.updateUserProfile = async (req, res) => {
   try {
     const { email, name, age, gender, activity, weight, height, goal } = req.body;
@@ -29,7 +29,7 @@ exports.updateUserProfile = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email is required.' });
     }
 
-    // calculate BMI
+    // BMI Calculation
     let bmi = null;
     let bmiLabel = '-';
     if (weight > 0 && height > 0) {

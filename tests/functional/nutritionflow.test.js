@@ -1,7 +1,3 @@
-/**
- * UNIT TESTS — Nutrition / Food Controller
- */
-
 jest.mock('../../models/Meal');
 
 const Meal = require('../../models/Meal');
@@ -208,11 +204,7 @@ describe('Nutrition — Food search modal filters by name', () => {
   });
 });
  
-// ─── NUTRITION — Selecting food auto-fills calories / macros ──────
-/**
- * Mirrors the frontend onFoodSelect handler which populates the
- * log-meal form fields when the user picks an item from the modal.
- */
+// Selecting food auto-fills calories 
 function selectFood(food) {
   return {
     calories: food.calories,
@@ -255,11 +247,7 @@ describe('Nutrition — Selecting food auto-fills calories and macros', () => {
   });
 });
  
-// ─── NUTRITION — Warning at / above 2000 kcal ─────────────────────
-/**
- * The UI renders a warning banner when the daily calorie total
- * reaches or exceeds 2000 kcal.
- */
+// NUTRITION — Warning at / above 2000 kcal 
 function shouldShowCalorieWarning(totalCalories, threshold = 2000) {
   return totalCalories >= threshold;
 }
@@ -282,16 +270,14 @@ describe('Nutrition — Warning shows at / above 2000 kcal', () => {
   });
  
   it('warning state is derived from the same summary.calories value returned by the API', () => {
+
     // Simulates the frontend: const warn = summary.calories >= 2000
     const summaryFromApi = { calories: 2100, protein: 90, carbs: 250, fat: 60 };
     expect(shouldShowCalorieWarning(summaryFromApi.calories)).toBe(true);
   });
 });
  
-// ─── NUTRITION — Water +/− buttons update count & progress bar ───
-/**
- * Mirrors the in-page water tracker state machine.
- */
+//  Water +/− buttons update count and progress bar 
 function waterReducer(count, action, goal = 8) {
   let next;
   if (action === 'increment') next = count + 1;

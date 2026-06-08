@@ -1,6 +1,6 @@
 const Workout = require('../models/Workout');
 
-// ── GET ALL WORKOUTS ─────────────────────────────────────────────
+// Getting all workouts 
 exports.getWorkouts = async (req, res) => {
   try {
     const { userId } = req.query;
@@ -12,7 +12,7 @@ exports.getWorkouts = async (req, res) => {
   }
 };
 
-// ── CREATE WORKOUT ───────────────────────────────────────────────
+// Creating a new workout
 exports.createWorkout = async (req, res) => {
   try {
     const { userId, exercise, type, duration, intensity, calories, date } = req.body;
@@ -30,7 +30,7 @@ exports.createWorkout = async (req, res) => {
   }
 };
 
-// ── UPDATE WORKOUT ───────────────────────────────────────────────
+// Updating the current workout
 exports.updateWorkout = async (req, res) => {
   try {
     const workout = await Workout.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -41,7 +41,7 @@ exports.updateWorkout = async (req, res) => {
   }
 };
 
-// ── DELETE WORKOUT ───────────────────────────────────────────────
+// Deleting a workout
 exports.deleteWorkout = async (req, res) => {
   try {
     const workout = await Workout.findByIdAndDelete(req.params.id);
