@@ -23,20 +23,33 @@
           <li class="nav-item"><a class="nav-link" href="nutrition.html">Nutrition</a></li>
           <li class="nav-item"><a class="nav-link active" href="goals.html">Goals</a></li>
           <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+         
+          <!-- Notification Dropdown -->
           <li class="nav-item dropdown ms-1">
             <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown"
               aria-expanded="false" style="position: relative;">
               <i class="bi bi-bell-fill"></i>
-              <span class="badge bg-danger rounded-pill"
-                style="font-size: 0.55rem; position: absolute; top: 0px; right: 0px;">3</span>
+              <span class="badge bg-danger rounded-pill" id="notifBadge"
+                style="font-size: 0.55rem; position: absolute; top: 0px; right: 0px; display:none;"></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="notificationDropdown"
-              style="min-width: 200px;">
-              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">New workout available!</a></li>
-              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">You hit your step goal.</a></li>
-              <li><a class="dropdown-item" href="#" style="font-size: 0.85rem;">Don't forget to log lunch.</a></li>
+              style="min-width: 280px; max-height: 340px; overflow-y: auto;">
+              <li class="px-3 py-2 d-flex justify-content-between align-items-center"
+                style="border-bottom: 1px solid rgba(0,207,255,0.1);">
+                <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">Notifications</span>
+                <button onclick="clearAllNotifications(event)"
+                  style="font-size: 0.7rem; background: none; border: none; color: var(--primary); cursor: pointer; padding: 0;">
+                  Clear all
+                </button>
+              </li>
+              <div id="notifList">
+                <li class="px-3 py-3 text-center" style="font-size: 0.8rem; color: var(--text-muted);">
+                  All caught up! 
+                </li>
+              </div>
             </ul>
           </li>
+
           <li class="nav-item ms-2">
             <a class="btn-primary-custom" href="login.html" style="padding: 8px 18px; font-size: 0.8rem;">Sign In</a>
           </li>
@@ -238,7 +251,7 @@
         const tar = parseFloat(g.target);
         const start = parseFloat(g.start) || 0;
         if (tar < start) return cur <= tar; // reduction goal
-        return cur >= tar; // Increase goal
+        return cur >= tar; // increase goal
       }).length;
       const inProgress = total - completed;
 
@@ -469,6 +482,80 @@
     window.renderGoals = renderGoals;
 
     renderGoals();
+
+    function buildNotifications() {
+        const allWorkouts = Store.get('workouts');
+        const allMeals    = Store.get('meals');
+        const allGoals    = Store.get('goals');
+        const todayKey    = todayStr();
+        const notifs      = [];
+
+        if (!allWorkouts.some(w => w.date === todayKey))
+          notifs.push({ id: 'no_workout_today', icon: 'bi-lightning-fill', color: '#00CFFF',
+            text: "You haven't logged a workout today. Get moving! 💪", link: 'workout.html' });
+
+        if (!allMeals.some(m => m.date === todayKey))
+          notifs.push({ id: 'no_meal_today', icon: 'bi-egg-fried', color: '#FFB800',
+            text: "No meals logged today. Don't forget to track your food!", link: 'nutrition.html' });
+
+        allGoals.forEach(g => {
+          const pct = g.target > 0 ? (g.current / g.target) * 100 : 0;
+          if (pct >= 80 && pct < 100)
+            notifs.push({ id: 'goal_near_' + g.id, icon: 'bi-bullseye', color: '#00E5A0',
+              text: `"${g.title}" is ${Math.round(pct)}% done — almost there!`, link: 'goals.html' });
+          if (g.deadline && g.deadline < todayKey && g.current < g.target)
+            notifs.push({ id: 'goal_overdue_' + g.id, icon: 'bi-exclamation-circle-fill', color: '#ff4d4d',
+              text: `Goal "${g.title}" is past its deadline. Update your progress!`, link: 'goals.html' });
+        });
+
+        if (calBurned >= 500)
+          notifs.push({ id: 'cal_milestone', icon: 'bi-fire', color: '#FF6B35',
+            text: `🔥 You've burned ${calBurned} kcal today — great effort!`, link: 'workout.html' });
+
+        return notifs;
+      }
+
+      function renderNotifications() {
+        const dismissed = JSON.parse(localStorage.getItem('fitly_dismissed_notifs') || '[]');
+        const active = buildNotifications().filter(n => !dismissed.includes(n.id));
+        const list   = document.getElementById('notifList');
+        const badge  = document.getElementById('notifBadge');
+
+        if (active.length === 0) {
+          list.innerHTML = `<li class="px-3 py-3 text-center" style="font-size:0.8rem;color:var(--text-muted);">All caught up! 🎉</li>`;
+          badge.style.display = 'none';
+        } else {
+          badge.textContent   = active.length;
+          badge.style.display = 'inline-block';
+          list.innerHTML = active.map(n => `
+            <li style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(0,207,255,0.06);">
+              <i class="bi ${n.icon}" style="color:${n.color};font-size:1rem;margin-top:2px;flex-shrink:0;"></i>
+              <div style="flex:1;">
+                <a href="${n.link}" style="font-size:0.8rem;color:var(--text-primary);text-decoration:none;line-height:1.4;">${n.text}</a>
+              </div>
+              <button onclick="dismissNotif(event,'${n.id}')"
+                style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:0;line-height:1;flex-shrink:0;"
+                title="Dismiss">×</button>
+            </li>`).join('');
+        }
+      }
+
+      function dismissNotif(event, id) {
+        event.preventDefault(); event.stopPropagation();
+        const dismissed = JSON.parse(localStorage.getItem('fitly_dismissed_notifs') || '[]');
+        if (!dismissed.includes(id)) dismissed.push(id);
+        localStorage.setItem('fitly_dismissed_notifs', JSON.stringify(dismissed));
+        renderNotifications();
+      }
+
+      function clearAllNotifications(event) {
+        event.preventDefault(); event.stopPropagation();
+        const allIds = buildNotifications().map(n => n.id);
+        localStorage.setItem('fitly_dismissed_notifs', JSON.stringify(allIds));
+        renderNotifications();
+      }
+
+      renderNotifications();
   </script>
 </body>
 </html>

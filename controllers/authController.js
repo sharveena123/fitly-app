@@ -80,3 +80,74 @@ exports.loginUser = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Login error: ' + error.message });
   }
 };
+
+// Verify email exists
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({
+      email: email.toLowerCase()
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'No account found with this email.'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Email verified.'
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// Reset password
+exports.resetPassword = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required.'
+      });
+    }
+
+    const user = await User.findOne({
+      email: email.toLowerCase()
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.'
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Password updated successfully.'
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};

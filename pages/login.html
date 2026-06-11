@@ -101,19 +101,19 @@
 
     document.addEventListener('DOMContentLoaded', function () {
 
-      // ── Redirect if already logged in ──────────────────────────
+      // Redirect if already logged in 
       if (localStorage.getItem('token')) {
         window.location.href = 'dashboard.html';
         return;
       }
 
-      // ── Pre-fill remembered email ───────────────────────────────
+      // Pre-fill remembered email 
       var rememberToken = localStorage.getItem('fitly_remember_token');
       if (rememberToken) {
         document.getElementById('loginEmail').value = rememberToken;
       }
 
-      // ── Login form submit ───────────────────────────────────────
+      // Login form submit 
       document.getElementById('loginForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 
@@ -158,13 +158,10 @@
 
           alertBox.style.display = 'none';
 
-          // ── ✅ Save token ──────────────────────────────────────
           localStorage.setItem('token', result.token);
 
-          // ── ✅ Save full profile (including MongoDB _id as 'id')
-          //    so every page can call getCurrentUserId()
           var profileObj = {
-            id:     result.user.id,        // MongoDB _id — used by workout/nutrition/goals pages
+            id:     result.user.id,        
             name:   result.user.name,
             email:  result.user.email,
             age:    result.user.age,
@@ -189,7 +186,7 @@
         }
       });
 
-      // ── Real-time field validation ──────────────────────────────
+      // Real-time field validation
       document.getElementById('loginEmail').addEventListener('input', function () {
         if (this.value.trim() && validateEmail(this.value.trim())) {
           this.closest('.mb-3').querySelector('.field-error').style.display = 'none';

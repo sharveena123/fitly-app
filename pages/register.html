@@ -103,10 +103,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
   <script src="../js/main.js"></script>
   <script>
+    
     // helper to show validation messages above the form
     function showRegisterError(message) {
       document.getElementById('regAlert').style.display = 'block';
       document.getElementById('regAlertMsg').textContent = message;
+
       // Scroll smoothly back to top of form so user sees the message
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -132,21 +134,21 @@
       var color = '#cc0000';
       var width = 25;
 
-      // ❌ Weak: too short OR too few types
+      // Weak: too short OR too few types
       if (length < 8 || types <= 2) {
         label = 'Weak';
         color = '#cc0000';
         width = 25;
       }
 
-      // 🟠 Fair: 3 types but missing full strength (no special char OR not all 4 types)
+      // Fair: 3 types but missing full strength (no special char OR not all 4 types)
       else if (types === 3) {
         label = 'Fair';
         color = '#ff9900';
         width = 50;
       }
 
-      // 🟢 Strong: all requirements met
+      // Strong: all requirements met
       else if (types === 4) {
         label = 'Strong';
         color = '#00aa55';

@@ -37,7 +37,7 @@ exports.getWorkoutRecommendation = async (req, res) => {
       model: 'gemini-2.5-flash',
       contents: prompt,
       config: { 
-        responseMimeType: "application/json" // strict constraint forcing valid JSON output
+        responseMimeType: "application/json" 
       }
     });
 
