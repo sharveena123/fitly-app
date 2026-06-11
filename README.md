@@ -113,6 +113,3 @@ All API routes are prefixed with `/api`:
 - User data is persisted in **MongoDB** — make sure your `MONGO_URI` is set in the `.env` file before starting the server.
 - The AI recommendation feature requires a valid `GEMINI_API_KEY` in your `.env` file.
 
-## License
-
-ISC
