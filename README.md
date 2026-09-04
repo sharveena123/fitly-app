@@ -12,7 +12,8 @@ Fitly is an all-in-one fitness tracking web app. Log workouts, monitor nutrition
 - **Analytics Dashboard** — Visual charts, summaries, and trends to keep you informed of your performance.
 - **Profile & Metrics** — Store personal stats and get instant calculations like BMI.
 - **AI Workout Recommendations** — Personalized weekly workout prescriptions powered by Google Gemini.
-- **Authentication** — Register and log in with secure password hashing (bcrypt) and JWT-based sessions.
+- **Authentication** — Register and log in with secure password hashing (bcrypt), JWT sessions, and protected API routes.
+- **API classroom examples** — One parallel dashboard request, bearer-token auth, a small response cache, retries, and polling.
 
 ## Tech Stack
 
@@ -22,7 +23,7 @@ Fitly is an all-in-one fitness tracking web app. Log workouts, monitor nutrition
 | Backend  | Node.js, Express 5                              |
 | Auth     | bcryptjs, jsonwebtoken (JWT)                    |
 | AI       | Google Gemini (`@google/genai`, gemini-2.5-flash) |
-| Database | MongoDB                                         |
+| Database | Supabase (Postgres) with MongoDB compatibility    |
 
 ## Project Structure
 
@@ -61,14 +62,17 @@ cd fitly-app-1
 npm install
 ```
 
-3. Create a `.env` file in the project root:
+3. Create a `.env` file in the project root using `.env.example`:
 
 ```env
-MONGO_URI=your-mongodb-connection-string
 PORT=3000
 JWT_SECRET=your-secret-key
 GEMINI_API_KEY=your-gemini-api-key
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
+
+4. In the Supabase dashboard, open **SQL Editor**, paste [supabase/schema.sql](supabase/schema.sql), and run it. The server uses the service-role key, so keep it in `.env` and never place it in browser JavaScript.
 
 ### Running the App
 
@@ -106,10 +110,18 @@ All API routes are prefixed with `/api`:
 | `/api/workouts`  | Workout logging and retrieval        |
 | `/api/nutrition` | Meal and water intake tracking       |
 | `/api/goals`     | Goal creation and progress updates   |
+| `/api/dashboard` | Parallel dashboard data aggregation  |
 | `/api/ai`        | AI-powered workout recommendations   |
 
 ## Notes
 
-- User data is persisted in **MongoDB** — make sure your `MONGO_URI` is set in the `.env` file before starting the server.
+- With `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` set, user data is persisted in Supabase. If those variables are absent, the existing MongoDB models remain available as a fallback.
 - The AI recommendation feature requires a valid `GEMINI_API_KEY` in your `.env` file.
+
+## Classroom API Examples
+
+- `GET /api/dashboard?userId=...` uses `Promise.all()` to load workouts, meals, and goals in parallel.
+- Browser requests go through `apiFetch` in `js/main.js`, which adds the JWT bearer token, caches short-lived GET responses, and retries temporary server failures.
+- The dashboard polls the aggregate endpoint every 30 seconds and shows the last successful sync time.
+- Protected API routes return `401` without a valid `Authorization: Bearer <token>` header. Jest keeps its existing unauthenticated route tests in test mode.
 

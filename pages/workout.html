@@ -307,7 +307,7 @@
 
       if (userId) {
         try {
-          await fetch('http://localhost:3000/api/workouts/', {
+          await apiFetch('http://localhost:3000/api/workouts/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, exercise, type, duration, intensity, calories, date })
@@ -399,7 +399,7 @@
       const preferredActivityType = "Cardio"; 
 
       try {
-        const response = await fetch('http://localhost:3000/api/ai/recommend', {
+        const response = await apiFetch('http://localhost:3000/api/ai/recommend', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 

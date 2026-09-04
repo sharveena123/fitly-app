@@ -396,7 +396,7 @@
 
       if (userId) {
         try {
-          await fetch('http://localhost:3000/api/goals/set-targets', {
+          await apiFetch('http://localhost:3000/api/goals/set-targets', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, title, category, current, start: current, target, unit, deadline })

@@ -17,7 +17,7 @@ exports.setTargets = async (req, res) => {
       start: current,   
       target,
       unit:     unit     || '',
-      deadline: deadline || '',
+      deadline: deadline || null,
     });
 
     res.status(201).json({ success: true, goal });

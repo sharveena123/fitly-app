@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
+const { enabled } = require('../lib/supabase');
 
-const UserSchema = new mongoose.Schema({
+if (enabled) {
+  module.exports = require('../lib/supabaseModel')('users');
+} else {
+  const UserSchema = new mongoose.Schema({
   name:     { type: String, required: true },
   email:    { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true },
@@ -12,6 +16,7 @@ const UserSchema = new mongoose.Schema({
   activity: { type: String, default: 'moderate' },
   bmi:      { type: Number, default: null },
   bmiLabel: { type: String, default: '-' },
-}, { timestamps: true });
+  }, { timestamps: true });
 
-module.exports = mongoose.model('User', UserSchema);
+  module.exports = mongoose.model('User', UserSchema);
+}

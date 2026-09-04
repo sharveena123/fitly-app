@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
+const { enabled } = require('../lib/supabase');
 
-const WorkoutSchema = new mongoose.Schema({
+if (enabled) {
+  module.exports = require('../lib/supabaseModel')('workouts');
+} else {
+  const WorkoutSchema = new mongoose.Schema({
   userId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   exercise:  { type: String, required: true },
   type:      { type: String, required: true },
@@ -8,6 +12,7 @@ const WorkoutSchema = new mongoose.Schema({
   intensity: { type: String, default: 'moderate' },
   calories:  { type: Number, default: 0 },
   date:      { type: String, required: true },
-}, { timestamps: true });
+  }, { timestamps: true });
 
-module.exports = mongoose.model('Workout', WorkoutSchema);
+  module.exports = mongoose.model('Workout', WorkoutSchema);
+}

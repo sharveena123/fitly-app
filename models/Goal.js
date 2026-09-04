@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
+const { enabled } = require('../lib/supabase');
 
-const GoalSchema = new mongoose.Schema({
+if (enabled) {
+  module.exports = require('../lib/supabaseModel')('goals');
+} else {
+  const GoalSchema = new mongoose.Schema({
   userId:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   title:    { type: String, required: true },
   category: { type: String, default: 'Custom' },
@@ -9,6 +13,7 @@ const GoalSchema = new mongoose.Schema({
   target:   { type: Number, required: true },
   unit:     { type: String, default: '' },
   deadline: { type: String, default: '' },
-}, { timestamps: true });
+  }, { timestamps: true });
 
-module.exports = mongoose.model('Goal', GoalSchema);
+  module.exports = mongoose.model('Goal', GoalSchema);
+}

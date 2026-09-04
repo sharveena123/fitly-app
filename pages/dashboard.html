@@ -67,6 +67,7 @@
       <div>
         <h1 class="page-title">Dashboard</h1>
         <p class="page-subtitle" id="dashDate">Loading...</p>
+        <small id="apiSyncStatus" style="color: var(--text-muted);">API sync: waiting</small>
       </div>
       <div class="d-flex gap-2">
         <!-- Simulated POST / GET route style: buttons navigate to form pages -->
@@ -711,6 +712,18 @@
       }
 
       renderNotifications();
+
+      // One endpoint supplies three resources; polling keeps the dashboard fresh.
+      const dashboardProfile = Store.getObj('profile', {});
+      if (dashboardProfile.id && typeof startDashboardPolling === 'function') {
+        startDashboardPolling(dashboardProfile.id, function (payload) {
+          if (!payload.success || !payload.data) return;
+          Store.set('workouts', payload.data.workouts || []);
+          Store.set('meals', payload.data.meals || []);
+          Store.set('goals', payload.data.goals || []);
+          document.getElementById('apiSyncStatus').textContent = 'API sync: ' + new Date(payload.fetchedAt).toLocaleTimeString();
+        });
+      }
 </script>
 </body>
 </html>

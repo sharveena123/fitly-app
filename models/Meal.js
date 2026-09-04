@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
+const { enabled } = require('../lib/supabase');
 
-const MealSchema = new mongoose.Schema({
+if (enabled) {
+  module.exports = require('../lib/supabaseModel')('meals');
+} else {
+  const MealSchema = new mongoose.Schema({
   userId:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   food:     { type: String, required: true },
   type:     { type: String, required: true },
@@ -9,6 +13,7 @@ const MealSchema = new mongoose.Schema({
   protein:  { type: Number, default: 0 },
   fat:      { type: Number, default: 0 },
   date:     { type: String, required: true },
-}, { timestamps: true });
+  }, { timestamps: true });
 
-module.exports = mongoose.model('Meal', MealSchema);
+  module.exports = mongoose.model('Meal', MealSchema);
+}

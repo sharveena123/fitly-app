@@ -37,6 +37,66 @@ function getToken() {
   return localStorage.getItem('token') || null;
 }
 
+// Small browser API client used in class examples: auth, cache, retries, and polling.
+var apiCache = new Map();
+
+async function apiFetch(path, options) {
+  options = options || {};
+  var method = (options.method || 'GET').toUpperCase();
+  var cacheKey = method + ':' + path;
+  var cached = apiCache.get(cacheKey);
+  if (method === 'GET' && options.cacheTtl && cached && Date.now() - cached.time < options.cacheTtl) {
+    return new Response(JSON.stringify(cached.data), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }
+
+  var headers = Object.assign({}, options.headers || {});
+  var token = getToken();
+  if (token) headers.Authorization = 'Bearer ' + token;
+
+  var requestOptions = Object.assign({}, options, { headers: headers });
+  delete requestOptions.cacheTtl;
+  delete requestOptions.retries;
+  var retries = options.retries === undefined ? 2 : options.retries;
+  var lastError;
+
+  for (var attempt = 0; attempt <= retries; attempt++) {
+    try {
+      var requestUrl = path.indexOf('/') === 0 ? 'http://localhost:3000' + path : path;
+      var response = await fetch(requestUrl, requestOptions);
+      if (response.ok || response.status < 500 || attempt === retries) {
+        if (method === 'GET' && response.ok) {
+          var copy = await response.clone().json();
+          apiCache.set(cacheKey, { time: Date.now(), data: copy });
+        }
+        return response;
+      }
+      lastError = new Error('Server returned ' + response.status);
+    } catch (error) {
+      lastError = error;
+    }
+    await new Promise(function (resolve) { setTimeout(resolve, 200 * Math.pow(2, attempt)); });
+  }
+  throw lastError;
+}
+
+function clearApiCache() {
+  apiCache.clear();
+}
+
+function startDashboardPolling(userId, onUpdate) {
+  var poll = async function () {
+    try {
+      var response = await apiFetch('/api/dashboard?userId=' + encodeURIComponent(userId), { retries: 1 });
+      if (response.ok) onUpdate(await response.json());
+    } catch (error) {
+      console.warn('Dashboard polling failed:', error.message);
+    }
+  };
+  var timer = setInterval(poll, 30000);
+  poll();
+  return function stopPolling() { clearInterval(timer); };
+}
+
 // Navbar active state 
 document.addEventListener('DOMContentLoaded', function () {
   var currentPage = window.location.pathname.split('/').pop() || 'index.html';
@@ -83,13 +143,23 @@ function updateNavbarAuthState() {
 }
 
 // Demo login for Fitly
-function loginDemoUser() {
-  localStorage.setItem('token', 'mock-demo-token-xyz-12345');
-
+async function loginDemoUser() {
   var demoUser = { email: 'demo@fitly.com', name: 'Demo User', age: 28, weight: 75, height: 175, goal: 'Build muscle', isDemo: true };
+
+  try {
+    var response = await apiFetch('http://localhost:3000/api/auth/demo', { method: 'POST' });
+    var result = await response.json();
+    if (result.success) {
+      localStorage.setItem('token', result.token);
+      demoUser = result.user;
+    }
+  } catch (error) {
+    // Keep the visual demo usable if the backend is not running.
+    localStorage.removeItem('token');
+  }
+
   Store.setObj('currentUser', demoUser);
   Store.setObj('profile', demoUser);
-
   showToast("Welcome to Fitly! You're logged in as a demo user.", 'success');
 
   setTimeout(function () {

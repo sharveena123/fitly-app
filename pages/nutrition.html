@@ -325,7 +325,7 @@
 
       if (userId) {
         try {
-          await fetch('http://localhost:3000/api/nutrition/log', {
+          await apiFetch('http://localhost:3000/api/nutrition/log', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, food, type, calories, carbs, protein, fat, date })

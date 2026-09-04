@@ -5,7 +5,7 @@ const User   = require('../models/User');
 // Register a new user
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password, age, weight, height, goal } = req.body;
+    const { name, email, password, age, weight, height, goal } = req.body || {};
 
     if (!name || !email || !password) {
       return res.status(400).json({ success: false, message: 'Please fill in all required fields.' });
@@ -39,7 +39,7 @@ exports.registerUser = async (req, res) => {
 // Login an existing user
 exports.loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
 
     if (!email || !password) {
       return res.status(400).json({ success: false, message: 'Please provide both email and password.' });
@@ -56,7 +56,7 @@ exports.loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      { id: user._id || user.id, email: user.email },
       process.env.JWT_SECRET || 'SuperSecretKey123',
       { expiresIn: '24h' }
     );
@@ -66,7 +66,7 @@ exports.loginUser = async (req, res) => {
       message: 'Login successful!',
       token,
       user: {
-        id:     user._id,
+        id:     user._id || user.id,
         name:   user.name,
         email:  user.email,
         age:    user.age,
@@ -84,7 +84,11 @@ exports.loginUser = async (req, res) => {
 // Verify email exists
 exports.verifyEmail = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email } = req.body || {};
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email is required.' });
+    }
 
     const user = await User.findOne({
       email: email.toLowerCase()
@@ -113,7 +117,7 @@ exports.verifyEmail = async (req, res) => {
 // Reset password
 exports.resetPassword = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
 
     if (!email || !password) {
       return res.status(400).json({
@@ -122,22 +126,21 @@ exports.resetPassword = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({
-      email: email.toLowerCase()
-    });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    if (!user) {
+    const updated = await User.findOneAndUpdate(
+      { email: email.toLowerCase() },
+      { password: hashedPassword },
+      { new: true }
+    );
+
+    if (!updated) {
       return res.status(404).json({
         success: false,
         message: 'User not found.'
       });
     }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    user.password = hashedPassword;
-    await user.save();
 
     return res.status(200).json({
       success: true,
@@ -150,4 +153,26 @@ exports.resetPassword = async (req, res) => {
       message: error.message
     });
   }
+};
+
+// Issue a real JWT for the local demo account without creating a database user.
+exports.loginDemoUser = (req, res) => {
+  const user = {
+    id: 'demo',
+    name: 'Demo User',
+    email: 'demo@fitly.com',
+    age: 28,
+    weight: 75,
+    height: 175,
+    goal: 'Build muscle',
+    isDemo: true,
+  };
+
+  const token = jwt.sign(
+    { id: user.id, email: user.email, isDemo: true },
+    process.env.JWT_SECRET || 'SuperSecretKey123',
+    { expiresIn: '24h' }
+  );
+
+  return res.status(200).json({ success: true, token, user });
 };
